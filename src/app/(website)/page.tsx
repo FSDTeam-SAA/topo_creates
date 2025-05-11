@@ -1,8 +1,11 @@
+import { ProductGrid } from "@/components/product/product-grid";
 import SectionHeader from "@/components/section/section-header";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { getTrendingProducts } from '@/data/product-data';
 
 export default function Home() {
+  const trendingProducts = getTrendingProducts();
   return (
     <>
       <div
@@ -24,6 +27,7 @@ export default function Home() {
       </div>
       <div className="h-[300vh] bg-white">
         <SectionHeader />
+          <ProductGrid title="TRENDING NOW" subtitle="EXPLORE THE EDIT" products={trendingProducts} />
       </div>
     </>
   );
