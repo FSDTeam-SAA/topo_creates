@@ -1,411 +1,712 @@
-"use client"
+"use client";
 
-import type React from "react"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { ChevronDown } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Checkbox } from "@/components/ui/checkbox"
+const formSchema = z.object({
+  businessName: z.string().min(5, {
+    message: "Business name must be at least 5 characters.",
+  }),
+  abnNumber: z.string().optional(),
+  instagramHandle: z.string().min(5, {
+    message: "Instagram must be at least 5 characters.",
+  }),
+  businessWebsite: z.string().optional(),
+  fullName: z.string().min(5, {
+    message: "Full name must be at least 5 characters.",
+  }),
+  businessEmail: z.string().optional(),
+  phoneNumber: z.string().min(5, {
+    message: "Phone number must be at least 5 characters.",
+  }),
+  businessAddress: z.string().min(5, {
+    message: "Business address must be at least 5 characters.",
+  }),
 
-export default function FormPage() {
-  const router = useRouter()
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
-  const [formData, setFormData] = useState({
-    businessName: "",
-    businessABN: "",
-    instagramHandle: "",
-    website: "",
-    fullName: "",
-    emailAddress: "",
-    phoneNumber: "",
-    businessAddress: "",
-    dressesCount: "",
-    reviewMethod: "",
-    localPickup: "no",
-    shipAustralia: "yes",
-    offerTryOns: "yes",
-    agreeStandards: false,
-    agreeTerms: false,
-  })
+  numberOfDresses: z.string().optional(),
+  reviewStockMethod: z.object({
+    website: z.boolean(),
+    instagram: z.boolean(),
+    keyBrands: z.boolean(),
+  }),
+  notes: z.string().optional(),
+  allowLocalPickup: z.enum(["yes", "no"], {
+    required_error: "Please select an option",
+  }),
+  shipAustraliaWide: z.enum(["yes", "no"], {
+    required_error: "Please select an option",
+  }),
+  allowTryOn: z.enum(["yes", "no"], {
+    required_error: "Please select an option",
+  }),
+  agreedTerms: z.boolean().optional(),
+  agreedCurationPolicy: z.boolean().optional(),
+});
 
-  useEffect(() => {
-    // Get the selected plan from localStorage
-    const plan = localStorage.getItem("selectedPlan")
-    if (plan) {
-      setSelectedPlan(plan)
-    } else {
-      // If no plan is selected, redirect back to the pricing page
-      router.push("/become-lender")
-    }
-  }, [router])
+const BecomeALenderForm = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      businessName: "",
+      abnNumber: "",
+      instagramHandle: "",
+      businessWebsite: "",
+      fullName: "",
+      businessEmail: "",
+      phoneNumber: "",
+      businessAddress: "",
+      numberOfDresses: "",
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+      reviewStockMethod: {
+        website: true,
+        instagram: false,
+        keyBrands: true,
+      },
+      notes: "",
+      allowLocalPickup: "no",
+      shipAustraliaWide: "yes",
+      allowTryOn: "yes",
+      agreedTerms: false,
+      agreedCurationPolicy: false,
+    },
+  });
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["become-a-lender"],
+    mutationFn: (values: z.infer<typeof formSchema>) =>
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/application/apply`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      }).then((res) => res.json()),
+    onSuccess: (data) => {
+      if (!data?.status) {
+        toast.error(data.message || "Something went wrong");
+        return;
+      } else {
+        toast.success(data.message || "Application created successfully");
+        form.reset();
+      }
+    },
+  });
+
+  // 2. Define a submit handler.
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    // console.log(values, values.numberOfDresses);
+    console.log(values);
+    mutate(values)
   }
-
-  const handleRadioChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
-
-  const handleCheckboxChange = (name: string, checked: boolean) => {
-    setFormData((prev) => ({ ...prev, [name]: checked }))
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-
-    // Log the form data along with the selected plan
-    console.log({
-      selectedPlan,
-      ...formData,
-    })
-
-    // You could redirect to a success page or show a success message here
-    alert("Form submitted successfully! Check console for details.")
-  }
-
-  // Custom Label component with 24px font size
-  const StyledLabel = ({
-    htmlFor,
-    className,
-    children,
-  }: { htmlFor?: string; className?: string; children: React.ReactNode }) => {
-    return (
-      <Label htmlFor={htmlFor} className={`block mb-1 text-[24px] ${className || ""}`}>
-        {children}
-      </Label>
-    )
-  }
-
-  const CollapsibleSection = ({ title, id, children }: { title: string; id: string; children: React.ReactNode }) => {
-    const [isOpen, setIsOpen] = useState(true)
-
-    return (
-      <div className="border-b border-gray-200">
-        <button
-          type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          className="w-full py-4 flex justify-between items-center"
-          aria-expanded={isOpen}
-          aria-controls={id}
-        >
-          <h2 className="text-[32px] font-normal">{title}</h2>
-          <ChevronDown
-            className={`h-5 w-5 transition-transform duration-300 ${isOpen ? "transform rotate-180" : ""}`}
-          />
-        </button>
-        <div
-          id={id}
-          className={`overflow-hidden transition-all duration-300 ${isOpen ? "max-h-[1000px] opacity-100 mb-6" : "max-h-0 opacity-0"}`}
-        >
-          {children}
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <div className="pt-20">
-      <h1 className="sub-title text-center">APPLY TO LEND WITH MUSE GALA</h1>
-      <p className="text-center text-[30px] font-normal my-5">
-        Join Australia&apos;s curated fashion rental platform. Showcase your collection, <br /> expand your reach, and grow
-        with us.
-      </p>
-      <div className="max-w-5xl mx-auto px-4 py-12">
-        <form onSubmit={handleSubmit} className="space-y-12 ">
-          <CollapsibleSection title="BUSINESS INFORMATION" id="business-info">
-            <div className="space-y-6">
-              <div>
-                <StyledLabel htmlFor="businessName">
-                  Business Name <span className="text-red-500">*</span>
-                </StyledLabel>
-                <Input
-                  id="businessName"
-                  name="businessName"
-                  value={formData.businessName}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full border-t-0 border-x-0 border-b border-gray-300 rounded-none px-0 focus:ring-0"
-                />
-              </div>
+    <div className="mt-20 container mx-auto">
+      <div className="py-[25px] md:py-[38px] lg:py-[50px]">
+        <h2 className="text-4xl md:text-5xl lg:text-[56px] font-normal font-avenir uppercase leading-[64px] tracking-[10px] text-black text-center">
+          APPLY TO LEND WITH MUSE GALA
+        </h2>
+        <p className="text-xl md:text-2xl lg:text-3xl font-normal uppercase text-black leading-[36px] font-nimbus tracking-[10%] text-center pt-[10px] md:pt-[13px] lg:pt-[15px]">
+          Join Australia’s curated fashion rental platform. Showcase your
+          collection, <br className="block md:hidden" /> expand your reach, and
+          grow with us.
+        </p>
+      </div>
+      <div className="">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="">
+            <Accordion type="single" collapsible defaultValue="item-1">
+              {/* first  */}
+              <AccordionItem value="item-1">
+                <AccordionTrigger className="text-2xl md:text-[28px] lg:text-[32px] font-normal font-nimbus tracking-[20%] leading-[48px] uppercase">
+                  BUSINESS INFORMATION
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="businessName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xl md:text-[22px] lg:text-2xl font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
+                            Business Name{" "}
+                            <sup className="pl-1 text-[#891D33]">*</sup>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              className="w-[90%] h-[60px]  border-t-0 border-l-0 border-r-0 border-b-[1.5px] border-black rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 px-2 shadow-none !text-xl md:text-2xl font-medium leading-normal text-black"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="py-[25px] md:py-[35px] lg:py-[45px]">
+                    <FormField
+                      control={form.control}
+                      name="abnNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xl md:text-[22px] lg:text-2xl font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
+                            Business ABN{" "}
+                            <span className="pl-4 md:pl-5 text-lg font-normal tracking-[0%] text-[#595959] font-nimbus leading-[24px] ">
+                              (if available)
+                            </span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              className="w-[90%] h-[60px]  border-t-0 border-l-0 border-r-0 border-b-[1.5px] border-black rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 px-2 shadow-none !text-xl md:text-2xl font-medium leading-normal text-black"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="instagramHandle"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xl md:text-[22px] lg:text-2xl font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
+                            Instagram Handle{" "}
+                            <sup className="pl-1 text-[#891D33]">*</sup>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              className="w-[90%] h-[60px]  border-t-0 border-l-0 border-r-0 border-b-[1.5px] border-black rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 px-2 shadow-none !text-xl md:text-2xl font-medium leading-normal text-black"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="pt-[25px] md:pt-[35px] lg:pt-[45px]">
+                    <FormField
+                      control={form.control}
+                      name="businessWebsite"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xl md:text-[22px] lg:text-2xl font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
+                            Website
+                            <span className="pl-4 md:pl-5 text-lg font-normal tracking-[0%] text-[#595959] font-nimbus leading-[24px] ">
+                              (if available)
+                            </span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              className="w-[90%] h-[60px]  border-t-0 border-l-0 border-r-0 border-b-[1.5px] border-black rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 px-2 shadow-none !text-xl md:text-2xl font-medium leading-normal text-black"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+              {/* second  */}
+              <AccordionItem value="item-2">
+                <AccordionTrigger className="text-2xl md:text-[28px] lg:text-[32px] font-normal font-nimbus tracking-[20%] leading-[48px] uppercase">
+                  Contact Information
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="fullName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xl md:text-[22px] lg:text-2xl font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
+                            Full Name
+                            <sup className="pl-1 text-[#891D33]">*</sup>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              className="w-[90%] h-[60px]  border-t-0 border-l-0 border-r-0 border-b-[1.5px] border-black rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 px-2 shadow-none !text-xl md:text-2xl font-medium leading-normal text-black"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="py-[25px] md:py-[35px] lg:py-[45px]">
+                    <FormField
+                      control={form.control}
+                      name="businessEmail"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xl md:text-[22px] lg:text-2xl font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
+                            Email Address
+                            <span className="pl-4 md:pl-5 text-lg font-normal tracking-[0%] text-[#595959] font-nimbus leading-[24px] ">
+                              (if available)
+                            </span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              className="w-[90%] h-[60px]  border-t-0 border-l-0 border-r-0 border-b-[1.5px] border-black rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 px-2 shadow-none !text-xl md:text-2xl font-medium leading-normal text-black"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="phoneNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xl md:text-[22px] lg:text-2xl font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
+                            Phone Number
+                            <sup className="pl-1 text-[#891D33]">*</sup>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              className="w-[90%] h-[60px]  border-t-0 border-l-0 border-r-0 border-b-[1.5px] border-black rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 px-2 shadow-none !text-xl md:text-2xl font-medium leading-normal text-black"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="businessAddress"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xl md:text-[22px] lg:text-2xl font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
+                            Business Address
+                            <sup className="pl-1 text-[#891D33]">*</sup>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              className="w-[90%] h-[60px]  border-t-0 border-l-0 border-r-0 border-b-[1.5px] border-black rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 px-2 shadow-none !text-xl md:text-2xl font-medium leading-normal text-black "
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+              {/* third  */}
+              <AccordionItem value="item-3">
+                <AccordionTrigger className="text-2xl md:text-[28px] lg:text-[32px] font-normal font-nimbus tracking-[20%] leading-[48px] uppercase">
+                  Collection Overview
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="numberOfDresses"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xl md:text-[22px] lg:text-2xl font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
+                            How many dresses do you want to list?
+                            <sup className="pl-1 text-[#891D33]">*</sup>
+                          </FormLabel>
+                          <FormControl>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                              defaultValue={field.value}
+                            >
+                              <SelectTrigger className="w-[90%] h-[60px] border-t-0 border-l-0 border-r-0 border-b-[1.5px] border-black rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 active-visible:ring-0 active-visible:ring-offset-0 focus:ring-0 focus:ring-none px-2 shadow-none !text-xl !md:text-2xl !tracking-[15%] font-medium leading-normal text-black">
+                                <SelectValue
+                                  placeholder="Please Select"
+                                  className="!text-xl !md:text-2xl font-normal font-nimbus !tracking-[15%] leading-[28px] text-black"
+                                />
+                              </SelectTrigger>
+                              <SelectContent className="!text-xl !md:text-2xl font-normal font-nimbus !tracking-[15%] leading-[28px] text-black">
+                                <SelectItem value="1-5">1-5 Dresses</SelectItem>
+                                <SelectItem value="5-15">
+                                  5-15 Dresses
+                                </SelectItem>
+                                <SelectItem value="15-30">
+                                  15-30 Dresses
+                                </SelectItem>
+                                <SelectItem value="30+">30+ Dresses</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="pt-[25px] md:pt-[35px] lg:pt-[45px]">
+                    <FormField
+                      control={form.control}
+                      name="reviewStockMethod"
+                      render={() => (
+                        <FormItem>
+                          <FormLabel className="text-xl md:text-[22px] lg:text-2xl font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
+                            Best way for us to review your stock
+                            <sup className="pl-1 text-[#891D33]">*</sup>
+                          </FormLabel>
+                          <FormControl>
+                            {/* Dropdown */}
+                            <div className="relative">
+                              <div
+                                onClick={toggleDropdown}
+                                className="w-[90%] flex justify-between items-center py-3 border-b border-black cursor-pointer"
+                              >
+                                <span className="text-sm text-gray-700">
+                                  Please select
+                                </span>
+                                <ChevronDown
+                                  className={cn(
+                                    "h-4 w-4 transition-transform",
+                                    isOpen && "rotate-180"
+                                  )}
+                                />
+                              </div>
 
-              <div>
-                <StyledLabel htmlFor="businessABN">
-                  Business ABN <span className="text-gray-400 text-sm">(if available)</span>
-                </StyledLabel>
-                <Input
-                  id="businessABN"
-                  name="businessABN"
-                  value={formData.businessABN}
-                  onChange={handleInputChange}
-                  className="w-full border-t-0 border-x-0 border-b border-gray-300 rounded-none px-0 focus:ring-0"
-                />
-              </div>
+                              {/* Dropdown content */}
+                              {isOpen && (
+                                <div className="mt-6 space-y-5 ">
+                                  {/* Website option */}
+                                  <FormField
+                                    control={form.control}
+                                    name="reviewStockMethod.website"
+                                    render={({ field }) => (
+                                      <FormItem className="flex items-center space-x-3 m-0 p-0">
+                                        <FormControl>
+                                          <Checkbox
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                            className="rounded-none border-black h-[18px] w-[18px] data-[state=checked]:bg-black data-[state=checked]:text-white mt-2"
+                                          />
+                                        </FormControl>
+                                        <FormLabel className="text-sm font-normal mt-0 cursor-pointer">
+                                          Website
+                                        </FormLabel>
+                                      </FormItem>
+                                    )}
+                                  />
 
-              <div>
-                <StyledLabel htmlFor="instagramHandle">
-                  Instagram Handle <span className="text-red-500">*</span>
-                </StyledLabel>
-                <Input
-                  id="instagramHandle"
-                  name="instagramHandle"
-                  value={formData.instagramHandle}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full border-t-0 border-x-0 border-b border-gray-300 rounded-none px-0 focus:ring-0"
-                />
-              </div>
+                                  {/* Instagram option */}
+                                  <FormField
+                                    control={form.control}
+                                    name="reviewStockMethod.instagram"
+                                    render={({ field }) => (
+                                      <FormItem className="flex items-start space-x-3 m-0 p-0">
+                                        <FormControl>
+                                          <Checkbox
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                            className="rounded-none border-black h-[18px] w-[18px] data-[state=checked]:bg-black data-[state=checked]:text-white mt-3"
+                                          />
+                                        </FormControl>
+                                        <FormLabel className="text-sm font-normal mt-0 cursor-pointer">
+                                          Instagram
+                                        </FormLabel>
+                                      </FormItem>
+                                    )}
+                                  />
 
-              <div>
-                <StyledLabel htmlFor="website">
-                  Website <span className="text-gray-400 text-sm">(if available)</span>
-                </StyledLabel>
-                <Input
-                  id="website"
-                  name="website"
-                  value={formData.website}
-                  onChange={handleInputChange}
-                  className="w-full border-t-0 border-x-0 border-b border-gray-300 rounded-none px-0 focus:ring-0"
-                />
-              </div>
+                                  {/* Key brands option */}
+                                  <div>
+                                    <FormField
+                                      control={form.control}
+                                      name="reviewStockMethod.keyBrands"
+                                      render={({ field }) => (
+                                        <FormItem className=" flex items-start space-x-3 m-0 p-0">
+                                          <FormControl>
+                                            <Checkbox
+                                              checked={field.value}
+                                              onCheckedChange={field.onChange}
+                                              className="rounded-none border-black h-[18px] w-[18px] data-[state=checked]:bg-black data-[state=checked]:text-white mt-3"
+                                            />
+                                          </FormControl>
+                                          <div className="flex items-center">
+                                            <FormLabel className=" text-sm font-normal mt-0 cursor-pointer inline-block">
+                                              List your key brands
+                                            </FormLabel>
+                                            <span className="text-xs text-gray-500 ml-1">
+                                              (Optional)
+                                            </span>
+
+                                            {form.watch("reviewStockMethod")
+                                              ?.keyBrands && (
+                                              <div className=" flex items-center -mt-1">
+                                                <span className="mr-2 text-sm">
+                                                  :
+                                                </span>
+                                                <FormField
+                                                  control={form.control}
+                                                  name="notes"
+                                                  render={({ field }) => (
+                                                    <FormItem className="w-full m-0 p-0 ">
+                                                      <FormControl className="w-full">
+                                                        <Input
+                                                          {...field}
+                                                          className="w-full md:w-[1032px] border-0 border-b border-black rounded-none p-0 h-7 focus-visible:ring-0 focus-visible:ring-offset-0 text-sm"
+                                                        />
+                                                      </FormControl>
+                                                    </FormItem>
+                                                  )}
+                                                />
+                                              </div>
+                                            )}
+                                          </div>
+                                        </FormItem>
+                                      )}
+                                    />
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+              {/* fourth part  */}
+              <AccordionItem value="item-4">
+                <AccordionTrigger className="text-2xl md:text-[28px] lg:text-[32px] font-normal font-nimbus tracking-[20%] leading-[48px] uppercase">
+                  Service Questions
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="allowLocalPickup"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xl md:text-[22px] lg:text-2xl font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
+                            Do you offer local pickup?{" "}
+                            <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <RadioGroup
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                              className="flex gap-10 md:gap-[50px] lg:gap-[60px] pt-2"
+                            >
+                              <FormItem className="flex items-center space-x-2">
+                                <FormControl className="mt-3">
+                                  <RadioGroupItem value="yes" />
+                                </FormControl>
+                                <FormLabel className="text-xl md:text-[22px] lg:text-2xl font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
+                                  Yes
+                                </FormLabel>
+                              </FormItem>
+                              <FormItem className="flex items-center space-x-2">
+                                <FormControl className="mt-3">
+                                  <RadioGroupItem value="no" />
+                                </FormControl>
+                                <FormLabel className="text-xl md:text-[22px] lg:text-2xl font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
+                                  No
+                                </FormLabel>
+                              </FormItem>
+                            </RadioGroup>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="py-[30px] md:py-[38px] lg:py-[45px]">
+                    <FormField
+                      control={form.control}
+                      name="shipAustraliaWide"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xl md:text-[22px] lg:text-2xl font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
+                            Can you ship Australia-wide?
+                            <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <RadioGroup
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                              className="flex gap-10 md:gap-[50px] lg:gap-[60px] pt-2"
+                            >
+                              <FormItem className="flex items-center space-x-2">
+                                <FormControl className="mt-3">
+                                  <RadioGroupItem value="yes" />
+                                </FormControl>
+                                <FormLabel className="text-xl md:text-[22px] lg:text-2xl font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
+                                  Yes
+                                </FormLabel>
+                              </FormItem>
+                              <FormItem className="flex items-center space-x-2">
+                                <FormControl className="mt-3">
+                                  <RadioGroupItem value="no" />
+                                </FormControl>
+                                <FormLabel className="text-xl md:text-[22px] lg:text-2xl font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
+                                  No
+                                </FormLabel>
+                              </FormItem>
+                            </RadioGroup>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="allowTryOn"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-xl md:text-[22px] lg:text-2xl font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
+                            Do you offer try ons?
+                            <span className="text-red-500">*</span>
+                          </FormLabel>
+                          <FormControl>
+                            <RadioGroup
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                              className="flex gap-10 md:gap-[50px] lg:gap-[60px] pt-2"
+                            >
+                              <FormItem className="flex items-center space-x-2">
+                                <FormControl className="mt-3">
+                                  <RadioGroupItem value="yes" />
+                                </FormControl>
+                                <FormLabel className="text-xl md:text-[22px] lg:text-2xl font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
+                                  Yes
+                                </FormLabel>
+                              </FormItem>
+                              <FormItem className="flex items-center space-x-2">
+                                <FormControl className="mt-3">
+                                  <RadioGroupItem value="no" />
+                                </FormControl>
+                                <FormLabel className="text-xl md:text-[22px] lg:text-2xl font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
+                                  No
+                                </FormLabel>
+                              </FormItem>
+                            </RadioGroup>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+
+            <div className="mt-[40px] md:mt-[70px] lg:mt-[100px]">
+              <h5 className="text-2xl md:text-[28px] lg:text-[32px] text-black tracking-[20%] uppercase leading-[48px] font-nimbus border-b border-black">
+                Agreement
+              </h5>
             </div>
-          </CollapsibleSection>
-
-          <CollapsibleSection title="CONTACT INFORMATION" id="contact-info">
-            <div className="space-y-6">
-              <div>
-                <StyledLabel htmlFor="fullName">
-                  Full Name <span className="text-red-500">*</span>
-                </StyledLabel>
-                <Input
-                  id="fullName"
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full border-t-0 border-x-0 border-b border-gray-300 rounded-none px-0 focus:ring-0"
-                />
-              </div>
-
-              <div>
-                <StyledLabel htmlFor="emailAddress">
-                  Email Address <span className="text-gray-400 text-sm">(if available)</span>
-                </StyledLabel>
-                <Input
-                  id="emailAddress"
-                  name="emailAddress"
-                  type="email"
-                  value={formData.emailAddress}
-                  onChange={handleInputChange}
-                  className="w-full border-t-0 border-x-0 border-b border-gray-300 rounded-none px-0 focus:ring-0"
-                />
-              </div>
-
-              <div>
-                <StyledLabel htmlFor="phoneNumber">
-                  Phone Number <span className="text-gray-400 text-sm">(if available)</span>{" "}
-                  <span className="text-red-500">*</span>
-                </StyledLabel>
-                <Input
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  value={formData.phoneNumber}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full border-t-0 border-x-0 border-b border-gray-300 rounded-none px-0 focus:ring-0"
-                />
-              </div>
-
-              <div>
-                <StyledLabel htmlFor="businessAddress">
-                  Business Address <span className="text-red-500">*</span>
-                </StyledLabel>
-                <Input
-                  id="businessAddress"
-                  name="businessAddress"
-                  value={formData.businessAddress}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full border-t-0 border-x-0 border-b border-gray-300 rounded-none px-0 focus:ring-0"
-                />
-              </div>
-
-              <p className="text-sm text-gray-500 italic">
-                Important if you&apos;re offering local pickup options later.
-              </p>
+            <div className="flex items-center gap-[20px] md:gap-[25px] py-[30px] md:py-[38px] lg:py-[45px]">
+              <FormField
+                control={form.control}
+                name="agreedCurationPolicy"
+                render={({ field }) => (
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        className="w-[25px] h-[25px]"
+                      />
+                    </FormControl>
+                    <FormLabel className="text-base md:text-lg font-nimbus font-normal leading-[24px] tracking-[0%] text-black">
+                      I confirm that all dresses listed meet Muse Gala&apos;`s
+                      curation and quality standards.
+                    </FormLabel>
+                  </FormItem>
+                )}
+              />
             </div>
-          </CollapsibleSection>
 
-          <CollapsibleSection title="COLLECTION OVERVIEW" id="collection-overview">
-            <div className="space-y-6">
-              <div>
-                <StyledLabel htmlFor="dressesCount">
-                  How many dresses do you want to list? <span className="text-red-500">*</span>
-                </StyledLabel>
-                <div className="relative">
-                  <select
-                    id="dressesCount"
-                    name="dressesCount"
-                    value={formData.dressesCount}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, dressesCount: e.target.value }))}
-                    required
-                    className="w-full border-t-0 border-x-0 border-b border-gray-300 rounded-none px-0 py-2 pr-8 appearance-none bg-transparent focus:outline-none"
-                  >
-                    <option value="" disabled>
-                      Please Select
-                    </option>
-                    <option value="1-5">1-5 dresses</option>
-                    <option value="6-10">6-10 dresses</option>
-                    <option value="11-20">11-20 dresses</option>
-                    <option value="21+">21+ dresses</option>
-                  </select>
-                  <ChevronDown className="absolute right-0 top-2 h-5 w-5 pointer-events-none" />
-                </div>
-              </div>
-
-              <div>
-                <StyledLabel htmlFor="reviewMethod">
-                  Best way for us to review your stock <span className="text-red-500">*</span>
-                </StyledLabel>
-                <div className="relative">
-                  <select
-                    id="reviewMethod"
-                    name="reviewMethod"
-                    value={formData.reviewMethod}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, reviewMethod: e.target.value }))}
-                    required
-                    className="w-full border-t-0 border-x-0 border-b border-gray-300 rounded-none px-0 py-2 pr-8 appearance-none bg-transparent focus:outline-none"
-                  >
-                    <option value="" disabled>
-                      Please Select
-                    </option>
-                    <option value="photos">Photos</option>
-                    <option value="video-call">Video Call</option>
-                    <option value="in-person">In Person</option>
-                  </select>
-                  <ChevronDown className="absolute right-0 top-2 h-5 w-5 pointer-events-none" />
-                </div>
-              </div>
+            <div className="flex items-center gap-[20px] md:gap-[25px]">
+              <FormField
+                control={form.control}
+                name="agreedTerms"
+                render={({ field }) => (
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        className="w-[25px] h-[25px]"
+                      />
+                    </FormControl>
+                    <FormLabel className="text-base md:text-lg font-nimbus font-normal leading-[24px] tracking-[0%] text-black">
+                      I agree to Muse Gala&apos;s{" "}
+                      <span className="text-[#891D33] underline">
+                        Lender Terms & Conditions.
+                      </span>
+                    </FormLabel>
+                  </FormItem>
+                )}
+              />
             </div>
-          </CollapsibleSection>
 
-          <CollapsibleSection title="SERVICE QUESTIONS" id="service-questions">
-            <div className="space-y-6">
-              <div>
-                <StyledLabel className="mb-3">
-                  Do you offer local pickup? <span className="text-red-500">*</span>
-                </StyledLabel>
-                <RadioGroup
-                  value={formData.localPickup}
-                  onValueChange={(value) => handleRadioChange("localPickup", value)}
-                  className="flex gap-8"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="yes" id="local-yes" />
-                    <Label htmlFor="local-yes" className="text-[24px]">
-                      Yes
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="no" id="local-no" />
-                    <Label htmlFor="local-no" className="text-[24px]">
-                      No
-                    </Label>
-                  </div>
-                </RadioGroup>
-              </div>
-
-              <div>
-                <StyledLabel className="mb-3">
-                  Can you ship Australia-wide? <span className="text-red-500">*</span>
-                </StyledLabel>
-                <RadioGroup
-                  value={formData.shipAustralia}
-                  onValueChange={(value) => handleRadioChange("shipAustralia", value)}
-                  className="flex gap-8"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="yes" id="ship-yes" />
-                    <Label htmlFor="ship-yes" className="text-[24px]">
-                      Yes
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="no" id="ship-no" />
-                    <Label htmlFor="ship-no" className="text-[24px]">
-                      No
-                    </Label>
-                  </div>
-                </RadioGroup>
-              </div>
-
-              <div>
-                <StyledLabel className="mb-3">
-                  Do you offer try ons? <span className="text-red-500">*</span>
-                </StyledLabel>
-                <RadioGroup
-                  value={formData.offerTryOns}
-                  onValueChange={(value) => handleRadioChange("offerTryOns", value)}
-                  className="flex gap-8"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="yes" id="tryons-yes" />
-                    <Label htmlFor="tryons-yes" className="text-[24px]">
-                      Yes
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="no" id="tryons-no" />
-                    <Label htmlFor="tryons-no" className="text-[24px]">
-                      No
-                    </Label>
-                  </div>
-                </RadioGroup>
-              </div>
+            <div className="w-full flex justify-center items-center mt-[50px] md:mt-[70px] lg:mt-[110px] mb-[30px] md:mb-[40px] lg:mb-[50px]">
+              <button
+                disabled={isPending}
+                className="text-bae font-normal font-nimbus leading-[20px] tracking-[20%] uppercase text-black border-b border-black py-[10px]"
+                type="submit"
+              >
+                {isPending ? "Submitting..." : "Submit"}
+              </button>
             </div>
-          </CollapsibleSection>
-
-          <div>
-            <h2 className="text-[32px] font-normal mb-6">AGREEMENT</h2>
-            <div className="space-y-4">
-              <div className="flex items-start space-x-2">
-                <Checkbox
-                  id="agreeStandards"
-                  checked={formData.agreeStandards}
-                  onCheckedChange={(checked) => handleCheckboxChange("agreeStandards", checked as boolean)}
-                  required
-                />
-                <Label htmlFor="agreeStandards" className="text-[24px]">
-                  I confirm that all dresses listed meet Muse Gala&apos;s curation and quality standards.
-                </Label>
-              </div>
-
-              <div className="flex items-start space-x-2">
-                <Checkbox
-                  id="agreeTerms"
-                  checked={formData.agreeTerms}
-                  onCheckedChange={(checked) => handleCheckboxChange("agreeTerms", checked as boolean)}
-                  required
-                />
-                <Label htmlFor="agreeTerms" className="text-[24px]">
-                  I agree to Muse Gala&apos;s <span className="text-red-500">Lender Terms & Conditions</span>.
-                </Label>
-              </div>
-            </div>
-          </div>
-
-          <div className="text-center">
-            <Button type="submit" className="px-12 py-2 bg-white text-black border border-black hover:bg-gray-100">
-              SUBMIT
-            </Button>
-          </div>
-        </form>
+          </form>
+        </Form>
       </div>
     </div>
-  )
-}
+  );
+};
+
+export default BecomeALenderForm;
