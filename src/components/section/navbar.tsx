@@ -40,7 +40,7 @@ const Navbar = () => {
   console.log(session?.user);
   return (
     <div
-      className={`fixed top-0 z-50 w-full h-[70px] py-3 transition duration-300 ${
+      className={`fixed top-0 z-50 min-w-full h-[70px] py-3 transition duration-300 ${
         scrolling
           ? "bg-transparent backdrop-blur-xl "
           : isHomePage
@@ -48,7 +48,7 @@ const Navbar = () => {
           : "bg-transparent mt-0"
       }`}
     >
-      <div className="container mx-auto">
+      <div className="container mx-auto ">
         <div className="flex justify-between items-center">
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center md:gap-x-3 lg:gap-x-1">
