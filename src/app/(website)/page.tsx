@@ -57,7 +57,7 @@ export default function Home() {
                 href="#"
                 className="inline-block border-b border-black px-6 py-2 text-xl uppercase tracking-widest hover:bg-black hover:text-white"
               >
-                Start Listing Today
+               EXPLORE NEARBY DRESSES
               </Link>
             </div>
           </div>
