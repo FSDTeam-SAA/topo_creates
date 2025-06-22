@@ -13,10 +13,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import Image from "next/image";
+import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -80,14 +82,14 @@ const SignUpForm = () => {
             NEW HERE? JOIN MUSE CLUB
           </h2>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
               <div>
                 <FormField
                   control={form.control}
                   name="firstName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-normal text-black leading-[20px] uppercase">
+                      <FormLabel className="text-[14px] font-inter font-normal text-black leading-[20px] uppercase">
                         First Name
                       </FormLabel>
                       <FormControl>
@@ -168,10 +170,19 @@ const SignUpForm = () => {
               <div className="w-full flex justify-center items-center pt-5">
                 <button
                   disabled={isPending}
-                  className="text-base font-normal text-black leading-[20px] border-b border-black py-[10px] uppercase"
+                  className={cn(
+                    "text-sm font-normal disabled:text-black/60 text-black leading-[20px] border-b border-black py-[10px] uppercase flex items-center gap-x-3 bg-transparent",
+                    isPending && "opacity-50"
+                  )}
                   type="submit"
                 >
-                  {isPending ? "Loading..." : "Create"}
+                  {isPending ? (
+                    <>
+                      Please wait <Loader2 className="h-4 w-4 animate-spin" />
+                    </>
+                  ) : (
+                    "Join Now"
+                  )}
                 </button>
               </div>
             </form>

@@ -1,7 +1,7 @@
 "use client";
+import { CircleCheckBig } from "lucide-react";
 import React, { useState } from "react";
 import { Button } from "../ui/button";
-import { CircleCheckBig } from "lucide-react";
 
 const AccountInfo = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -27,7 +27,7 @@ const AccountInfo = () => {
     <div>
       <section className="">
         <div className=" mb-[65px]">
-          <h2 className="text-3xl  tracking-widest font-normal mb-6 ">
+          <h2 className="text-xl  tracking-widest font-normal mb-6 ">
             Account Info
           </h2>
           <hr className="border border-black border-b" />

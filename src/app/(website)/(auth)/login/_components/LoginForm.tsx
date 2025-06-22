@@ -13,9 +13,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 const formSchema = z.object({
@@ -24,6 +26,7 @@ const formSchema = z.object({
 });
 
 const LoginForm = () => {
+  const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -34,18 +37,21 @@ const LoginForm = () => {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
     try {
       const res = await signIn("credentials", {
         email: values.email,
         password: values.password,
         redirect: false,
-      })
-      if(res?.error){
-        throw new Error(res.error)
+      });
+      setLoading(false);
+      if (res?.error) {
+        throw new Error(res.error);
       }
       toast.success("Login successful");
-      window.location.href = "/"
+      window.location.href = "/";
     } catch (error) {
+      setLoading(false);
       console.error("Login error:", error);
       toast.error("Login failed. Please check your credentials.");
     }
@@ -127,10 +133,13 @@ const LoginForm = () => {
               </div>
               <div className="w-full flex justify-center items-center pt-[20px]">
                 <button
-                  className="text-base font-normal text-black leading-[20px] border-b border-black py-[10px] uppercase"
+                  className={cn(
+                    "text-base font-normal text-black leading-[20px] border-b border-black py-[10px] uppercase",
+                    loading && "text-black/50"
+                  )}
                   type="submit"
                 >
-                  Sign In
+                  {loading ? "Signing in..." : "Sign In"}
                 </button>
               </div>
             </form>

@@ -1,9 +1,5 @@
-
-
-
-import React from "react";
-import { Button } from "../ui/button";
 import clsx from "clsx";
+import { Button } from "../ui/button";
 
 const OrderHistory = () => {
   const orders = [
@@ -43,7 +39,7 @@ const OrderHistory = () => {
   ];
 
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-8">
+    <div className="w-full ">
       <section>
         {/* Header */}
         <div className="mb-10">
