@@ -35,12 +35,10 @@ const MuseClub = () => {
               }}
             ></div>
           </div>
-          <div className="flex justify-between text-sm sm:text-base text-gray-700 mt-4 sm:mt-6">
-            <span className="text-base sm:text-lg font-normal">$0 Member</span>
-            <span className="text-base sm:text-lg font-normal">
-              $300 Silver
-            </span>
-            <span className="text-base sm:text-lg font-normal">$600 Gold</span>
+          <div className="flex justify-between text-[14px] text-gray-700 mt-4 sm:mt-6">
+            <span className="font-normal">$0 Member</span>
+            <span className=" font-normal">$300 Silver</span>
+            <span className=" font-normal">$600 Gold</span>
           </div>
         </div>
 
