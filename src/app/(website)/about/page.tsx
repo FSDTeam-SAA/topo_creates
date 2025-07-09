@@ -23,7 +23,9 @@ const AboutPage = () => {
           </div>
         </div>
         <div className="md:grid-cols-1 bg-white w-full flex flex-col justify-center px-[1rem] lg:pr-16 ">
-          <h2 className="headerClass uppercase text-center">about</h2>
+          <h2 className="headerClass font-avenir uppercase text-center">
+            about
+          </h2>
           <p className="text-base text-[14px]  leading-[30px] text-black/80 text-center pt-5 md:pt-6 lg:pt-[30px] font-inter">
             We connect Australia’s leading boutique rental collections with
             women who dress to own every moment, offering a seamless blend of

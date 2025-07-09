@@ -22,7 +22,7 @@ export default function Home() {
           </h1> */}
 
           <Button variant="link" className="sub-header text-white mt-[200px]">
-            <Link href="/login">Browse to Edit</Link>
+            <Link href="/login">Browse the Edit</Link>
           </Button>
         </div>
       </div>

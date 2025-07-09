@@ -22,7 +22,7 @@ export function ProductGrid({ title, subtitle, products }: ProductGridProps) {
           </div>
         )}
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
         {products?.slice(0, 4).map((product) => (
           <div key={product.id} className="flex">
             <div className="w-full flex flex-col h-full">

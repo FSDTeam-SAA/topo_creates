@@ -3,6 +3,9 @@
 import { Button } from "@/components/ui/button";
 import { ProfileFormSchemaValues, profileSchema } from "@/schemas/account";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
@@ -14,24 +17,42 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
 
 const AccountInfo = () => {
   const [isEditing, setIsEditing] = useState(false);
 
+  const data = useSession({ required: true });
+
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["profileEdit"],
+    mutationFn: (body: ProfileFormSchemaValues) =>
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/user/${data.data?.user.id}`,
+        {
+          method: "PUT",
+          body: JSON.stringify(body),
+        }
+      ).then((res) => res.json()),
+    onSuccess: (res) => {
+      console.log(res);
+      setIsEditing(false);
+      // Optionally, you can show a success message or update the UI
+    },
+  });
+
   const form = useForm<ProfileFormSchemaValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      fullName: "Mehedi",
+      firstName: "Mehedi",
       lastName: "Hasan",
       email: "email@gmail.com",
-      phone: "0154754545454",
-      address: "DHAKA",
+      phoneNumber: "0154754545454",
     },
   });
 
   const onSubmit = (values: ProfileFormSchemaValues) => {
-    console.log("Form Submitted:", values);
-    setIsEditing(false);
+    mutate(values);
   };
 
   return (
@@ -51,7 +72,7 @@ const AccountInfo = () => {
               {/* Full Name */}
               <FormField
                 control={form.control}
-                name="fullName"
+                name="firstName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-lg">Full Name</FormLabel>
@@ -59,7 +80,7 @@ const AccountInfo = () => {
                       <FormControl>
                         <Input
                           {...field}
-                          className="border-b border-gray-300 rounded-none px-0 py-1 text-sm"
+                          className="border-b border-gray-300 rounded-none px-2 py-1 text-sm"
                         />
                       </FormControl>
                     ) : (
@@ -82,7 +103,7 @@ const AccountInfo = () => {
                         <Input
                           {...field}
                           type="email"
-                          className="border-b border-gray-300 rounded-none px-0 py-1 text-sm"
+                          className="border-b border-gray-300 rounded-none px-2 py-1 text-sm"
                         />
                       </FormControl>
                     ) : (
@@ -96,15 +117,15 @@ const AccountInfo = () => {
               {/* Address */}
               <FormField
                 control={form.control}
-                name="address"
+                name="bio"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-lg">Shipping Address</FormLabel>
+                    <FormLabel className="text-lg">Bio</FormLabel>
                     {isEditing ? (
                       <FormControl>
-                        <Input
+                        <Textarea
                           {...field}
-                          className="border-b border-gray-300 rounded-none px-0 py-1 text-sm"
+                          className="border-b border-gray-300 rounded-none px-2 py-1 text-sm"
                         />
                       </FormControl>
                     ) : (
@@ -129,7 +150,7 @@ const AccountInfo = () => {
                       <FormControl>
                         <Input
                           {...field}
-                          className="border-b border-gray-300 rounded-none px-0 py-1 text-sm"
+                          className="border-b border-gray-300 rounded-none px-2 py-1 text-sm"
                         />
                       </FormControl>
                     ) : (
@@ -143,7 +164,7 @@ const AccountInfo = () => {
               {/* Phone */}
               <FormField
                 control={form.control}
-                name="phone"
+                name="phoneNumber"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-lg">Phone</FormLabel>
@@ -152,7 +173,7 @@ const AccountInfo = () => {
                         <Input
                           {...field}
                           type="tel"
-                          className="border-b border-gray-300 rounded-none px-0 py-1 text-sm"
+                          className="border-b border-gray-300 rounded-none px-2 py-1 text-sm"
                         />
                       </FormControl>
                     ) : (
@@ -164,26 +185,37 @@ const AccountInfo = () => {
               />
 
               {/* Action Button */}
-              <div className="flex justify-end pt-4">
-                {isEditing ? (
-                  <Button
-                    type="submit"
-                    size="sm"
-                    className="text-xs rounded-none border border-gray-300 hover:bg-transparent hover:text-black"
-                  >
-                    Save
-                  </Button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => setIsEditing(true)}
-                    className="text-base border-b border-black pb-1 hover:text-black"
-                  >
-                    Edit Info
-                  </button>
-                )}
-              </div>
             </div>
+          </div>
+          <div className="flex justify-end pt-4">
+            {isEditing ? (
+              <div className="flex gap-x-3">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setIsEditing(false)}
+                  className="text-xs rounded-none border border-gray-300 hover:bg-transparent hover:text-black"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  size="sm"
+                  className="text-xs rounded-none border border-gray-300 hover:bg-transparent hover:text-black"
+                >
+                  Save Now {isPending && <Loader2 className="animate-spin" />}
+                </Button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsEditing(true)}
+                className="text-base border-b border-black pb-1 hover:text-black"
+              >
+                Edit Info
+              </button>
+            )}
           </div>
         </form>
       </Form>

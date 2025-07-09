@@ -47,7 +47,10 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-[18px] font-medium tracking-wider">LENDERS</h3>
             <nav className="flex flex-col space-y-2 text-[14px]">
-              <Link href="#" className="text-gray-600 hover:text-gray-900">
+              <Link
+                href="/become-lender"
+                className="text-gray-600 hover:text-gray-900"
+              >
                 Become a Lender
               </Link>
               <Link href="#" className="text-gray-600 hover:text-gray-900">
@@ -71,7 +74,7 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-[18px] font-medium tracking-wider">COMPANY</h3>
             <nav className="flex flex-col space-y-2 text-[14px]">
-              <Link href="#" className="text-gray-600 hover:text-gray-900">
+              <Link href="/about" className="text-gray-600 hover:text-gray-900">
                 About
               </Link>
               <Link href="#" className="text-gray-600 hover:text-gray-900">
