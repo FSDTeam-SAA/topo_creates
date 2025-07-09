@@ -81,13 +81,13 @@ const CustomMarker = ({
     >
       <MapPin
         size={30}
-        className={`text-gray-800  transition-all ${
-          active ? "scale-110 fill-blue-500" : "fill-white"
+        className={`text-[#800000]  transition-all ${
+          active ? "scale-110 fill-white" : "fill-white"
         }`}
       />
       {title && (
         <div
-          className={`bg-white px-2 py-1 rounded text-xs font-medium text-gray-800  mt-1 whitespace-nowrap ${
+          className={`bg-white px-2 py-1 rounded text-xs font-medium text-[#800000]  mt-1 whitespace-nowrap ${
             active ? "font-bold" : ""
           }`}
         >
@@ -199,7 +199,7 @@ const FindNearMap = ({
 
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: "mapbox://styles/mapbox/outdoors-v12",
+        style: "mapbox://styles/mapbox/light-v11",
         center: center,
         zoom: zoom,
         attributionControl: false,

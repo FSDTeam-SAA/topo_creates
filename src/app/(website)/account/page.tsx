@@ -1,12 +1,10 @@
-
-import React from "react";
 import AllAccountInfo from "./_components/all_account_info";
 
-const page = () => {
+const page = async () => {
   return (
     <div className="container mx-auto">
-          <AllAccountInfo />
-      </div>
+      <AllAccountInfo />
+    </div>
   );
 };
 

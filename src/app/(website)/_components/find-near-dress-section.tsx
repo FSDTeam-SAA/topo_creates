@@ -8,7 +8,9 @@ const FindNearDressSection = () => {
       {/* Text content section */}
       <div className=" flex flex-col justify-center  flex-1 mb-8 md:mb-0">
         <div>
-          <h1 className={cn("headerClass")}>FIND YOUR DRESS NEAR YOU</h1>
+          <h1 className={cn("headerClass underline")}>
+            FIND YOUR DRESS NEAR YOU
+          </h1>
           <p className="sub-title mb-8 ">
             Discover rentals ready for pick up. Real time availability.
           </p>
