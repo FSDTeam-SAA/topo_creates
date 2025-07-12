@@ -2,8 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
+import { loginAction } from "@/actions/auth/login";
 import {
   Form,
   FormControl,
@@ -14,21 +14,18 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { signIn } from "next-auth/react";
+import { loginformSchema, LoginFormValues } from "@/schemas/auth";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import { toast } from "sonner";
 
-const formSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
-
 const LoginForm = () => {
-  const [loading, setLoading] = useState(false);
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginformSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -36,25 +33,18 @@ const LoginForm = () => {
   });
 
   // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setLoading(true);
-    try {
-      const res = await signIn("credentials", {
-        email: values.email,
-        password: values.password,
-        redirect: false,
+  async function onSubmit(values: LoginFormValues) {
+    startTransition(() => {
+      loginAction(values).then((res) => {
+        if (!res.success) {
+          toast.error(res.message || "Login failed. Please try again.");
+          return;
+        }
+
+        router.push("/");
+        toast.success(res.message || "Login successful");
       });
-      setLoading(false);
-      if (res?.error) {
-        throw new Error(res.error);
-      }
-      toast.success("Login successful");
-      window.location.href = "/";
-    } catch (error) {
-      setLoading(false);
-      console.error("Login error:", error);
-      toast.error("Login failed. Please check your credentials.");
-    }
+    });
   }
   return (
     <div className="mt-20">
@@ -135,11 +125,11 @@ const LoginForm = () => {
                 <button
                   className={cn(
                     "text-base font-normal text-black leading-[20px] border-b border-black py-[10px] uppercase",
-                    loading && "text-black/50"
+                    isPending && "text-black/50"
                   )}
                   type="submit"
                 >
-                  {loading ? "Signing in..." : "Sign In"}
+                  {isPending ? "Signing in..." : "Sign In"}
                 </button>
               </div>
             </form>
