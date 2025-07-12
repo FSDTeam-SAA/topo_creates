@@ -1,48 +1,34 @@
-import { NextAuthOptions } from "next-auth";
+import NextAuth from "next-auth";
 import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-export const authOptions: NextAuthOptions = {
+export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
-  session: {
-    strategy: "jwt",
-    maxAge: 1 * 24 * 60 * 60, // 1 day
-  },
   providers: [
     CredentialsProvider({
       name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "text", placeholder: "email" },
-        password: {
-          label: "Password",
-          type: "password",
-          placeholder: "password",
-        },
-      },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Please enter your email and password");
         }
 
         try {
-          const res = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                email: credentials.email,
-                password: credentials.password,
-              }),
-            }
-          );
+          const url =
+            process.env.NEXT_PUBLIC_BACKEND_URL + "/api/v1/auth/login";
+
+          const res = await fetch(`${url}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: credentials.email,
+              password: credentials.password,
+            }),
+          });
 
           const response = await res.json();
 
-          if (!res.ok || !response?.status) {
-            throw new Error(response?.message || "Login failed");
+          if (!res.ok) {
+            throw new Error(response.message || "Login failed");
           }
 
           const { user, accessToken } = response.data;
@@ -93,4 +79,4 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-};
+});

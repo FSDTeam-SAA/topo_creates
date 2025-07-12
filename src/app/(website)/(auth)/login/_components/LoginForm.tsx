@@ -2,8 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
+import { loginAction } from "@/actions/auth/login";
 import {
   Form,
   FormControl,
@@ -13,19 +13,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { loginformSchema, LoginFormValues } from "@/schemas/auth";
 import Image from "next/image";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import { toast } from "sonner";
 
-const formSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
-
 const LoginForm = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginformSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -33,22 +33,18 @@ const LoginForm = () => {
   });
 
   // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      const res = await signIn("credentials", {
-        email: values.email,
-        password: values.password,
-        redirect: false,
-      })
-      if(res?.error){
-        throw new Error(res.error)
-      }
-      toast.success("Login successful");
-      window.location.href = "/"
-    } catch (error) {
-      console.error("Login error:", error);
-      toast.error("Login failed. Please check your credentials.");
-    }
+  async function onSubmit(values: LoginFormValues) {
+    startTransition(() => {
+      loginAction(values).then((res) => {
+        if (!res.success) {
+          toast.error(res.message || "Login failed. Please try again.");
+          return;
+        }
+
+        router.push("/");
+        toast.success(res.message || "Login successful");
+      });
+    });
   }
   return (
     <div className="mt-20">
@@ -127,10 +123,13 @@ const LoginForm = () => {
               </div>
               <div className="w-full flex justify-center items-center pt-[20px]">
                 <button
-                  className="text-base font-normal text-black leading-[20px] border-b border-black py-[10px] uppercase"
+                  className={cn(
+                    "text-base font-normal text-black leading-[20px] border-b border-black py-[10px] uppercase",
+                    isPending && "text-black/50"
+                  )}
                   type="submit"
                 >
-                  Sign In
+                  {isPending ? "Signing in..." : "Sign In"}
                 </button>
               </div>
             </form>

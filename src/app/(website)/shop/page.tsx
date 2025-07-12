@@ -66,7 +66,6 @@ export default function ShopPage() {
   }, [isLoading]);
 
   // Get the products to display based on current page
-  const productsToShow = filteredProducts.slice(0, visibleProducts);
   const hasMoreProducts = filteredProducts.length > visibleProducts;
   const remainingProducts = filteredProducts.length - visibleProducts;
   const nextBatchSize = Math.min(remainingProducts, PRODUCTS_PER_PAGE);
@@ -75,7 +74,7 @@ export default function ShopPage() {
     <div className="container mx-auto  py-8 mt-20">
       <div className="text-center mb-12">
         <h1 className="headerClass">SHOP</h1>
-        <p className="sub-title text-gray-600">
+        <p className=" text-[13px] text-gray-600">
           CURATED DESIGNER RENTALS FOR EVERY MOMENT.
         </p>
       </div>
@@ -88,7 +87,7 @@ export default function ShopPage() {
 
         <div className="w-full lg:w-3/4">
           {/* Main product grid */}
-          <ProductGrid title="" products={productsToShow} />
+          <ProductGrid title="" products={allProducts} />
 
           {/* Skeleton loader when loading more products */}
           {isLoading && (

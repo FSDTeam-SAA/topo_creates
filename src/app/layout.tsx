@@ -33,7 +33,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn("antialiased", inter.className)}>
+      <body className={cn("antialiased", avenir.variable, inter.className)}>
         <AuthSessionProvider>
           <AppProvider>
             {children}

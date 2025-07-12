@@ -1,17 +1,14 @@
-
-
-import React from "react";
 import Paymentcard from "../payment_card";
 
 const MuseClub = () => {
   const progressValue = 70;
 
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-8">
+    <div className="w-full">
       <section>
         {/* Title */}
         <div className="mb-12">
-          <h2 className="text-2xl sm:text-3xl tracking-wide font-normal mb-4 sm:mb-6">
+          <h2 className="text-xltracking-wide font-normal mb-4 sm:mb-6">
             Muse Club
           </h2>
           <hr className="border border-black" />
@@ -38,10 +35,10 @@ const MuseClub = () => {
               }}
             ></div>
           </div>
-          <div className="flex justify-between text-sm sm:text-base text-gray-700 mt-4 sm:mt-6">
-            <span className="text-base sm:text-lg font-normal">$0 Member</span>
-            <span className="text-base sm:text-lg font-normal">$300 Silver</span>
-            <span className="text-base sm:text-lg font-normal">$600 Gold</span>
+          <div className="flex justify-between text-[14px] text-gray-700 mt-4 sm:mt-6">
+            <span className="font-normal">$0 Member</span>
+            <span className=" font-normal">$300 Silver</span>
+            <span className=" font-normal">$600 Gold</span>
           </div>
         </div>
 
@@ -55,4 +52,3 @@ const MuseClub = () => {
 };
 
 export default MuseClub;
-

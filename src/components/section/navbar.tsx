@@ -34,7 +34,7 @@ const Navbar = () => {
   const menus = [
     { id: 1, href: "/", linkText: "HOME" },
     { id: 2, href: "/shop", linkText: "SHOP" },
-    { id: 3, href: "/about", linkText: "ABOUT" },
+    // { id: 3, href: "/about", linkText: "ABOUT" },
     { id: 4, href: "/how-it-works", linkText: "HOW IT WORKS" },
     { id: 5, href: "/become-lender", linkText: "BECOME A LENDER" },
     { id: 6, href: "/find-near-you", linkText: "FIND NEAR YOU" },
@@ -138,11 +138,7 @@ const Navbar = () => {
     <>
       <div
         className={`fixed top-0 z-50 min-w-full h-[70px] py-3 transition duration-300 ${
-          scrolling
-            ? "bg-transparent backdrop-blur-xl"
-            : isHomePage
-            ? ""
-            : "bg-transparent mt-0"
+          scrolling ? "bg-white" : isHomePage ? "" : "bg-transparent mt-0"
         }`}
       >
         <div className="container mx-auto">
@@ -263,6 +259,7 @@ const Navbar = () => {
                           <Link
                             href="/account"
                             className="block text-center w-full"
+                            onClick={() => setIsAccountOpen(!isAccountOpen)}
                           >
                             <span className="text-black text-sm tracking-[0.2em] uppercase">
                               MY ACCOUNT
@@ -270,7 +267,10 @@ const Navbar = () => {
                             <div className="h-[1px] bg-black w-full mt-1"></div>
                           </Link>
                           <button
-                            onClick={() => signOut()}
+                            onClick={() => {
+                              signOut();
+                              setIsAccountOpen((prev) => !prev);
+                            }}
                             className="block text-center w-full"
                           >
                             <span className="text-black text-sm tracking-[0.2em] uppercase">
