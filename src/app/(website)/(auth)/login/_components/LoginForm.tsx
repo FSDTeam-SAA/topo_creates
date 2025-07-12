@@ -13,6 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { cn } from "@/lib/utils";
 import { loginformSchema, LoginFormValues } from "@/schemas/auth";
 import Image from "next/image";
@@ -110,7 +111,7 @@ const LoginForm = () => {
                       </div>
 
                       <FormControl>
-                        <Input
+                        <PasswordInput
                           placeholder=""
                           {...field}
                           className="border-t-0 border-l-0 border-r-0 border-b border-black rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 px-0 shadow-none"
