@@ -14,6 +14,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import AustraliaLocationSelector from "@/components/ui/australia-location-selector";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
@@ -24,6 +32,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
@@ -33,59 +42,25 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import {
+  becomeLenderForm,
+  BecomeLenderFormType,
+} from "@/types/become-lender-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { CheckCircle, ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 
-const formSchema = z.object({
-  businessName: z.string().min(5, {
-    message: "Business name must be at least 5 characters.",
-  }),
-  abnNumber: z.string().optional(),
-  instagramHandle: z.string().min(5, {
-    message: "Instagram must be at least 5 characters.",
-  }),
-  businessWebsite: z.string().optional(),
-  fullName: z.string().min(5, {
-    message: "Full name must be at least 5 characters.",
-  }),
-  email: z.string().optional(),
-  phoneNumber: z.string().min(5, {
-    message: "Phone number must be at least 5 characters.",
-  }),
-  businessAddress: z.string().min(5, {
-    message: "Business address must be at least 5 characters.",
-  }),
-
-  numberOfDresses: z.string().optional(),
-  reviewStockMethod: z.object({
-    website: z.boolean(),
-    instagram: z.boolean(),
-    keyBrands: z.boolean(),
-  }),
-  notes: z.string().optional(),
-  allowLocalPickup: z.enum(["yes", "no"], {
-    required_error: "Please select an option",
-  }),
-  shipAustraliaWide: z.enum(["yes", "no"], {
-    required_error: "Please select an option",
-  }),
-  allowTryOn: z.enum(["yes", "no"], {
-    required_error: "Please select an option",
-  }),
-  agreedTerms: z.boolean().optional(),
-  agreedCurationPolicy: z.boolean().optional(),
-});
+const mapboxtoken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
 
 const BecomeALenderForm = () => {
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+
+  const form = useForm<BecomeLenderFormType>({
+    resolver: zodResolver(becomeLenderForm),
     defaultValues: {
       businessName: "",
       abnNumber: "",
@@ -111,13 +86,31 @@ const BecomeALenderForm = () => {
     },
   });
 
+  const isAllowedLocalPickup = form.watch("allowLocalPickup").includes("yes");
+
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
+  useEffect(() => {
+    const value = form.watch("allowLocalPickup");
+
+    if (value.includes("no")) {
+      form.resetField("address", undefined);
+      form.resetField("country", undefined);
+      form.resetField("city", undefined);
+      form.resetField("postcode", undefined);
+      form.resetField("state", undefined);
+      form.resetField("suburb", undefined);
+      form.resetField("latitude", undefined);
+      form.resetField("longitude", undefined);
+      form.resetField("placeName", undefined);
+    }
+  }, [form]);
+
   const { mutate, isPending } = useMutation({
     mutationKey: ["become-a-lender"],
-    mutationFn: (values: z.infer<typeof formSchema>) =>
+    mutationFn: (values: BecomeLenderFormType) =>
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/application/apply`, {
         method: "POST",
         headers: {
@@ -137,7 +130,7 @@ const BecomeALenderForm = () => {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: BecomeLenderFormType) {
     // console.log(values, values.numberOfDresses);
     mutate(values);
   }
@@ -572,6 +565,39 @@ const BecomeALenderForm = () => {
                           </FormItem>
                         )}
                       />
+
+                      {isAllowedLocalPickup && (
+                        <Card className="mt-10 shadow-none">
+                          <CardHeader>
+                            <CardTitle>Business Location Selector</CardTitle>
+                            <CardDescription>
+                              Select your business location using the
+                              interactive map and search functionality
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-2">
+                              <Label></Label>
+                              <AustraliaLocationSelector
+                                accessToken={mapboxtoken}
+                                onLocationSelect={(data) => {
+                                  form.setValue("address", data.address);
+                                  form.setValue("country", data.country);
+                                  form.setValue("city", data.city);
+                                  form.setValue("postcode", data.postcode);
+                                  form.setValue("state", data.state);
+                                  form.setValue("suburb", data.suburb);
+                                  form.setValue("latitude", data.latitude);
+                                  form.setValue("longitude", data.longitude);
+                                  form.setValue("placeName", data.placeName);
+                                }}
+                                placeholder="Search for your business location..."
+                                mapHeight="300px"
+                              />
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )}
                     </div>
                     <div className="py-[30px] md:py-[38px] lg:py-[45px]">
                       <FormField
