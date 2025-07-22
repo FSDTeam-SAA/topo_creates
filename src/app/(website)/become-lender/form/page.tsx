@@ -53,7 +53,7 @@ const formSchema = z.object({
   fullName: z.string().min(5, {
     message: "Full name must be at least 5 characters.",
   }),
-  businessEmail: z.string().optional(),
+  email: z.string().optional(),
   phoneNumber: z.string().min(5, {
     message: "Phone number must be at least 5 characters.",
   }),
@@ -92,7 +92,7 @@ const BecomeALenderForm = () => {
       instagramHandle: "",
       businessWebsite: "",
       fullName: "",
-      businessEmail: "",
+      email: "",
       phoneNumber: "",
       businessAddress: "",
       numberOfDresses: "",
@@ -118,7 +118,7 @@ const BecomeALenderForm = () => {
   const { mutate, isPending } = useMutation({
     mutationKey: ["become-a-lender"],
     mutationFn: (values: z.infer<typeof formSchema>) =>
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/application/apply`, {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/application/apply`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -284,7 +284,7 @@ const BecomeALenderForm = () => {
                     <div className="py-[25px] md:py-[35px] lg:py-[45px]">
                       <FormField
                         control={form.control}
-                        name="businessEmail"
+                        name="email"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-sm font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
