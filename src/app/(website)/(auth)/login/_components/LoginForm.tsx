@@ -42,7 +42,7 @@ const LoginForm = () => {
           return;
         }
 
-        router.push("/");
+        window.location.href = "/";
         toast.success(res.message || "Login successful");
       });
     });

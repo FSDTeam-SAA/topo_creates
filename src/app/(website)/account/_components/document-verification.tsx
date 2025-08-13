@@ -29,7 +29,7 @@ const DocumentVerification = ({ session }: Props) => {
   const {
     data: kycRes,
     refetch: fetchKyc,
-    isRefetching,
+    isFetching,
   } = useQuery<GetApiRes>({
     queryKey: ["kyc-check"],
     queryFn: () =>
@@ -90,9 +90,9 @@ const DocumentVerification = ({ session }: Props) => {
         <Button
           variant="secondary"
           onClick={() => fetchKyc()}
-          disabled={isRefetching}
+          disabled={isFetching}
         >
-          Verify {isRefetching ? <Loader2 className="animate-spin" /> : "Now"}
+          Verify {isFetching ? <Loader2 className="animate-spin" /> : "Now"}
         </Button>
       </Alert>
     );
