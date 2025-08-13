@@ -1,10 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import Image from "next/image";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 import {
   Form,
@@ -49,13 +49,16 @@ const ResetPasswordForm = () => {
   const { mutate, isPending } = useMutation({
     mutationKey: ["reset-password"],
     mutationFn: (values: { email: string; newPassword: string }) =>
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/reset-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      }).then((res) => res.json()),
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/reset-password`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        }
+      ).then((res) => res.json()),
     onSuccess: (data) => {
       if (!data.status) {
         toast.error(data.message || "Something went wrong");

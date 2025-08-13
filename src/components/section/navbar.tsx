@@ -4,7 +4,7 @@ import type React from "react";
 
 // Packages
 import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -17,11 +17,15 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Session } from "next-auth";
 // import { Input } from "@/components/ui/input";
 
-const Navbar = () => {
-  const { data: session } = useSession();
+interface Props {
+  isLoggedin?: boolean;
+  session?: Session;
+}
 
+const Navbar = ({ isLoggedin, session }: Props) => {
   const [scrolling, setScrolling] = useState(false);
   const pathname = usePathname();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -220,7 +224,7 @@ const Navbar = () => {
 
               {/* User Menu */}
               <div className="relative cursor-pointer" ref={accountRef}>
-                {!session?.user ? (
+                {!isLoggedin ? (
                   <>
                     <Link
                       href="/login"

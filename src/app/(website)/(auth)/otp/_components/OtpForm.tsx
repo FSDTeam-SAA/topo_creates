@@ -2,12 +2,12 @@
 
 import type React from "react";
 
-import { useState, useRef, useEffect } from "react";
-import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 const OtpForm = () => {
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
@@ -80,7 +80,7 @@ const OtpForm = () => {
   const { mutate, isPending } = useMutation({
     mutationKey: ["verify-otp"],
     mutationFn: (values: { otp: string; email: string }) =>
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/verify-code`, {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/verify-code`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

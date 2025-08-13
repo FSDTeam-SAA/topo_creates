@@ -1,10 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import Image from "next/image";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 import {
   Form,
@@ -16,8 +16,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -35,14 +35,17 @@ const ForgotPasswordForm = () => {
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["forgot-password"],
-    mutationFn: (email : string) =>
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/forget-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({email}),
-      }).then((res) => res.json()),
+    mutationFn: (email: string) =>
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/forget-password`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
+      ).then((res) => res.json()),
     onSuccess: (data, email) => {
       if (!data.status) {
         toast.error(data.message || "Something went wrong");

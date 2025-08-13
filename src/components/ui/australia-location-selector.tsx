@@ -179,7 +179,7 @@ export default function AustraliaLocationSelector({
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: "mapbox://styles/mapbox/satellite-streets-v12", // Better for precise location selection
+      style: "mapbox://styles/mapbox/navigation-day-v1", // Better for precise location selection
       center: initialLocation
         ? [initialLocation.longitude, initialLocation.latitude]
         : [133.7751, -25.2744], // Geographic center of Australia
