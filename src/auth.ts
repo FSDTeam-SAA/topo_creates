@@ -14,7 +14,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         try {
           const url =
-            process.env.NEXT_PUBLIC_BACKEND_URL + "/api/v1/auth/login";
+            process.env.NEXT_PUBLIC_BACKEND_URL + "/auth/login";
 
           const res = await fetch(`${url}`, {
             method: "POST",
