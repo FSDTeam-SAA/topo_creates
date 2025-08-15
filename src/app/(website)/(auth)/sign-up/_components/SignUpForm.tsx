@@ -42,7 +42,7 @@ const SignUpForm = () => {
   const { mutate, isPending } = useMutation({
     mutationKey: ["sign-up"],
     mutationFn: (values: z.infer<typeof formSchema>) =>
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register`, {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
