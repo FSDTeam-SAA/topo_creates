@@ -3,7 +3,7 @@ import MarketingForm from "./_components/markeitng-form";
 
 const Page = () => {
   return (
-    <div className="min-h-screen w-full flex flex-col justify-center items-center gap-y-16">
+    <div className="min-h-screen w-full flex flex-col justify-center items-center gap-y-10 container">
       <div className="text-center space-y-5 flex flex-col items-center">
         <Image
           src="/logos/logo_black.png"
