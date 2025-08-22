@@ -1,4 +1,3 @@
-import Footer from "@/components/Footer/Footer";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 import AppProvider from "@/providers/AppProvider";
@@ -37,7 +36,7 @@ export default async function RootLayout({
         <AuthSessionProvider>
           <AppProvider>
             {children}
-            <Footer />
+            {/* <Footer /> */}
             <Toaster />
           </AppProvider>
         </AuthSessionProvider>
