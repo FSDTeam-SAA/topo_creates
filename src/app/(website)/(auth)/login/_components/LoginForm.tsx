@@ -18,13 +18,12 @@ import { cn } from "@/lib/utils";
 import { loginformSchema, LoginFormValues } from "@/schemas/auth";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
 
 const LoginForm = () => {
   const [isPending, startTransition] = useTransition();
-  const router = useRouter();
+
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginformSchema),
     defaultValues: {

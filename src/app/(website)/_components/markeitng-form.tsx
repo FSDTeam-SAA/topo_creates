@@ -13,7 +13,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ArrowRight } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { ArrowRight, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+
+interface ApiProps {
+  status: boolean;
+  message: string;
+}
 
 // 1. Define Zod schema
 const emailSchema = z.object({
@@ -30,8 +37,35 @@ export default function EmailForm() {
     defaultValues: { email: "" },
   });
 
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["marketing"],
+    mutationFn: (email: string) =>
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/newsletterSubscription/create`,
+        {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
+      ).then((res) => res.json()),
+    onSuccess(data: ApiProps) {
+      if (!data.status) {
+        toast.error(data.message);
+        return;
+      }
+
+      // handle succeess
+      toast.success("You’re officially on the list — elegance is coming.");
+      form.reset({
+        email: "",
+      });
+    },
+  });
+
   const onSubmit = (data: EmailFormData) => {
-    console.log("Email submitted:", data.email);
+    mutate(data.email);
   };
 
   return (
@@ -55,8 +89,13 @@ export default function EmailForm() {
             )}
           />
 
-          <Button type="submit" variant="ghost" size="icon">
-            <ArrowRight />
+          <Button
+            type="submit"
+            variant="ghost"
+            size="icon"
+            disabled={isPending}
+          >
+            {isPending ? <Loader2 className="animate-spin" /> : <ArrowRight />}
           </Button>
         </div>
       </form>
