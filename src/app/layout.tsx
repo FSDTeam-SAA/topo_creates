@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     description:
       "Rent event-ready dresses from Australia’s most-loved labels. Curated styles with real-time availability, pickup & express delivery.",
     images: ["https://musegala.com/og-image.jpg"], // same as OG image
-    creator: "@musegala", // update if you have a Twitter/X handle
+    creator: "@monirhrabby", // update if you have a Twitter/X handle
   },
 };
 
