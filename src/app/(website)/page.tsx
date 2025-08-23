@@ -6,9 +6,10 @@ const Page = () => {
     <div className="min-h-screen w-full flex flex-col justify-center items-center gap-y-10 container">
       <div className="text-center space-y-5 flex flex-col items-center">
         <Image
-          src="/logos/logo_black.png"
-          width={100}
-          height={100}
+          src="/logos/M.svg"
+          sizes=""
+          width={200}
+          height={200}
           alt="logo"
         />
         <h1 className="font-normal text-[30px] uppercase tracking-widest">
