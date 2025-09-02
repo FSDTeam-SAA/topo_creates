@@ -1,37 +1,29 @@
-export type ProductSize = "XS" | "S" | "M" | "L" | "XL"
-
-export type DeliveryOption = "shipping" | "local-pickup"
-
-export type RentalDuration = "4" | "8"
-
-export interface ProductImage {
-  src: string
-  alt: string
-}
-
 export interface Product {
-  id: string
-  name: string,
-  price: number
-  images: ProductImage[]
-  sizes: ProductSize[]
-  defaultSize?: ProductSize
-  description: string
-  rentalFee: number
-  insuranceFee: number
-  shippingFee: number
-  slug: string
+  _id: string;
+  lenderId: string;
+  dressId: string;
+  dressName: string;
+  brand: string;
+  size: string;
+  status: string;
+  colour: string;
+  condition: string;
+  category: string;
+  media: string[]; // array of image URLs
+  description: string;
+  rentalPrice: {
+    fourDays: number;
+    eightDays: number;
+  };
+  material: string;
+  careInstructions: string;
+  occasion: string[];
+  insurance: boolean;
+  pickupOption: string;
+  approvalStatus: string;
+  reasonsForRejection?: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  lenderName: string;
 }
-
-export interface SizeGuideOption {
-  label: string
-  value: string
-}
-
-export const sizeGuideOptions: SizeGuideOption[] = [
-  { label: "Tight Fit", value: "tight" },
-  { label: "True to Size", value: "true" },
-  { label: "Relaxed Fit", value: "relaxed" },
-]
-
-

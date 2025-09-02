@@ -257,7 +257,7 @@ const FindNearMap = ({
 
     return () => {
       if (map.current) {
-        map.current.remove();
+        map?.current.remove();
         map.current = null;
       }
     };

@@ -1,77 +1,6 @@
-// "use client";
-
-// import Image from "next/image";
-// import Link from "next/link";
-// import { useState, useEffect } from "react";
-// import type { Product } from "@/types/product";
-
-// interface ProductCardProps {
-//   product: Product;
-// }
-
-// export function ProductCard({ product }: ProductCardProps) {
-//   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-//   const [isHovered, setIsHovered] = useState(false);
-
-//   const images =
-//     product.images.length > 0
-//       ? product.images
-//       : [{ src: "/placeholder.svg", alt: "Product image" }];
-
-//   useEffect(() => {
-//     if (!isHovered || images.length <= 1) return;
-
-//     const interval = setInterval(() => {
-//       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-//     }, 1500); // Increased to 1.5s for smoother feel
-
-//     return () => clearInterval(interval);
-//   }, [isHovered, images.length]);
-
-//   const handleMouseEnter = () => {
-//     setIsHovered(true);
-//   };
-
-//   const handleMouseLeave = () => {
-//     setIsHovered(false);
-//     // Smooth transition back to first image
-//     setTimeout(() => {
-//       setCurrentImageIndex(0);
-//     }, 150);
-//   };
-
-//   return (
-//     <div className="flex flex-col h-full">
-//       <Link
-//         href={`/product/${product.slug}`}
-//         className="group flex flex-col flex-grow"
-//         onMouseEnter={handleMouseEnter}
-//         onMouseLeave={handleMouseLeave}
-//       >
-//         <div className="overflow-hidden mb-4 aspect-[2/3] w-full relative">
-//           <Image
-//             src={images[currentImageIndex]?.src}
-//             alt={images[currentImageIndex]?.alt}
-//             fill
-//             className="object-cover transition-all duration-500 ease-in-out group-hover:scale-110"
-//           />
-//         </div>
-//         <div className="text-center space-y-1 mt-auto">
-//           <h3 className="text-lg tracking-widest transition-colors duration-300 group-hover:text-gray-700">
-//             {product.name}
-//           </h3>
-//           <p className="text-sm tracking-wider transition-colors duration-300 group-hover:text-gray-600">
-//             RENT ${product.price} | RRP ${Math.round(product.price * 3.5)}
-//           </p>
-//         </div>
-//       </Link>
-//     </div>
-//   );
-// }
-
 "use client";
 
-import type { Product } from "@/types/product";
+import { Product } from "@/types/product";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -84,9 +13,10 @@ export function ProductCard({ product }: ProductCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
+  // Map media strings to objects with src and alt
   const images =
-    product.images.length > 0
-      ? product.images
+    product?.media && product.media.length > 0
+      ? product.media.map((url) => ({ src: url, alt: product.dressName }))
       : [{ src: "/placeholder.svg", alt: "Product image" }];
 
   useEffect(() => {
@@ -94,7 +24,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 1500); // 1.5s interval for smoother cycling
+    }, 1500); // 1.5s interval
 
     return () => clearInterval(interval);
   }, [isHovered, images.length]);
@@ -113,7 +43,7 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="flex flex-col h-full">
       <Link
-        href={`/product/${product.slug}`}
+        href={`/product/${product.dressId}`}
         className="group flex flex-col flex-grow"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -136,10 +66,11 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
         <div className="text-center space-y-1 mt-auto">
           <h3 className="text-[14px] tracking-widest transition-colors duration-300 group-hover:text-gray-700">
-            {product.name}
+            {product.dressName}
           </h3>
           <p className="text-[10px] tracking-wider transition-colors duration-300 group-hover:text-gray-600">
-            RENT ${product.price} | RRP ${Math.round(product.price * 3.5)}
+            RENT ${product.rentalPrice.fourDays} | RRP $
+            {Math.round(product.rentalPrice.fourDays * 3.5)}
           </p>
         </div>
       </Link>
