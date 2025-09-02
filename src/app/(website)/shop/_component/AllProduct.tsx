@@ -7,13 +7,13 @@ import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 
 const AllProduct = () => {
-  const { search } = useFilterStore();
+  const { search, size } = useFilterStore();
 
   const { data: allProduct, isLoading } = useQuery({
-    queryKey: ["all-product", search],
+    queryKey: ["all-product", search, size],
     queryFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin?search=${search}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin?search=${search}&size=${size}`
       );
       const data = res.json();
 
