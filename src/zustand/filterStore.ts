@@ -9,8 +9,8 @@ interface IFilter {
   setLocalPickup: (value: string) => void;
   eventDate: string;
   setEventDate: (value: string) => void;
-  price: number;
-  setPrice: (value: number) => void;
+  price: string;
+  setPrice: (value: string) => void;
   size: string;
   setSize: (value: string) => void;
 }
@@ -20,7 +20,7 @@ const initialState = {
   rental: "",
   localPickup: "",
   eventDate: "",
-  price: 0,
+  price: "",
   size: "",
 };
 
@@ -30,6 +30,6 @@ export const useFilterStore = create<IFilter>((set) => ({
   setRental: (value: string) => set({ rental: value }),
   setLocalPickup: (value: string) => set({ localPickup: value }),
   setEventDate: (value: string) => set({ eventDate: value }),
-  setPrice: (value: number) => set({ price: value }),
+  setPrice: (value: string) => set({ price: value }),
   setSize: (value: string) => set({ size: value }),
 }));
