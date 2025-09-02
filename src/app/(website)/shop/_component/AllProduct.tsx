@@ -2,22 +2,24 @@
 
 import { ProductCard } from "@/components/product/product-card";
 import { Product } from "@/types/product";
+import { useFilterStore } from "@/zustand/filterStore";
 import { useQuery } from "@tanstack/react-query";
+import Image from "next/image";
 
 const AllProduct = () => {
+  const { search } = useFilterStore();
+
   const { data: allProduct, isLoading } = useQuery({
-    queryKey: ["all-product"],
+    queryKey: ["all-product", search],
     queryFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin?search=${search}`
       );
       const data = res.json();
 
       return data;
     },
   });
-
-  console.log("allProduct : ", allProduct);
 
   return (
     <div>
@@ -36,6 +38,19 @@ const AllProduct = () => {
               <ProductCard key={product._id} product={product} />
             ))}
       </div>
+
+      {allProduct?.data.length === 0 && (
+        <div className="text-center min-h-[calc(100vh-400px)] flex flex-col items-center justify-center">
+          <Image
+          src={'/no-product.webp'}
+          alt="no-product.png"
+          width={1000}
+          height={1000}
+          className="h-[300px] w-[300px] mx-auto"
+          />
+          <h1 className="uppercase font-avenir text-xl tracking-[15px]">No Product Available</h1>
+        </div>
+      )}
     </div>
   );
 };
