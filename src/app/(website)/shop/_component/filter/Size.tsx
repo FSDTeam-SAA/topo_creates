@@ -1,11 +1,15 @@
+'use client'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useFilterStore } from "@/zustand/filterStore";
 
 const Size = () => {
+  const { setSize } = useFilterStore();
+
   const labels = [
     {
       id: 1,
@@ -48,7 +52,13 @@ const Size = () => {
           <div className="space-y-4">
             {labels.map((item) => (
               <div key={item.id} className="flex items-center gap-3">
-                <input className="h-4 w-4" type="checkbox" id="XXS" />
+                <input
+                  onClick={(e) => setSize((e.target as HTMLInputElement).value)}
+                  className="h-4 w-4"
+                  type="checkbox"
+                  id="XXS"
+                  value={item.label}
+                />
                 <label
                   htmlFor="XXS"
                   className="font-avenir tracking-[0.2rem] opacity-75 uppercase"
