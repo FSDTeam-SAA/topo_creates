@@ -23,7 +23,7 @@ const AllProduct = () => {
 
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 lg:gap-5 gap-10">
         {isLoading
           ? Array.from({ length: 16 }).map((_, index) => (
               <div key={index} className="flex flex-col h-full animate-pulse">

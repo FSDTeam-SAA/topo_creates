@@ -15,11 +15,13 @@ import Size from "./filter/Size";
 export function FilterDrawer() {
   return (
     <Drawer>
-      <DrawerTrigger asChild className="lg:hidden">
-        <Button variant="outline">
-          <Filter />
-        </Button>
-      </DrawerTrigger>
+      <div className="flex justify-end">
+        <DrawerTrigger asChild className="lg:hidden">
+          <Button variant="outline">
+            <Filter /> Filter
+          </Button>
+        </DrawerTrigger>
+      </div>
 
       <DrawerContent className="container">
         <div className=" space-y-3 mt-3">
