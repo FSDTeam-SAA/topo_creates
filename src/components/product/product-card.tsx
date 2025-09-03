@@ -69,8 +69,8 @@ export function ProductCard({ product }: ProductCardProps) {
             {product.dressName}
           </h3>
           <p className="text-[10px] tracking-wider transition-colors duration-300 group-hover:text-gray-600">
-            RENT ${product.rentalPrice.fourDays} | RRP $
-            {Math.round(product.rentalPrice.fourDays * 3.5)}
+            RENT ${product?.rentalPrice?.fourDays} | RRP $
+            {Math.round(product?.rentalPrice?.fourDays * 3.5)}
           </p>
         </div>
       </Link>
