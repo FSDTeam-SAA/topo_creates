@@ -1,19 +1,19 @@
-import { cn } from "@/lib/utils";
-import type { Product } from "@/types/product";
-import Link from "next/link";
-import { ProductCard } from "./product-card";
+import { cn } from '@/lib/utils'
+import type { Product } from '@/types/product'
+import Link from 'next/link'
+import { ProductCard } from './product-card'
 
 interface ProductGridProps {
-  title: string;
-  subtitle?: string;
-  products: Product[];
+  title: string
+  subtitle?: string
+  products: Product[]
 }
 
 export function ProductGrid({ title, subtitle, products }: ProductGridProps) {
   return (
-    <section className=" container mx-auto">
+    <section className=" container mx-auto mb-12">
       <div className="text-center mb-5">
-        <h2 className={cn("headerClass")}>{title}</h2>
+        <h2 className={cn('headerClass')}>{title}</h2>
         {subtitle && (
           <div className="flex justify-center">
             <Link href="#" className="sub-title border-b border-black pb-1">
@@ -32,5 +32,5 @@ export function ProductGrid({ title, subtitle, products }: ProductGridProps) {
         ))}
       </div>
     </section>
-  );
+  )
 }
