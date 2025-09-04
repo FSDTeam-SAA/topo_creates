@@ -2,7 +2,14 @@
 'use client'
 
 import { useState } from 'react'
-import { MapPin, Filter, ChevronDown, ChevronUp, Map } from 'lucide-react'
+import {
+  MapPin,
+  Filter,
+  ChevronDown,
+  ChevronUp,
+  Map,
+  AlertCircle,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import { Label } from '@/components/ui/label'
@@ -17,67 +24,84 @@ import {
 import AustraliaLocationSelector from '@/components/ui/australia-location-selector'
 import ProductList from './product-list'
 import { usePathname } from 'next/navigation'
+import { useQuery } from '@tanstack/react-query'
 
 export default function FindNearYou() {
-  // find the current route
+  // current route
   const pathname = usePathname()
   const isMapPage = pathname === '/find-near-you/map'
 
+  // Location
   const [selectedLocation, setSelectedLocation] = useState<{
     latitude: number
     longitude: number
     placeName: string
   } | null>(null)
 
-  const [radius, setRadius] = useState(50) // default 50 km
-  const [products, setProducts] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
-
-  // UI Toggles
-  const [showMap, setShowMap] = useState(true)
-  const [showFilters, setShowFilters] = useState(false)
-
-  // Filter States
+  // Filters
+  const [radius, setRadius] = useState(2)
   const [size, setSize] = useState('')
   const [category, setCategory] = useState('')
   const [minPrice, setMinPrice] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
 
+  // UI toggles
+  const [showMap, setShowMap] = useState(true)
+  const [showFilters, setShowFilters] = useState(false)
+
   const mapboxtoken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
 
+  // Fetcher Function
   const fetchProducts = async () => {
-    if (!selectedLocation) return
-    setLoading(true)
-    try {
-      const queryParams = new URLSearchParams({
-        latitude: String(selectedLocation.latitude),
-        longitude: String(selectedLocation.longitude),
-        radius: String(radius),
-      })
+    if (!selectedLocation) return []
 
-      if (size) queryParams.append('size', size)
-      if (category) queryParams.append('category', category)
-      if (minPrice) queryParams.append('minPrice', minPrice)
-      if (maxPrice) queryParams.append('maxPrice', maxPrice)
+    const queryParams = new URLSearchParams({
+      latitude: String(selectedLocation.latitude),
+      longitude: String(selectedLocation.longitude),
+      radius: String(radius),
+    })
+    if (size) queryParams.append('size', size)
+    if (category) queryParams.append('category', category)
+    if (minPrice) queryParams.append('minPrice', minPrice)
+    if (maxPrice) queryParams.append('maxPrice', maxPrice)
 
-      const res = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_BACKEND_URL
-        }/api/v1/admin/?${queryParams.toString()}`
-      )
-      const data = await res.json()
-      setProducts(data?.data || [])
-    } catch (err) {
-      console.error('API fetch failed', err)
-      setProducts([])
-    } finally {
-      setLoading(false)
-    }
+    const res = await fetch(
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_URL
+      }/api/v1/admin/?${queryParams.toString()}`
+    )
+    if (!res.ok) throw new Error('Failed to fetch products')
+
+    const data = await res.json()
+    console.log('longitude:', selectedLocation.longitude)
+    console.log('latitude:', selectedLocation.latitude)
+    console.log('radius', radius)
+    console.log('Fetched products:', data)
+    return data?.data || []
   }
 
-  console.log('Selected Location:', selectedLocation)
-  console.log('Radius:', radius)
-  console.log('Products:', products)
+  // React Query
+  const {
+    data: products = [],
+    isFetching,
+    isError,
+    error,
+    refetch,
+    isLoading,
+  } = useQuery({
+    queryKey: [
+      'products',
+      selectedLocation,
+      radius,
+      size,
+      category,
+      minPrice,
+      maxPrice,
+    ],
+    queryFn: fetchProducts,
+    enabled: false, // fetch only when button clicked
+    retry: 1,
+  })
 
   return (
     <section className="container mx-auto py-12 mt-16 md:mt-20">
@@ -109,7 +133,7 @@ export default function FindNearYou() {
         </Button>
       </div>
 
-      {/* Location Selector with toggle */}
+      {/* Location Selector */}
       {showMap && (
         <div className="mb-6">
           <AustraliaLocationSelector
@@ -133,19 +157,18 @@ export default function FindNearYou() {
           Radius: <span className="font-light">{radius} km</span>
         </p>
         <Slider
-          defaultValue={[50]}
-          max={200}
-          step={5}
+          defaultValue={[2]}
+          max={50}
+          step={2}
           className="w-full"
           onValueChange={(val) => setRadius(val[0])}
         />
       </div>
 
-      {/* Extra Filters (collapsible) */}
+      {/* Filters */}
       {showFilters && (
         <div className="mb-6 p-4 border rounded-lg shadow-sm bg-gray-50">
           <p className="font-normal text-xl mb-4">Filter Options</p>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-[30px] md:gap-[45px] lg:gap-[60px]">
             {/* Size */}
             <div>
@@ -215,19 +238,46 @@ export default function FindNearYou() {
 
       {/* Search Button */}
       <Button
-        onClick={fetchProducts}
+        onClick={() => refetch()}
         className="w-full uppercase tracking-wider"
-        disabled={!selectedLocation || loading}
+        disabled={!selectedLocation || isFetching}
       >
-        {loading ? 'Searching...' : 'Search Near You'}
+        {isFetching ? 'Searching...' : 'Search Near You'}
         <MapPin size={18} className="ml-2" />
       </Button>
 
-      {/* Product List (only show if not map route) */}
-      {!isMapPage && (
+      {/* Error */}
+      {isError && (
+        <div className="mt-6 flex items-center gap-2 text-red-600">
+          <AlertCircle className="size-5" />
+          <span>{(error as Error)?.message || 'Something went wrong'}</span>
+        </div>
+      )}
+
+      {/* Loading skeleton */}
+      {isLoading || isFetching ? (
+        <div className="mt-10 space-y-4">
+          {[...Array(3)].map((_, i) => (
+            <div
+              key={i}
+              className="w-full h-40 bg-gray-200 animate-pulse rounded-lg"
+            />
+          ))}
+        </div>
+      ) : null}
+
+      {/* Products */}
+      {!isMapPage && !isFetching && products.length >= 0 && (
         <div className="mt-10">
           <ProductList products={products} />
         </div>
+      )}
+
+      {/* Empty State */}
+      {!isFetching && products.length === 0 && !isError && (
+        <p className="mt-10 text-center text-gray-600">
+          No products found. Try adjusting filters or radius.
+        </p>
       )}
     </section>
   )

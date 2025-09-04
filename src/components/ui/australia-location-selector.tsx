@@ -171,6 +171,7 @@ export default function AustraliaLocationSelector({
   )
 
   // Initialize map with Australia focus
+  // Map Init → run only once
   useEffect(() => {
     if (!mapContainer.current || map.current) return
 
@@ -178,42 +179,34 @@ export default function AustraliaLocationSelector({
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/navigation-day-v1', // Better for precise location selection
+      style: 'mapbox://styles/mapbox/navigation-day-v1',
       center: initialLocation
         ? [initialLocation.longitude, initialLocation.latitude]
-        : [151.2093, -33.8688], // Geographic Sydney
-      zoom: initialLocation ? 16 : 12, // Higher zoom for initial
-      pitch: 0, // Flat view for better precision
+        : [151.2093, -33.8688], // Sydney fallback
+      zoom: initialLocation ? 16 : 14,
+      pitch: 0,
       bearing: 0,
     })
 
-    // Add navigation controls
     map.current.addControl(new mapboxgl.NavigationControl(), 'top-right')
-
-    // Add scale control for distance reference
     map.current.addControl(
-      new mapboxgl.ScaleControl({
-        maxWidth: 100,
-        unit: 'metric',
-      }),
+      new mapboxgl.ScaleControl({ maxWidth: 100, unit: 'metric' }),
       'bottom-left'
     )
 
-    // Add click handler for map
     map.current.on('click', handleMapClick)
 
-    // Add initial marker if location provided
+    // optional → just add marker if initialLocation exists
     if (initialLocation) {
       addPreciseMarker(initialLocation.longitude, initialLocation.latitude)
     }
 
     return () => {
-      if (map.current) {
-        map.current.remove()
-        map.current = null
-      }
+      map.current?.remove()
+      map.current = null
     }
-  }, [accessToken, initialLocation, addPreciseMarker, handleMapClick])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accessToken, addPreciseMarker, handleMapClick])
 
   const searchAustralianLocations = useCallback(
     async (query: string) => {
