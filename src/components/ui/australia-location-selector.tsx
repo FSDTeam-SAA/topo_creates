@@ -158,7 +158,7 @@ export default function AustraliaLocationSelector({
         }
       })
     },
-    [reverseGeocodeAustralia] // ✅ Now safe to include
+    [reverseGeocodeAustralia] // Now safe to include
   )
 
   const handleMapClick = useCallback(
@@ -181,8 +181,8 @@ export default function AustraliaLocationSelector({
       style: 'mapbox://styles/mapbox/navigation-day-v1', // Better for precise location selection
       center: initialLocation
         ? [initialLocation.longitude, initialLocation.latitude]
-        : [133.7751, -25.2744], // Geographic center of Australia
-      zoom: initialLocation ? 16 : 4, // Higher zoom for initial location, lower for Australia overview
+        : [151.2093, -33.8688], // Geographic Sydney
+      zoom: initialLocation ? 16 : 12, // Higher zoom for initial
       pitch: 0, // Flat view for better precision
       bearing: 0,
     })

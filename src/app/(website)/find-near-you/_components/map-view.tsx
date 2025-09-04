@@ -1,20 +1,42 @@
-import Image from "next/image";
-import React from "react";
-import MapProductList from "./map-product-list";
+import {
+  ApiProduct,
+  ProductCardData,
+  normalizeProducts,
+} from "../utility/normalizeProducts";
+import ProductCard from "../_components/product-card";
 
-const MapView = () => {
+interface MapViewProps {
+  products?: ApiProduct[] | null;
+}
+
+export default function MapView({ products }: MapViewProps) {
+  const normalizedProducts: ProductCardData[] = normalizeProducts(products);
+
   return (
-    <div className="container mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-5 md:gap-6 lg:gap-[30px]">
-        <div className="md:col-span-3">
-          <Image src="/images/google-map.png" alt="Map" width={867} height={1118} className="w-full" />
+    <div className="relative w-full h-[500px] bg-gray-100">
+      <p className="absolute top-4 left-4 bg-white p-2 shadow">
+        Showing {normalizedProducts.length} dresses on the map
+      </p>
+
+      {/* Hidden render for build safety */}
+      {normalizedProducts.map((p) => (
+        <div key={p.id} className="hidden">
+          {p.name}
         </div>
-        <div className="md:col-span-2">
-          <MapProductList />
-        </div>
-      </div>
+      ))}
     </div>
   );
-};
+}
 
-export default MapView;
+// 🟢 Extra Component: Product list handled here
+MapView.List = function MapViewList({ products }: MapViewProps) {
+  const normalizedProducts: ProductCardData[] = normalizeProducts(products);
+
+  return (
+    <>
+      {normalizedProducts.map((product) => (
+        <ProductCard key={product.id} {...product} />
+      ))}
+    </>
+  );
+};

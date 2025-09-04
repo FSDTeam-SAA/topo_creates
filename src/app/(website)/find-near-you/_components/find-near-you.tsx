@@ -16,8 +16,13 @@ import {
 } from '@/components/ui/select'
 import AustraliaLocationSelector from '@/components/ui/australia-location-selector'
 import ProductList from './product-list'
+import { usePathname } from 'next/navigation'
 
 export default function FindNearYou() {
+  // find the current route
+  const pathname = usePathname()
+  const isMapPage = pathname === '/find-near-you/map'
+
   const [selectedLocation, setSelectedLocation] = useState<{
     latitude: number
     longitude: number
@@ -75,10 +80,13 @@ export default function FindNearYou() {
   console.log('Products:', products)
 
   return (
-    <section className="container mx-auto py-10">
-      <h1 className="text-center text-2xl font-bold uppercase lg:my-16 mb-8">
+    <section className="container mx-auto py-12 mt-16 md:mt-20">
+      <h1 className="text-center text-xl md:text-4xl lg:text-[56px] uppercase font-normal tracking-[5px] lg:tracking-[20px] mb-6 font-avenir">
         Find Near You
       </h1>
+      <p className="text-center text-lg md:text-xl lg:text-2xl font-normal tracking-[3px] lg:tracking-[10px] mb-8 font-avenir">
+        FIND YOUR DRESS NEAR YOU FOR LOCAL PICK UP
+      </p>
 
       {/* Toggle Buttons */}
       <div className="flex items-center justify-center gap-4 mb-6">
@@ -121,8 +129,8 @@ export default function FindNearYou() {
 
       {/* Radius Slider */}
       <div className="mb-6">
-        <p className="font-medium mb-2">
-          Radius: <span className="font-bold">{radius} km</span>
+        <p className="font-normal mb-2">
+          Radius: <span className="font-light">{radius} km</span>
         </p>
         <Slider
           defaultValue={[50]}
@@ -136,12 +144,12 @@ export default function FindNearYou() {
       {/* Extra Filters (collapsible) */}
       {showFilters && (
         <div className="mb-6 p-4 border rounded-lg shadow-sm bg-gray-50">
-          <p className="font-semibold mb-4">Filter Options</p>
+          <p className="font-normal text-xl mb-4">Filter Options</p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-[30px] md:gap-[45px] lg:gap-[60px]">
             {/* Size */}
             <div>
-              <Label className="text-lg text-black font-normal leading-[28px] tracking-[0.15em]">
+              <Label className="text-lg text-black font-thin leading-[28px] tracking-[0.15em]">
                 Size
               </Label>
               <Select value={size} onValueChange={setSize}>
@@ -160,7 +168,7 @@ export default function FindNearYou() {
 
             {/* Category */}
             <div>
-              <Label className="text-lg text-black font-normal leading-[28px] tracking-[0.15em]">
+              <Label className="text-lg text-black font-thin leading-[28px] tracking-[0.15em]">
                 Category
               </Label>
               <Select value={category} onValueChange={setCategory}>
@@ -179,7 +187,7 @@ export default function FindNearYou() {
             {/* Price Range */}
             <div className="w-full flex items-end gap-4">
               <div className="w-full">
-                <Label className="text-lg text-black font-normal leading-[28px] tracking-[0.15em]">
+                <Label className="text-lg text-black font-thin leading-[28px] tracking-[0.15em]">
                   Price Range
                 </Label>
                 <div className="flex items-center gap-2 border-b border-black pb-4">
@@ -215,10 +223,12 @@ export default function FindNearYou() {
         <MapPin size={18} className="ml-2" />
       </Button>
 
-      {/* Product List */}
-      <div className="mt-10">
-        <ProductList products={products} />
-      </div>
+      {/* Product List (only show if not map route) */}
+      {!isMapPage && (
+        <div className="mt-10">
+          <ProductList products={products} />
+        </div>
+      )}
     </section>
   )
 }
