@@ -2,17 +2,17 @@ import Image from "next/image";
 import { Truck, MapPin } from "lucide-react";
 
 interface ProductCardProps {
-  id: string;
-  name: string;
-  price: string;
-  days: number;
-  size: string;
-  image: string;
-  description: string;
-  shipping: boolean;
-  pickup: boolean;
-  location?: { lat: number; lng: number };
+  id?: string
+  name?: string
+  price?: string
+  days?: number
+  size?: string
+  image?: string
+  description?: string
+  shipping?: boolean
+  pickup?: boolean
 }
+
 
 export default function MapProductCard({
   name,
@@ -30,7 +30,7 @@ export default function MapProductCard({
         <div>
           <Image
             src={image || "/placeholder.svg"}
-            alt={name}
+            alt={name || "Product Image"}
             width={196}
             height={257}
             className="w-full md:w-[196px] h-[203px] md:h-[238px] object-cover"
@@ -44,7 +44,7 @@ export default function MapProductCard({
                 {name}
               </h3>
               <p className="text-lg md:text-[20px] lg:text-[24px] font-normal text-black leading-[20px] md:leading-[24px] lg:leading-[28px] tracking-[0.15rem] py-[12px] md:py-[14px] lg:py-[16px]">
-                {price} / {days} Days
+                ${price} / {days} Days
               </p>
               <p className="text-base md:text-[17px] lg:text-lg font-normal text-black leading-[20px] md:leading-[22px] lg:leading-[24px] tracking-[0rem]">
                 Size: {size}

@@ -2,7 +2,6 @@
 
 import { ApiProduct, ProductCardData, normalizeProducts } from '../utility/normalizeProducts'
 import ProductCard from './product-card'
-import ViewToggle from './view-toggle'
 
 interface ProductListProps {
   products?: ApiProduct[] | null
@@ -13,7 +12,7 @@ export default function ProductList({ products }: ProductListProps) {
 
   return (
     <section className="container mx-auto px-4">
-      <ViewToggle />
+   
 
       <div className="mb-8 grid grid-cols-1 gap-6">
         {normalizedProducts.map((product) => (
