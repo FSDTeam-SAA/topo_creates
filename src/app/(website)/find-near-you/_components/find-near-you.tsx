@@ -25,9 +25,9 @@ import AustraliaLocationSelector from '@/components/ui/australia-location-select
 import ProductList from './product-list'
 import { usePathname } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
+import type { ApiProduct } from '../utility/normalizeProducts'
 
 export default function FindNearYou() {
-  // current route
   const pathname = usePathname()
   const isMapPage = pathname === '/find-near-you/map'
 
@@ -45,20 +45,29 @@ export default function FindNearYou() {
   const [minPrice, setMinPrice] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
 
-  // UI toggles
+  // UI
   const [showMap, setShowMap] = useState(true)
   const [showFilters, setShowFilters] = useState(false)
 
+  // Pagination
+  const [page, setPage] = useState(1)
+  const [allProducts, setAllProducts] = useState<ApiProduct[]>([])
+  const [pagination, setPagination] = useState<{
+    totalPages: number
+    totalItems: number
+  } | null>(null)
+
   const mapboxtoken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
 
-  // Fetcher Function
+  // Fetcher
   const fetchProducts = async () => {
     if (!selectedLocation) return []
 
     const queryParams = new URLSearchParams({
       latitude: String(selectedLocation.latitude),
       longitude: String(selectedLocation.longitude),
-      radius: String(radius),
+      radius: String(radius * 1000),
+      page: String(page),
     })
     if (size) queryParams.append('size', size)
     if (category) queryParams.append('category', category)
@@ -73,33 +82,23 @@ export default function FindNearYou() {
     if (!res.ok) throw new Error('Failed to fetch products')
 
     const data = await res.json()
-    console.log('longitude:', selectedLocation.longitude)
-    console.log('latitude:', selectedLocation.latitude)
-    console.log('radius', radius)
-    console.log('Fetched products:', data)
+    setPagination(data?.pagination || null)
+
+    if (page === 1) {
+      setAllProducts(data?.data || [])
+    } else {
+      setAllProducts((prev) => [...prev, ...(data?.data || [])])
+    }
+
+    console.log('Fetched Products:', data || [])
+
     return data?.data || []
   }
 
-  // React Query
-  const {
-    data: products = [],
-    isFetching,
-    isError,
-    error,
-    refetch,
-    isLoading,
-  } = useQuery({
-    queryKey: [
-      'products',
-      selectedLocation,
-      radius,
-      size,
-      category,
-      minPrice,
-      maxPrice,
-    ],
+  const { isFetching, isError, error, refetch, isLoading } = useQuery({
+    queryKey: ['products', page],
     queryFn: fetchProducts,
-    enabled: false, // fetch only when button clicked
+    enabled: false,
     retry: 1,
   })
 
@@ -172,11 +171,9 @@ export default function FindNearYou() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-[30px] md:gap-[45px] lg:gap-[60px]">
             {/* Size */}
             <div>
-              <Label className="text-lg text-black font-thin leading-[28px] tracking-[0.15em]">
-                Size
-              </Label>
+              <Label className="text-lg text-black font-thin">Size</Label>
               <Select value={size} onValueChange={setSize}>
-                <SelectTrigger className="w-full border-b shadow-none border-t-0 border-r-0 border-l-0 border-black rounded-none pt-5 pb-3 h-auto focus:ring-0 focus:ring-offset-0">
+                <SelectTrigger className="w-full border-b shadow-none rounded-none pt-5 pb-3 h-auto">
                   <SelectValue placeholder="Please Select" />
                 </SelectTrigger>
                 <SelectContent>
@@ -191,11 +188,9 @@ export default function FindNearYou() {
 
             {/* Category */}
             <div>
-              <Label className="text-lg text-black font-thin leading-[28px] tracking-[0.15em]">
-                Category
-              </Label>
+              <Label className="text-lg text-black font-thin">Category</Label>
               <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="w-full border-b border-t-0 shadow-none border-r-0 border-l-0 border-black rounded-none pt-5 pb-3 h-auto focus:ring-0 focus:ring-offset-0">
+                <SelectTrigger className="w-full border-b shadow-none rounded-none pt-5 pb-3 h-auto">
                   <SelectValue placeholder="Please Select" />
                 </SelectTrigger>
                 <SelectContent>
@@ -210,7 +205,7 @@ export default function FindNearYou() {
             {/* Price Range */}
             <div className="w-full flex items-end gap-4">
               <div className="w-full">
-                <Label className="text-lg text-black font-thin leading-[28px] tracking-[0.15em]">
+                <Label className="text-lg text-black font-thin">
                   Price Range
                 </Label>
                 <div className="flex items-center gap-2 border-b border-black pb-4">
@@ -219,7 +214,6 @@ export default function FindNearYou() {
                     placeholder="Min"
                     value={minPrice}
                     onChange={(e) => setMinPrice(e.target.value)}
-                    className="text-lg shadow-none font-normal text-black tracking-[0.15px] border-none rounded-none p-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
                   <span className="text-2xl text-black px-2">—</span>
                   <Input
@@ -227,7 +221,6 @@ export default function FindNearYou() {
                     placeholder="Max"
                     value={maxPrice}
                     onChange={(e) => setMaxPrice(e.target.value)}
-                    className="text-lg shadow-none font-normal text-black tracking-[0.15px] border-none rounded-none p-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                   />
                 </div>
               </div>
@@ -238,7 +231,10 @@ export default function FindNearYou() {
 
       {/* Search Button */}
       <Button
-        onClick={() => refetch()}
+        onClick={() => {
+          setPage(1)
+          refetch()
+        }}
         className="w-full uppercase tracking-wider"
         disabled={!selectedLocation || isFetching}
       >
@@ -254,7 +250,7 @@ export default function FindNearYou() {
         </div>
       )}
 
-      {/* Loading skeleton */}
+      {/* Skeleton */}
       {isLoading || isFetching ? (
         <div className="mt-10 space-y-4">
           {[...Array(3)].map((_, i) => (
@@ -267,17 +263,38 @@ export default function FindNearYou() {
       ) : null}
 
       {/* Products */}
-      {!isMapPage && !isFetching && products.length >= 0 && (
+      {!isMapPage && allProducts.length > 0 && (
         <div className="mt-10">
-          <ProductList products={products} />
+          <ProductList products={allProducts} />
+
+          {pagination && page < pagination.totalPages && (
+            <div className="text-center mt-6">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setPage((p) => p + 1)
+                  refetch()
+                }}
+                disabled={isFetching}
+              >
+                {isFetching ? 'Loading...' : 'Load More'}
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
       {/* Empty State */}
-      {!isFetching && products.length === 0 && !isError && (
-        <p className="mt-10 text-center text-gray-600">
-          No products found. Try adjusting filters or radius.
-        </p>
+      {!isFetching && allProducts.length === 0 && !isError && (
+        <div className="mt-16 text-center space-y-5">
+          <AlertCircle className="mx-auto mb-3 text-gray-400 size-24" />
+          <h3 className="text-lg md:text-xl lg:text-2xl font-medium text-gray-700">
+            No Dresses Found
+          </h3>
+          <p className="text-gray-500 mt-1">
+            Try adjusting your filters or increasing the radius.
+          </p>
+        </div>
       )}
     </section>
   )

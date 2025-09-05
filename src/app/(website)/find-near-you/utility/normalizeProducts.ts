@@ -33,7 +33,9 @@ export interface ApiProduct {
 const DEFAULT_LAT = -33.8786
 const DEFAULT_LNG = 151.2069
 
-export function normalizeProducts(products?: ApiProduct[] | null): ProductCardData[] {
+export function normalizeProducts(
+  products?: ApiProduct[] | null
+): ProductCardData[] {
   if (products && products.length > 0) {
     return products.map((product, idx) => ({
       id: product.id || idx,
@@ -44,28 +46,15 @@ export function normalizeProducts(products?: ApiProduct[] | null): ProductCardDa
       size: product.size || 'N/A',
       image: product.media?.[0] || product.image || '/images/dress.png',
       description: product.description || '',
-      pickup: product.pickupOption === 'Both' || product.pickupOption === 'Pickup',
-      shipping: product.pickupOption === 'Both' || product.pickupOption === 'Shipping',
+      pickup:
+        product.pickupOption === 'Both' || product.pickupOption === 'Pickup',
+      shipping:
+        product.pickupOption === 'Both' || product.pickupOption === 'Shipping',
       days: 4,
-      latitude: product.latitude ?? DEFAULT_LAT,   // fallback if missing
-      longitude: product.longitude ?? DEFAULT_LNG, // fallback if missing
+      latitude: product.latitude ?? DEFAULT_LAT,
+      longitude: product.longitude ?? DEFAULT_LNG,
     }))
   }
 
-  // If completely empty, return 1 demo product
-  return [
-    {
-      id: 'demo-1',
-      name: 'Demo Dress',
-      price: '$50',
-      days: 4,
-      size: 'M',
-      image: '/images/dress.png',
-      description: 'Demo product near Thai Town, Sydney.',
-      shipping: true,
-      pickup: true,
-      latitude: DEFAULT_LAT,
-      longitude: DEFAULT_LNG,
-    }, 
-  ]
+  return []
 }
