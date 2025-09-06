@@ -326,7 +326,7 @@ export default function FindNearYou() {
           <h3 className="text-lg md:text-xl lg:text-2xl font-medium text-gray-700">
             Start by Selecting a Location
           </h3>
-          <p className="text-gray-500 mt-1">
+          <p className="text-gray-500 mt-1 font-light">
             Use the map above to choose a location and search for dresses near
             you.
           </p>
@@ -344,7 +344,7 @@ export default function FindNearYou() {
             <h3 className="text-lg md:text-xl lg:text-2xl font-medium text-gray-700">
               No Dresses Found
             </h3>
-            <p className="text-gray-500 mt-1">
+            <p className="text-gray-500 mt-1 font-light">
               Try adjusting your filters or increasing the radius.
             </p>
           </div>
