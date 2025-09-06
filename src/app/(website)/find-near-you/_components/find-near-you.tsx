@@ -171,7 +171,7 @@ export default function FindNearYou() {
           />
           <div className="mt-6 text-center w-full">
             <Button
-              className="inline-block border-b border-black px-6 py-2 text-[14px] uppercase tracking-widest text-lg md:text-xl hover:bg-black hover:text-white"
+              className="inline-block border-b border-black font-light px-6 py-2 text-[14px] uppercase tracking-widest text-lg md:text-xl hover:bg-black hover:text-white"
               variant="outline"
               onClick={handleSearchNearYou}
             >
@@ -271,7 +271,7 @@ export default function FindNearYou() {
           <div className="mt-6 text-center">
             <Button
               variant="outline"
-              className="inline-block border-b border-black px-6 py-2 text-[14px] uppercase tracking-widest hover:bg-black hover:text-white"
+              className="inline-block border-b border-black px-6 py-2 text-[14px] font-light uppercase tracking-widest hover:bg-black hover:text-white"
               onClick={handleApplyFilters}
             >
               Apply Filters

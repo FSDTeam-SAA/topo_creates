@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { MapPin, X } from 'lucide-react'
+import { MapPin, Truck, X } from 'lucide-react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -60,6 +60,7 @@ const ProductPopover = ({
   position: { top: number; left: number }
   onClose: () => void
 }) => {
+  console.log("ProductPopover products:", products)
   const popoverRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -124,21 +125,36 @@ const ProductPopover = ({
 
             {/* Info */}
             <div className="flex-1 flex flex-col justify-between">
-              <div>
-                <div className="text-sm font-semibold text-gray-800 line-clamp-1">
+              <div className="space-y-2">
+                <div className="text-sm font-light text-gray-800 line-clamp-1">
                   {product?.name ?? (product as any)?.dressName ?? 'Untitled'}
                 </div>
-                <div className="text-xs text-gray-500">
-                  Price: {product?.price ?? 'N/A'}
+
+                {/* Shipping & Pickup */}
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-[10px] md:gap-[13px] lg:gap-[15px] text-xs text-gray-500">
+                  {product?.shipping && (
+                    <div className="flex items-center gap-[5px] md:gap-[8px]">
+                      <Truck width={20} height={16} />
+                      <span>SHIPPING</span>
+                    </div>
+                  )}
+
+                  {product?.pickup && (
+                    <div className="flex items-center gap-[5px] md:gap-[8px]">
+                      <MapPin className="w-[16px] h-[16px]" />
+                      <span>PICKUP</span>
+                    </div>
+                  )}
+
+                  {!product?.shipping && !product?.pickup && <span>N/A</span>}
                 </div>
+
                 <div className="text-xs text-gray-500">
-                  Size: {product?.size ?? 'N/A'} |{' '}
-                  {(product as any)?.pickupOption ?? 'N/A'}
+                  Size: {product?.size ?? 'N/A'}
                 </div>
               </div>
 
               <div className="text-sm font-bold text-[#800000]">
-                $
                 {(product as any)?.rentalPrice?.fourDays ??
                   product?.price ??
                   '—'}{' '}
@@ -232,7 +248,7 @@ const FindNearMap = ({
         const markerElement = document.createElement('div')
         markerElement.innerHTML = ReactDOMServer.renderToString(
           <CustomMarker
-            title={marker.title}
+            title={'click to view'}
             active={
               activeMarker?.lat === marker.lat &&
               activeMarker?.lng === marker.lng
