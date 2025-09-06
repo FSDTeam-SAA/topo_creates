@@ -3,12 +3,14 @@
 
 import { useFindNearYouStore } from '@/zustand/useFindNearYouStore'
 import FindNearYou from '../_components/find-near-you'
-import MapView from '../_components/map-view'
+// import MapView from '../_components/map-view'
 import MapProductCard from '../_components/map-product-card'
 import HowItWork from '@/components/HowItWork'
 import { ProductGrid } from '@/components/product/product-grid'
 import { getTrendingProducts } from '@/data/product-data'
 import { MapPinOff } from 'lucide-react'
+import FindNearMap from '../../_components/find-near-map'
+import { normalizeProducts } from '../utility/normalizeProducts'
 
 export default function MapPage() {
   const { allProducts } = useFindNearYouStore()
@@ -25,14 +27,18 @@ export default function MapPage() {
       {/* Map + Product List */}
       <section className="container mx-auto mb-12">
         {hasProducts ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-6">
             {/* Left → Map */}
             <div className="relative w-full min-h-[500px] bg-gray-100 rounded-lg overflow-hidden">
-              <MapView products={allProducts} />
+              {/* <MapView products={allProducts} /> */}
+              <FindNearMap
+                products={normalizeProducts(allProducts)}
+                height={650}
+              />
             </div>
 
             {/* Right → Product Cards */}
-            <div className="grid grid-cols-1 gap-6 px-2 pr-2 overflow-y-auto max-h-[650px]">
+            <div className="grid-cols-1 gap-6 px-2 pr-2 overflow-y-auto max-h-[650px] hidden md:grid">
               {allProducts.map((p, idx) => {
                 const id = (p as any)?._id ?? (p as any)?.dressId ?? idx
                 const name = (p as any)?.dressName ?? 'No Name'

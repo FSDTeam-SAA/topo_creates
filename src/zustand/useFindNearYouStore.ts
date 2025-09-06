@@ -1,5 +1,11 @@
-import { create } from "zustand"
-import type { ApiProduct } from "@/app/(website)/find-near-you/utility/normalizeProducts"
+import { create } from 'zustand'
+import type { ApiProduct } from '@/app/(website)/find-near-you/utility/normalizeProducts'
+
+interface Pagination {
+  totalPages: number
+  totalItems: number
+  currentPage: number
+}
 
 interface Location {
   latitude: number
@@ -16,27 +22,47 @@ interface FindNearYouState {
   maxPrice: string
   page: number
   allProducts: ApiProduct[]
-  pagination: { totalPages: number; totalItems: number } | null
-  setState: (state: Partial<FindNearYouState>) => void
+  pagination: Pagination | null
+
+  // Actions
+  setState: (partial: Partial<FindNearYouState>) => void
   resetPage: () => void
   nextPage: () => void
   setAllProducts: (products: ApiProduct[]) => void
-  setPagination: (pagination: { totalPages: number; totalItems: number } | null) => void
+  appendProducts: (products: ApiProduct[]) => void
+  setPagination: (pagination: Pagination | null) => void
+  resetAll: () => void
 }
 
 export const useFindNearYouStore = create<FindNearYouState>((set) => ({
   selectedLocation: null,
-  radius: 2,
-  size: "",
-  category: "",
-  minPrice: "",
-  maxPrice: "",
+  radius: 10,
+  size: '',
+  category: '',
+  minPrice: '',
+  maxPrice: '',
   page: 1,
   allProducts: [],
   pagination: null,
-  setState: (state) => set((prev) => ({ ...prev, ...state })),
+
+  // Actions
+  setState: (partial) => set((state) => ({ ...state, ...partial })),
   resetPage: () => set({ page: 1 }),
-  nextPage: () => set((prev) => ({ page: prev.page + 1 })),
-  setAllProducts: (products) => set((prev) => ({ ...prev, allProducts: products })),
-  setPagination: (pagination) => set((prev) => ({ ...prev, pagination })),
+  nextPage: () => set((state) => ({ page: state.page + 1 })),
+  setAllProducts: (products) => set({ allProducts: products }),
+  appendProducts: (products) =>
+    set((state) => ({ allProducts: [...state.allProducts, ...products] })),
+  setPagination: (pagination) => set({ pagination }),
+  resetAll: () =>
+    set({
+      selectedLocation: null,
+      radius: 10,
+      size: '',
+      category: '',
+      minPrice: '',
+      maxPrice: '',
+      page: 1,
+      allProducts: [],
+      pagination: null,
+    }),
 }))

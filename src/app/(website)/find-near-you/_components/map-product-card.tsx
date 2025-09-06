@@ -40,7 +40,7 @@ export default function MapProductCard({
         <div className="w-full relative">
           <div className="w-full flex flex-col md:flex-row items-start md:items-center">
             <div className="flex-1 ">
-              <h3 className="text-xl md:text-[25px] lg:text-[30px] font-light text-black leading-[25px] md:leading-[30px] lg:leading-[36px] uppercase tracking-[0.10rem]">
+              <h3 className="text-xl md:text-[22px] lg:text-2xl font-light text-black leading-[25px] md:leading-[30px] lg:leading-[36px] uppercase tracking-[0.10rem]">
                 {name}
               </h3>
               <p className="text-lg md:text-[20px] lg:text-[24px] font-normal text-black leading-[20px] md:leading-[24px] lg:leading-[28px] tracking-[0.15rem] py-[12px] md:py-[14px] lg:py-[16px]">

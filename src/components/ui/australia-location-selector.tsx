@@ -171,7 +171,6 @@ export default function AustraliaLocationSelector({
   )
 
   // Initialize map with Australia focus
-  // Map Init → run only once
   useEffect(() => {
     if (!mapContainer.current || map.current) return
 
@@ -194,19 +193,29 @@ export default function AustraliaLocationSelector({
       'bottom-left'
     )
 
+    // add click listener
     map.current.on('click', handleMapClick)
-
-    // optional → just add marker if initialLocation exists
-    if (initialLocation) {
-      addPreciseMarker(initialLocation.longitude, initialLocation.latitude)
-    }
 
     return () => {
       map.current?.remove()
       map.current = null
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accessToken, addPreciseMarker, handleMapClick])
+  }, [accessToken])
+
+  // Whenever initialLocation or selectedLocation changes, update marker
+  useEffect(() => {
+    if (!map.current) return
+
+    const lng = selectedLocation?.longitude ?? initialLocation?.longitude
+    const lat = selectedLocation?.latitude ?? initialLocation?.latitude
+
+    if (lng && lat) {
+      addPreciseMarker(lng, lat)
+      map.current.flyTo({ center: [lng, lat], zoom: 16 })
+    }
+  }, [initialLocation, selectedLocation, addPreciseMarker])
 
   const searchAustralianLocations = useCallback(
     async (query: string) => {

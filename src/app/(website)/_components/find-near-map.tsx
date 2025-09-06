@@ -1,113 +1,66 @@
-"use client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+'use client'
 
-import { MapPin, X } from "lucide-react";
-import mapboxgl from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
-import { useCallback, useEffect, useRef, useState } from "react";
-import ReactDOMServer from "react-dom/server";
+import { MapPin, X } from 'lucide-react'
+import mapboxgl from 'mapbox-gl'
+import 'mapbox-gl/dist/mapbox-gl.css'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import ReactDOMServer from 'react-dom/server'
+import Image from 'next/image'
+import {
+  ProductCardData,
+  normalizeProducts,
+} from '../find-near-you/utility/normalizeProducts'
 
 const MAPBOX_TOKEN =
-  process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || "your-mapbox-token-here";
-
-interface Product {
-  id: string;
-  name: string;
-  price?: number;
-}
+  process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || 'your-mapbox-token-here'
 
 interface Marker {
-  lat: number;
-  lng: number;
-  title?: string;
-  products?: Product[];
+  lat: number
+  lng: number
+  title?: string
+  products?: ProductCardData[]
 }
-
-const defaultMarkers: Marker[] = [
-  {
-    lat: -33.8688,
-    lng: 151.2093,
-    title: "Sydney CBD Store",
-    products: [
-      { id: "1", name: "Wireless Headphones", price: 99.99 },
-      { id: "2", name: "Smart Watch", price: 199.99 },
-      { id: "3", name: "Bluetooth Speaker", price: 79.99 },
-    ],
-  },
-  {
-    lat: -33.8915,
-    lng: 151.2767,
-    title: "Bondi Beach Outlet",
-    products: [
-      { id: "4", name: "Beach Towel", price: 29.99 },
-      { id: "5", name: "Sunscreen SPF 50+", price: 19.99 },
-      { id: "6", name: "Waterproof Phone Case", price: 34.99 },
-      { id: "7", name: "Surfboard Wax", price: 9.99 },
-    ],
-  },
-  {
-    lat: -33.8003,
-    lng: 151.1784,
-    title: "Chatswood Tech Store",
-    products: [
-      { id: "8", name: 'Laptop Pro 16"', price: 2499.99 },
-      { id: "9", name: "Wireless Keyboard", price: 89.99 },
-      { id: "10", name: "Noise Cancelling Headphones", price: 349.99 },
-      { id: "11", name: "4K Webcam", price: 129.99 },
-    ],
-  },
-  {
-    lat: -33.9022,
-    lng: 151.1753,
-    title: "Darling Harbour Fashion",
-    products: [
-      { id: "12", name: "Designer Sunglasses", price: 199.99 },
-      { id: "13", name: "Leather Wallet", price: 89.99 },
-      { id: "14", name: "Silk Scarf", price: 59.99 },
-    ],
-  },
-];
 
 const CustomMarker = ({
   title,
   active,
 }: {
-  title?: string;
-  active?: boolean;
-}) => {
-  return (
-    <div
-      className="flex flex-col items-center justify-center cursor-pointer"
-      style={{ transform: "translateY(-100%)" }}
-    >
-      <MapPin
-        size={30}
-        className={`text-[#800000]  transition-all ${
-          active ? "scale-110 fill-white" : "fill-white"
+  title?: string
+  active?: boolean
+}) => (
+  <div
+    className="flex flex-col items-center justify-center cursor-pointer"
+    style={{ transform: 'translateY(-100%)' }}
+  >
+    <MapPin
+      size={30}
+      className={`text-[#800000] transition-all ${
+        active ? 'scale-110 fill-white' : 'fill-white'
+      }`}
+    />
+    {title && (
+      <div
+        className={`bg-white px-2 py-1 rounded text-xs font-medium text-[#800000] mt-1 whitespace-nowrap ${
+          active ? 'font-bold' : ''
         }`}
-      />
-      {title && (
-        <div
-          className={`bg-white px-2 py-1 rounded text-xs font-medium text-[#800000]  mt-1 whitespace-nowrap ${
-            active ? "font-bold" : ""
-          }`}
-        >
-          {title}
-        </div>
-      )}
-    </div>
-  );
-};
+      >
+        {title}
+      </div>
+    )}
+  </div>
+)
 
 const ProductPopover = ({
   products,
   position,
   onClose,
 }: {
-  products?: Product[];
-  position: { top: number; left: number };
-  onClose: () => void;
+  products?: ProductCardData[]
+  position: { top: number; left: number }
+  onClose: () => void
 }) => {
-  const popoverRef = useRef<HTMLDivElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -115,159 +68,216 @@ const ProductPopover = ({
         popoverRef.current &&
         !popoverRef.current.contains(event.target as Node)
       ) {
-        onClose();
+        onClose()
       }
-    };
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [onClose])
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [onClose]);
-
-  if (!products || products.length === 0) return null;
+  if (!products || products.length === 0) return null
 
   return (
     <div
       ref={popoverRef}
-      className="absolute z-50 bg-white rounded-lg shadow-xl border border-gray-200 min-w-[250px]"
+      className="fixed z-[9999] bg-white rounded-lg shadow-2xl border border-gray-200 w-[340px] max-h-[400px] overflow-y-auto"
       style={{
-        top: `${position.top}px`,
+        top: `${position.top + 20}px`,
         left: `${position.left}px`,
-        transform: "translate(-50%, 10px)",
+        transform: 'translateX(-50%)',
       }}
     >
-      <div className="flex justify-between items-center p-3 border-b">
-        <h3 className="font-bold">Available Products</h3>
+      {/* Header */}
+      <div className="flex justify-between items-center px-4 py-2 border-b bg-gray-50 sticky top-0 z-10">
+        <h3 className="font-normal text-sm text-gray-800">
+          {products.length} Dresses Available
+        </h3>
         <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
           <X size={16} />
         </button>
       </div>
-      <ul className="divide-y divide-gray-100">
+
+      {/* Scrollable content */}
+      <div className="divide-y divide-gray-200">
         {products.map((product) => (
-          <li key={product.id} className="p-3 hover:bg-gray-50">
-            <div className="flex justify-between">
-              <span>{product.name}</span>
-              {product.price && (
-                <span className="font-medium">${product.price.toFixed(2)}</span>
-              )}
+          <div
+            key={product.id}
+            className="flex gap-3 p-3 hover:bg-gray-50 transition"
+          >
+            {/* Image */}
+            <div className="w-28 h-28 relative flex-shrink-0">
+              <Image
+                src={
+                  product?.image ||
+                  (product as any)?.media?.[0] ||
+                  '/images/dress.png'
+                }
+                alt={
+                  product?.name ??
+                  (product as any)?.dressName ??
+                  'Product image'
+                }
+                fill
+                className="object-cover rounded-md"
+              />
             </div>
-          </li>
+
+            {/* Info */}
+            <div className="flex-1 flex flex-col justify-between">
+              <div>
+                <div className="text-sm font-semibold text-gray-800 line-clamp-1">
+                  {product?.name ?? (product as any)?.dressName ?? 'Untitled'}
+                </div>
+                <div className="text-xs text-gray-500">
+                  Price: {product?.price ?? 'N/A'}
+                </div>
+                <div className="text-xs text-gray-500">
+                  Size: {product?.size ?? 'N/A'} |{' '}
+                  {(product as any)?.pickupOption ?? 'N/A'}
+                </div>
+              </div>
+
+              <div className="text-sm font-bold text-[#800000]">
+                $
+                {(product as any)?.rentalPrice?.fourDays ??
+                  product?.price ??
+                  '—'}{' '}
+                / 4 Days
+              </div>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
-  );
-};
+  )
+}
+
+interface FindNearMapProps {
+  products?: ProductCardData[]
+  center?: [number, number]
+  zoom?: number
+  width?: string | number
+  height?: string | number
+}
 
 const FindNearMap = ({
-  markers = defaultMarkers,
+  products = [],
   center = [151.2093, -33.8688],
-  zoom = 13,
-}: {
-  markers?: Marker[];
-  center?: [number, number];
-  zoom?: number;
-}) => {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const [activeMarker, setActiveMarker] = useState<Marker | null>(null);
-  const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
+  zoom = 12,
+  width = '100%',
+  height = 400,
+}: FindNearMapProps) => {
+  const mapContainer = useRef<HTMLDivElement>(null)
+  const map = useRef<mapboxgl.Map | null>(null)
+  const [activeMarker, setActiveMarker] = useState<Marker | null>(null)
+  const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 })
+
+  // normalize
+  const normalizedProducts = normalizeProducts(products as any)
+
+  // group products by coordinates
+  const markersMap = new Map<string, Marker>()
+  normalizedProducts
+    .filter((p) => p.latitude && p.longitude)
+    .forEach((p) => {
+      const key = `${p.latitude},${p.longitude}`
+      if (!markersMap.has(key)) {
+        markersMap.set(key, {
+          lat: p.latitude,
+          lng: p.longitude,
+          title: p.name,
+          products: [p],
+        })
+      } else {
+        markersMap.get(key)!.products!.push(p)
+      }
+    })
+
+  const markers: Marker[] = Array.from(markersMap.values())
 
   const handleMarkerClick = useCallback((marker: Marker) => {
     if (map.current) {
-      // Convert lat/lng to pixel coordinates
-      const point = map.current.project([marker.lng, marker.lat]);
-      setPopoverPosition({
-        top: point.y,
-        left: point.x,
-      });
-      setActiveMarker(marker);
+      const point = map.current.project([marker.lng, marker.lat])
+      setPopoverPosition({ top: point.y, left: point.x })
+      setActiveMarker(marker)
+      //  Don't zoom in
+      map.current.panTo([marker.lng, marker.lat])
     }
-  }, []);
+  }, [])
 
-  const closePopover = useCallback(() => {
-    setActiveMarker(null);
-  }, []);
+  const closePopover = useCallback(() => setActiveMarker(null), [])
 
   useEffect(() => {
-    if (!mapContainer.current || map.current) return;
+    if (!mapContainer.current || map.current) return
 
     try {
-      if (!MAPBOX_TOKEN || MAPBOX_TOKEN === "your-mapbox-token-here") {
-        throw new Error("Invalid Mapbox token");
+      if (!MAPBOX_TOKEN || MAPBOX_TOKEN === 'your-mapbox-token-here') {
+        throw new Error('Invalid Mapbox token')
       }
 
-      mapboxgl.accessToken = MAPBOX_TOKEN;
+      mapboxgl.accessToken = MAPBOX_TOKEN
 
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: "mapbox://styles/mapbox/light-v11",
+        style: 'mapbox://styles/mapbox/light-v11',
         center: center,
         zoom: zoom,
+        maxZoom: 13,
         attributionControl: false,
-      });
+      })
 
-      map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
+      map.current.addControl(new mapboxgl.NavigationControl(), 'top-right')
 
       markers.forEach((marker) => {
-        if (marker.lat && marker.lng) {
-          const markerElement = document.createElement("div");
-          markerElement.innerHTML = `
-            <div class="custom-marker">
-              ${ReactDOMServer.renderToString(
-                <CustomMarker
-                  title={marker.title}
-                  active={
-                    activeMarker?.lat === marker.lat &&
-                    activeMarker?.lng === marker.lng
-                  }
-                />
-              )}
-            </div>
-          `;
+        const markerElement = document.createElement('div')
+        markerElement.innerHTML = ReactDOMServer.renderToString(
+          <CustomMarker
+            title={marker.title}
+            active={
+              activeMarker?.lat === marker.lat &&
+              activeMarker?.lng === marker.lng
+            }
+          />
+        )
 
-          markerElement.addEventListener("click", (e) => {
-            e.stopPropagation();
-            // handleMarkerClick(marker, e as unknown as React.MouseEvent);
-            handleMarkerClick(marker);
-          });
+        markerElement.addEventListener('click', (e) => {
+          e.stopPropagation()
+          handleMarkerClick(marker)
+        })
 
-          new mapboxgl.Marker({
-            element: markerElement,
-            anchor: "bottom",
-          })
-            .setLngLat([marker.lng, marker.lat])
-            .addTo(map.current!);
-        }
-      });
+        new mapboxgl.Marker({ element: markerElement, anchor: 'bottom' })
+          .setLngLat([marker.lng, marker.lat])
+          .addTo(map.current!)
+      })
 
-      // Close popover when map is clicked
-      map.current.on("click", closePopover);
+      map.current.on('click', closePopover)
 
       if (markers.length > 1) {
-        const bounds = new mapboxgl.LngLatBounds();
-        markers.forEach((marker) => {
-          if (marker.lat && marker.lng) {
-            bounds.extend([marker.lng, marker.lat]);
-          }
-        });
-        map.current.fitBounds(bounds, { padding: 50 });
+        const bounds = new mapboxgl.LngLatBounds()
+        markers.forEach((marker) => bounds.extend([marker.lng, marker.lat]))
+        map.current.fitBounds(bounds, { padding: 50, maxZoom: 13 }) // limit zoom to 13
       }
     } catch (err) {
-      console.error("Map initialization error:", err);
+      console.error('Map initialization error:', err)
     }
 
     return () => {
-      if (map.current) {
-        map?.current.remove();
-        map.current = null;
-      }
-    };
-  }, [markers, center, zoom, handleMarkerClick, closePopover, activeMarker]);
+      map.current?.remove()
+      map.current = null
+    }
+  }, [markers, center, zoom, handleMarkerClick, closePopover, activeMarker])
 
   return (
-    <div className="w-full md:w-1/2 relative">
+    <div
+      className="relative"
+      style={{
+        width: typeof width === 'number' ? `${width}px` : width,
+        height: typeof height === 'number' ? `${height}px` : height,
+      }}
+    >
       <div
         ref={mapContainer}
-        className="h-[400px] w-full rounded-lg shadow-lg bg-gray-200 relative"
+        className="w-full h-full rounded-lg shadow-lg bg-gray-200 relative"
         onClick={closePopover}
       >
         {activeMarker && (
@@ -279,7 +289,7 @@ const FindNearMap = ({
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default FindNearMap;
+export default FindNearMap

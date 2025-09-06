@@ -54,7 +54,7 @@ export default function ProductCard({
         <div className="w-full relative">
           <div className="w-full flex flex-col md:flex-row items-center">
             <div className="flex-1">
-              <h3 className="text-[16px] font-normal text-black leading-[30px] md:leading-[45px] lg:leading-[60px] uppercase tracking-[10%]">
+              <h3 className="text-[16px] md:text-xl lg:text-2xl font-normal text-black leading-[30px] md:leading-[45px] lg:leading-[60px] uppercase tracking-[10%]">
                 {name}
               </h3>
               <p className="text-[16px] font-normal text-black leading-[24px] md:leading-[35px] lg:leading-[46px] tracking-[0.10rem] py-[10px]">
@@ -88,7 +88,7 @@ export default function ProductCard({
               )}
 
               {/* Description */}
-              <p className="text-[12px] text-black font-normal leading-[120%]">
+              <p className="text-[12px] md:text-sm text-gray-700 font-light leading-[120%]">
                 {description}
               </p>
             </div>

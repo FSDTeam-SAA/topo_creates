@@ -89,7 +89,7 @@ export default function FindNearYou() {
       page,
     ],
     queryFn: fetchProducts,
-    enabled: false, // 🚨 শুধু manual trigger এ fetch হবে
+    enabled: false,
     placeholderData: keepPreviousData,
     staleTime: 1000 * 60 * 5,
   })
@@ -169,9 +169,9 @@ export default function FindNearYou() {
             placeholder="Search for your business location..."
             mapHeight="300px"
           />
-          <div className="mt-4 text-center w-full">
+          <div className="mt-6 text-center w-full">
             <Button
-              className="w-full font-normal text-xl"
+              className="inline-block border-b border-black px-6 py-2 text-[14px] uppercase tracking-widest text-lg md:text-xl hover:bg-black hover:text-white"
               variant="outline"
               onClick={handleSearchNearYou}
             >
@@ -269,7 +269,11 @@ export default function FindNearYou() {
             </div>
           </div>
           <div className="mt-6 text-center">
-            <Button className="w-1/4" onClick={handleApplyFilters}>
+            <Button
+              variant="outline"
+              className="inline-block border-b border-black px-6 py-2 text-[14px] uppercase tracking-widest hover:bg-black hover:text-white"
+              onClick={handleApplyFilters}
+            >
               Apply Filters
             </Button>
           </div>
