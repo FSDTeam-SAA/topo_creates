@@ -89,7 +89,7 @@ export default function FindNearYou() {
       page,
     ],
     queryFn: fetchProducts,
-    enabled: !!selectedLocation,
+    enabled: false, // 🚨 শুধু manual trigger এ fetch হবে
     placeholderData: keepPreviousData,
     staleTime: 1000 * 60 * 5,
   })
@@ -99,23 +99,28 @@ export default function FindNearYou() {
   // Merge fetched products into Zustand
   useEffect(() => {
     if (!data) return
-
     if (page === 1) {
       setAllProducts(data)
     } else {
       setAllProducts([...allProducts, ...data])
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, page])
 
-  // Reset page + clear products when filters/location change
-  useEffect(() => {
+  // Manual trigger functions
+  const handleSearchNearYou = () => {
     if (!selectedLocation) return
     resetPage()
     setAllProducts([])
     refetch()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [size, category, minPrice, maxPrice, radius, selectedLocation])
+  }
+
+  const handleApplyFilters = () => {
+    if (!selectedLocation) return
+    resetPage()
+    setAllProducts([])
+    refetch()
+  }
 
   return (
     <section className="container mx-auto py-12 mt-16 md:mt-20">
@@ -164,6 +169,15 @@ export default function FindNearYou() {
             placeholder="Search for your business location..."
             mapHeight="300px"
           />
+          <div className="mt-4 text-center w-full">
+            <Button
+              className="w-full font-normal text-xl"
+              variant="outline"
+              onClick={handleSearchNearYou}
+            >
+              Search Near You
+            </Button>
+          </div>
         </div>
       )}
 
@@ -183,7 +197,7 @@ export default function FindNearYou() {
 
       {/* Filters */}
       {showFilters && (
-        <div className="mb-6 p-4 border rounded-lg shadow-sm bg-gray-50">
+        <div className="mb-6 p-4 border rounded-lg shadow-sm bg-white">
           <p className="font-normal text-xl mb-4">Filter Options</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-[30px] md:gap-[45px] lg:gap-[60px]">
             {/* Size */}
@@ -254,6 +268,11 @@ export default function FindNearYou() {
               </div>
             </div>
           </div>
+          <div className="mt-6 text-center">
+            <Button className="w-1/4" onClick={handleApplyFilters}>
+              Apply Filters
+            </Button>
+          </div>
         </div>
       )}
 
@@ -281,7 +300,7 @@ export default function FindNearYou() {
       )}
 
       {/* Loading */}
-      {(isLoading || isFetching) && (
+      {!isMapPage && (isLoading || isFetching) && (
         <div className="mt-10 space-y-4">
           {[...Array(3)].map((_, i) => (
             <div
@@ -300,7 +319,21 @@ export default function FindNearYou() {
         </div>
       )}
 
-      {/* Empty State */}
+      {/* Initial Empty State (before selecting location) */}
+      {!isMapPage && !isFetching && !isError && !selectedLocation && (
+        <div className="mt-16 text-center space-y-5">
+          <AlertCircle className="mx-auto mb-3 text-gray-400 size-24" />
+          <h3 className="text-lg md:text-xl lg:text-2xl font-medium text-gray-700">
+            Start by Selecting a Location
+          </h3>
+          <p className="text-gray-500 mt-1">
+            Use the map above to choose a location and search for dresses near
+            you.
+          </p>
+        </div>
+      )}
+
+      {/* No Results State (location selected but no products) */}
       {!isMapPage &&
         !isFetching &&
         allProducts.length === 0 &&

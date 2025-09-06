@@ -38,15 +38,15 @@ export default function ProductCard({
   })
   return (
     <div key={id}>
-      <div className="flex items-center gap-[20px] md:gap-[35px] lg:gap-[50px] mt-[20px] mb-[15px] md:my-[25px] lg:my-[30px]">
+      <div className="flex items-center justify-between gap-[20px] md:gap-[35px] lg:gap-[50px] mt-[20px] mb-[15px] md:my-[25px] lg:my-[30px]">
         {/* Product Image */}
         <div>
           <Image
             src={image || '/images/dress.png'}
             alt={name}
             width={400}
-            height={300}
-            className="w-[423px] h-[300px] object-contain flex-shrink-0"
+            height={400}
+            className="w-[423px] h-[400px] object-cover flex-shrink-0"
           />
         </div>
 
