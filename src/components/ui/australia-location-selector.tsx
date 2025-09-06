@@ -178,42 +178,44 @@ export default function AustraliaLocationSelector({
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/navigation-day-v1', // Better for precise location selection
+      style: 'mapbox://styles/mapbox/navigation-day-v1',
       center: initialLocation
         ? [initialLocation.longitude, initialLocation.latitude]
-        : [151.2093, -33.8688], // Geographic Sydney
-      zoom: initialLocation ? 16 : 12, // Higher zoom for initial
-      pitch: 0, // Flat view for better precision
+        : [151.2093, -33.8688], // Sydney fallback
+      zoom: initialLocation ? 16 : 14,
+      pitch: 0,
       bearing: 0,
     })
 
-    // Add navigation controls
     map.current.addControl(new mapboxgl.NavigationControl(), 'top-right')
-
-    // Add scale control for distance reference
     map.current.addControl(
-      new mapboxgl.ScaleControl({
-        maxWidth: 100,
-        unit: 'metric',
-      }),
+      new mapboxgl.ScaleControl({ maxWidth: 100, unit: 'metric' }),
       'bottom-left'
     )
 
-    // Add click handler for map
+    // add click listener
     map.current.on('click', handleMapClick)
 
-    // Add initial marker if location provided
-    if (initialLocation) {
-      addPreciseMarker(initialLocation.longitude, initialLocation.latitude)
+    return () => {
+      map.current?.remove()
+      map.current = null
     }
 
-    return () => {
-      if (map.current) {
-        map.current.remove()
-        map.current = null
-      }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accessToken])
+
+  // Whenever initialLocation or selectedLocation changes, update marker
+  useEffect(() => {
+    if (!map.current) return
+
+    const lng = selectedLocation?.longitude ?? initialLocation?.longitude
+    const lat = selectedLocation?.latitude ?? initialLocation?.latitude
+
+    if (lng && lat) {
+      addPreciseMarker(lng, lat)
+      map.current.flyTo({ center: [lng, lat], zoom: 16 })
     }
-  }, [accessToken, initialLocation, addPreciseMarker, handleMapClick])
+  }, [initialLocation, selectedLocation, addPreciseMarker])
 
   const searchAustralianLocations = useCallback(
     async (query: string) => {
