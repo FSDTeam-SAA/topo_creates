@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import type { ApiProduct } from '@/app/(website)/find-near-you/utility/normalizeProducts'
 
 interface Pagination {
@@ -34,27 +35,9 @@ interface FindNearYouState {
   resetAll: () => void
 }
 
-export const useFindNearYouStore = create<FindNearYouState>((set) => ({
-  selectedLocation: null,
-  radius: 10,
-  size: '',
-  category: '',
-  minPrice: '',
-  maxPrice: '',
-  page: 1,
-  allProducts: [],
-  pagination: null,
-
-  // Actions
-  setState: (partial) => set((state) => ({ ...state, ...partial })),
-  resetPage: () => set({ page: 1 }),
-  nextPage: () => set((state) => ({ page: state.page + 1 })),
-  setAllProducts: (products) => set({ allProducts: products }),
-  appendProducts: (products) =>
-    set((state) => ({ allProducts: [...state.allProducts, ...products] })),
-  setPagination: (pagination) => set({ pagination }),
-  resetAll: () =>
-    set({
+export const useFindNearYouStore = create<FindNearYouState>()(
+  persist(
+    (set) => ({
       selectedLocation: null,
       radius: 10,
       size: '',
@@ -64,5 +47,33 @@ export const useFindNearYouStore = create<FindNearYouState>((set) => ({
       page: 1,
       allProducts: [],
       pagination: null,
+
+      // Actions
+      setState: (partial) => set((state) => ({ ...state, ...partial })),
+      resetPage: () => set({ page: 1 }),
+      nextPage: () => set((state) => ({ page: state.page + 1 })),
+      setAllProducts: (products) => set({ allProducts: products }),
+      appendProducts: (products) =>
+        set((state) => ({ allProducts: [...state.allProducts, ...products] })),
+      setPagination: (pagination) => set({ pagination }),
+      resetAll: () =>
+        set({
+          selectedLocation: null,
+          radius: 10,
+          size: '',
+          category: '',
+          minPrice: '',
+          maxPrice: '',
+          page: 1,
+          allProducts: [],
+          pagination: null,
+        }),
     }),
-}))
+    {
+      name: 'find-near-you-storage', // localStorage key
+      partialize: (state) => ({
+        selectedLocation: state.selectedLocation,
+      }),
+    }
+  )
+)
