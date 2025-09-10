@@ -157,6 +157,18 @@ export default function FindNearYou() {
         <div className="mb-6">
           <AustraliaLocationSelector
             accessToken={mapboxtoken || ''}
+            initialLocation={
+              selectedLocation
+                ? {
+                    latitude: selectedLocation.latitude,
+                    longitude: selectedLocation.longitude,
+                    placeName: selectedLocation.placeName,
+                    address: selectedLocation.placeName, // store-এ আলাদা address না থাকলে এটাকে use করুন
+                    country: 'Australia', //required field fix
+                    precision: 'exact',
+                  }
+                : undefined
+            }
             onLocationSelect={(data) => {
               setState({
                 selectedLocation: {

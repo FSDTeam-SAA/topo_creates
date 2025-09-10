@@ -29,6 +29,12 @@ export interface ApiProduct {
   latitude?: number
   longitude?: number
   days?: number
+  lenderId?: {
+    _id?: string
+    fullName?: string
+    latitude?: number
+    longitude?: number
+  }
 }
 
 // 🟢 Default fallback → Thai Town, Sydney

@@ -178,7 +178,7 @@ export default function AustraliaLocationSelector({
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/navigation-day-v1',
+      style: 'mapbox://styles/mapbox/streets-v11',
       center: initialLocation
         ? [initialLocation.longitude, initialLocation.latitude]
         : [151.2093, -33.8688], // Sydney fallback

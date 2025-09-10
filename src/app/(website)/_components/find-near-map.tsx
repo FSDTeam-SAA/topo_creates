@@ -60,7 +60,7 @@ const ProductPopover = ({
   position: { top: number; left: number }
   onClose: () => void
 }) => {
-  console.log("ProductPopover products:", products)
+  console.log('ProductPopover products:', products)
   const popoverRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -235,7 +235,7 @@ const FindNearMap = ({
 
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/light-v11',
+        style: 'mapbox://styles/mapbox/streets-v11',
         center: center,
         zoom: zoom,
         maxZoom: 13,
