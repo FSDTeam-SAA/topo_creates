@@ -107,36 +107,37 @@ const Navbar = ({ isLoggedin, session }: Props) => {
   const isHomePage = pathname === "/";
 
   const getTextColor = () => {
-    return scrolling ||
-      pathname === "/become-lender" ||
-      pathname.startsWith("/product/") ||
-      pathname === "/product/dress-name" ||
-      pathname === "/checkout" ||
-      pathname === "/shop" ||
-      pathname === "/account" ||
-      pathname === "/about" ||
-      pathname === "/how-it-works" ||
-      pathname === "/find-near-you" ||
-      pathname === "/login"
-      ? "text-black"
-      : "text-white";
-  };
+  return scrolling ||
+    pathname === "/become-lender" ||
+    pathname.startsWith("/product/") ||
+    pathname.startsWith("/shop/") ||  // ✅ add this
+    pathname === "/checkout" ||
+    pathname === "/shop" ||
+    pathname === "/account" ||
+    pathname === "/about" ||
+    pathname === "/how-it-works" ||
+    pathname === "/find-near-you" ||
+    pathname === "/login"
+    ? "text-black"
+    : "text-white";
+};
 
-  const getBorderColor = () => {
-    return scrolling ||
-      pathname === "/become-lender" ||
-      pathname.startsWith("/product/") ||
-      pathname === "/product/dress-name" ||
-      pathname === "/checkout" ||
-      pathname === "/shop" ||
-      pathname === "/account" ||
-      pathname === "/about" ||
-      pathname === "/how-it-works" ||
-      pathname === "/find-near-you" ||
-      pathname === "/login"
-      ? "border-black"
-      : "border-white";
-  };
+const getBorderColor = () => {
+  return scrolling ||
+    pathname === "/become-lender" ||
+    pathname.startsWith("/product/") ||
+    pathname.startsWith("/shop/") || // ✅ add this
+    pathname === "/checkout" ||
+    pathname === "/shop" ||
+    pathname === "/account" ||
+    pathname === "/about" ||
+    pathname === "/how-it-works" ||
+    pathname === "/find-near-you" ||
+    pathname === "/login"
+    ? "border-black"
+    : "border-white";
+};
+
 
   return (
     <>
@@ -169,25 +170,22 @@ const Navbar = ({ isLoggedin, session }: Props) => {
               ))}
 
               <div className="flex-shrink-0">
-                {scrolling ||
-                pathname === "/account" ||
-                pathname.startsWith("/product/") ||
-                pathname === "/login" ||
-                pathname === "/checkout" ||
-                pathname === "/become-lender" ||
-                pathname === "/shop" ||
-                pathname === "/about" ||
-                pathname === "/how-it-works" ||
-                pathname === "/find-near-you" ? (
-                  <Image
-                    src="/logo-black.svg"
-                    height={60}
-                    width={60}
-                    alt="Logo"
-                  />
-                ) : (
-                  <Image src="/logo.svg" height={60} width={60} alt="Logo" />
-                )}
+               {scrolling ||
+ pathname === "/account" ||
+ pathname.startsWith("/product/") ||
+ pathname.startsWith("/shop/") ||  // ✅ add this
+ pathname === "/login" ||
+ pathname === "/checkout" ||
+ pathname === "/become-lender" ||
+ pathname === "/shop" ||
+ pathname === "/about" ||
+ pathname === "/how-it-works" ||
+ pathname === "/find-near-you" ? (
+   <Image src="/logo-black.svg" height={60} width={60} alt="Logo" />
+ ) : (
+   <Image src="/logo.svg" height={60} width={60} alt="Logo" />
+ )}
+
               </div>
             </div>
 

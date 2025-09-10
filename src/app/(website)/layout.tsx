@@ -11,7 +11,7 @@ export default async function WebsiteLayout({
   return (
     <div className="">
       <Navbar isLoggedin={!!session} session={session!} />
-      <div className="">{children}</div>
+      <div className="pt-[100px] min-h-[calc(100vh-100px)]">{children}</div>
       <Footer />
     </div>
   )
