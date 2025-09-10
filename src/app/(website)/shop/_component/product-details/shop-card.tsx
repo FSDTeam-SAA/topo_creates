@@ -11,8 +11,6 @@ interface ShopCardProps {
 const ShopCard = ({ allImages, isLoading }: ShopCardProps) => {
   const [currentImage, setCurrentImage] = useState("img-1");
 
-  console.log("all Images : ", allImages[0]);
-
   const img1 = allImages[0];
   const img2 = allImages[1];
   const img3 = allImages[2];
@@ -48,65 +46,73 @@ const ShopCard = ({ allImages, isLoading }: ShopCardProps) => {
       <div className="flex flex-col lg:flex-row gap-5">
         {/* Left Sidebar */}
         <div className="flex flex-row lg:flex-col gap-5 lg:w-[20%] w-full overflow-x-auto">
-          <div
-            onClick={() => setCurrentImage("img-1")}
-            className={` min-w-[150px] lg:h-[150px] h-[100px] cursor-pointer ${
-              currentImage === "img-1" ? "border border-black" : ""
-            }`}
-          >
-            <Image
-              src={img1 || "/placeholder.jpg"}
-              alt="img1.png"
-              width={1000}
-              height={1000}
-              className="w-full h-full"
-            />
-          </div>
+          {img1 && (
+            <div
+              onClick={() => setCurrentImage("img-1")}
+              className={` min-w-[150px] lg:h-[150px] h-[100px] cursor-pointer ${
+                currentImage === "img-1" ? "border border-black" : ""
+              }`}
+            >
+              <Image
+                src={img1 || "/placeholder.jpg"}
+                alt="img1.png"
+                width={1000}
+                height={1000}
+                className="w-full h-full"
+              />
+            </div>
+          )}
 
-          <div
-            onClick={() => setCurrentImage("img-2")}
-            className={` min-w-[150px] lg:h-[150px] h-[100px] cursor-pointer ${
-              currentImage === "img-2" ? "border border-black" : ""
-            }`}
-          >
-            <Image
-              src={img2 || "/placeholder.jpg"}
-              alt="img2.png"
-              width={1000}
-              height={1000}
-              className="w-full h-full"
-            />
-          </div>
+          {img2 && (
+            <div
+              onClick={() => setCurrentImage("img-2")}
+              className={` min-w-[150px] lg:h-[150px] h-[100px] cursor-pointer ${
+                currentImage === "img-2" ? "border border-black" : ""
+              }`}
+            >
+              <Image
+                src={img2 || "/placeholder.jpg"}
+                alt="img2.png"
+                width={1000}
+                height={1000}
+                className="w-full h-full"
+              />
+            </div>
+          )}
 
-          <div
-            onClick={() => setCurrentImage("img-3")}
-            className={` min-w-[150px] lg:h-[150px] h-[100px] cursor-pointer ${
-              currentImage === "img-3" ? "border border-black" : ""
-            }`}
-          >
-            <Image
-              src={img3 || "/placeholder.jpg"}
-              alt="img3.png"
-              width={1000}
-              height={1000}
-              className="w-full h-full"
-            />
-          </div>
+          {img3 && (
+            <div
+              onClick={() => setCurrentImage("img-3")}
+              className={` min-w-[150px] lg:h-[150px] h-[100px] cursor-pointer ${
+                currentImage === "img-3" ? "border border-black" : ""
+              }`}
+            >
+              <Image
+                src={img3 || "/placeholder.jpg"}
+                alt="img3.png"
+                width={1000}
+                height={1000}
+                className="w-full h-full"
+              />
+            </div>
+          )}
 
-          <div
-            onClick={() => setCurrentImage("img-4")}
-            className={` min-w-[150px] lg:h-[150px] h-[100px] cursor-pointer ${
-              currentImage === "img-4" ? "border border-black" : ""
-            }`}
-          >
-            <Image
-              src={img4 || "/placeholder.jpg"}
-              alt="img4.png"
-              width={1000}
-              height={1000}
-              className="w-full h-full"
-            />
-          </div>
+          {img4 && (
+            <div
+              onClick={() => setCurrentImage("img-4")}
+              className={` min-w-[150px] lg:h-[150px] h-[100px] cursor-pointer ${
+                currentImage === "img-4" ? "border border-black" : ""
+              }`}
+            >
+              <Image
+                src={img4 || "/placeholder.jpg"}
+                alt="img4.png"
+                width={1000}
+                height={1000}
+                className="w-full h-full"
+              />
+            </div>
+          )}
         </div>
 
         {/* Main Content */}

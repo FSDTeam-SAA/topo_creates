@@ -21,8 +21,6 @@ const ProductDetails = () => {
 
   const allImages = singleProduct?.data?.media || [];
 
-  console.log("singleProduct : ", singleProduct);
-
   return (
     <div className="flex flex-col lg:flex-row gap-10 lg:gap-12">
       <div className="lg:flex-1">
@@ -30,7 +28,7 @@ const ProductDetails = () => {
       </div>
 
       <div className="lg:w-[35%]">
-        <ShopDetails />
+        <ShopDetails singleProduct={singleProduct} />
       </div>
     </div>
   );
