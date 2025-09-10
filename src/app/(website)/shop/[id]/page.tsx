@@ -3,7 +3,7 @@ import ProductDetails from "../_component/product-details/product-details";
 
 const page = () => {
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto pb-24">
       <ProductDetails />
     </div>
   );

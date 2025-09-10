@@ -1,5 +1,7 @@
 import { useShoppingStore } from "@/zustand/shopingStore";
 import ShoppingRent from "./shopping-rent";
+import DeliveryOption from "./delivery-option";
+import PriceBreakDown from "./price-breakdown";
 
 interface RentalPrice {
   fourDays?: string | number;
@@ -21,8 +23,6 @@ const ShopDetails: React.FC<ShopDetailsProps> = ({ singleProduct }) => {
   const { rent, setRent } = useShoppingStore();
 
   const data = singleProduct?.data;
-
-  console.log("singleProduct : ", data);
 
   return (
     <div className="lg:min-h-[660px] font-avenir">
@@ -57,6 +57,10 @@ const ShopDetails: React.FC<ShopDetailsProps> = ({ singleProduct }) => {
       </div>
 
       <ShoppingRent />
+
+      <DeliveryOption />
+
+      <PriceBreakDown singleProduct={singleProduct} />
     </div>
   );
 };
