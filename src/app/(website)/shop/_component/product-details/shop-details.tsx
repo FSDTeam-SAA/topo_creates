@@ -1,7 +1,24 @@
-import React, { useState } from "react";
+import { useShoppingStore } from "@/zustand/shopingStore";
+import ShoppingRent from "./shopping-rent";
 
-const ShopDetails = ({ singleProduct }) => {
-  const [rent, setRent] = useState("4-day-rent");
+interface RentalPrice {
+  fourDays?: string | number;
+  eightDays?: string | number;
+}
+
+interface ProductData {
+  dressName?: string;
+  rentalPrice?: RentalPrice;
+}
+
+interface ShopDetailsProps {
+  singleProduct: {
+    data?: ProductData;
+  };
+}
+
+const ShopDetails: React.FC<ShopDetailsProps> = ({ singleProduct }) => {
+  const { rent, setRent } = useShoppingStore();
 
   const data = singleProduct?.data;
 
@@ -14,34 +31,32 @@ const ShopDetails = ({ singleProduct }) => {
       </h1>
 
       <p className="tracking-wider mt-2 opacity-75 uppercase">
-        {rent === "4-day-rent"
+        {rent === "4"
           ? `${data?.rentalPrice?.fourDays} / 4 days`
           : `${data?.rentalPrice?.eightDays} / 8 days`}
       </p>
 
       <div className="mt-16 opacity-75 flex items-center gap-5">
         <button
-          onClick={() => setRent("4-day-rent")}
+          onClick={() => setRent("4")}
           className={`w-1/2 pb-2 uppercase ${
-            rent === "4-day-rent"
-              ? "border-b-2 border-black"
-              : "border-b-2 border-white"
+            rent === "4" ? "border-b-2 border-black" : "border-b-2 border-white"
           }`}
         >
           4 day rent
         </button>
 
         <button
-          onClick={() => setRent("8-day-rent")}
+          onClick={() => setRent("8")}
           className={`w-1/2 pb-2 uppercase ${
-            rent === "8-day-rent"
-              ? "border-b-2 border-black"
-              : "border-b-2 border-white"
+            rent === "8" ? "border-b-2 border-black" : "border-b-2 border-white"
           }`}
         >
           8 day rent(+$15)
         </button>
       </div>
+
+      <ShoppingRent />
     </div>
   );
 };
