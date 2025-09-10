@@ -4,7 +4,7 @@ import Image from "next/image";
 const HowItWork = () => {
   return (
     <div>
-      <div className="max-w-6xl mx-auto px-4 py-16 text-center">
+      <div className="max-w-6xl mx-auto px-4 pt-16 text-center">
         <h2 className="headerClass">HOW IT WORKS</h2>
         <p className="sub-title mb-16">
           WE MADE IT SIMPLE. YOU MAKE IT STYLISH.

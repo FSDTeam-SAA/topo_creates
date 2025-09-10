@@ -43,7 +43,7 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="flex flex-col h-full">
       <Link
-        href={`/product/${product.dressId}`}
+        href={`/shop/${product._id}`}
         className="group flex flex-col flex-grow"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -58,7 +58,7 @@ export function ProductCard({ product }: ProductCardProps) {
           <div className="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out">
             <button
               className="w-full bg-white py-2 rounded hover:bg-gray-200 transition duration-300 text-black text-[14px]"
-              onClick={(e) => e.preventDefault()} // prevent navigating on button click
+              onClick={(e) => e.preventDefault()}
             >
               BOOK NOW
             </button>

@@ -7,7 +7,7 @@ import { FilterDrawer } from "./_component/FilterDrawer";
 
 const page = () => {
   return (
-    <div className="mt-20 container mx-auto py-8">
+    <div className=" container mx-auto pb-8">
       <div className="text-center">
         <h1 className=" uppercase headerClass">Shop</h1>
         <p className=" uppercase sub-title text-black/70">
