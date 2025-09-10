@@ -34,10 +34,10 @@ const Footer = () => {
               <Link href="#" className="text-gray-600 hover:text-gray-900">
                 Contact Us
               </Link>
-              <Link href="#" className="text-gray-600 hover:text-gray-900">
-                Return Policy
+              <Link href="/refund-policy" className="text-gray-600 hover:text-gray-900">
+                Refund Policy
               </Link>
-              <Link href="#" className="text-gray-600 hover:text-gray-900">
+              <Link href="/insurance-policy" className="text-gray-600 hover:text-gray-900">
                 Insurance Policy
               </Link>
             </nav>
