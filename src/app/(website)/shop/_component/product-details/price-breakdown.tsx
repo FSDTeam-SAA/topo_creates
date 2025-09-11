@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { toast } from "sonner";
 
 interface RentalPrice {
   fourDays?: string | number;
@@ -28,6 +29,8 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
   const token = session?.data?.user?.accessToken;
 
   const pathName = usePathname();
+
+  const { isConfirm, setIsConfirm, idPreview } = useShoppingStore();
 
   const data = singleProduct?.data;
 
@@ -104,6 +107,16 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
     createBooking.mutate();
   };
 
+  const handleCheckoutForm = () => {
+    if (idPreview === null) {
+      toast.error("Please complete all required fields!", {
+        position: "bottom-right",
+      });
+      return;
+    }
+    setIsConfirm(true);
+  };
+
   return (
     <div className="font-avenir uppercase mt-10">
       <h1 className="opacity-75 tracking-widest border-b border-black pb-1">
@@ -137,16 +150,28 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
       </div>
 
       <div className="text-center border-b-2 border-gray-500 pb-1 mt-10">
-        {pathName?.startsWith("/shop/checkout") && !pathName.includes("/confirmation") ? (
-          <button
-            onClick={handleCheckout}
-            disabled={createBooking.isPending || createCheckout.isPending}
-            className="opacity-75 tracking-widest uppercase disabled:opacity-50"
-          >
-            {createBooking.isPending || createCheckout.isPending
-              ? "Processing..."
-              : "Confirm & Pay"}
-          </button>
+        {pathName?.startsWith("/shop/checkout") &&
+        !pathName.includes("/confirmation") ? (
+          <div>
+            {isConfirm === true ? (
+              <button
+                onClick={handleCheckout}
+                disabled={createBooking.isPending || createCheckout.isPending}
+                className="opacity-75 tracking-widest uppercase disabled:opacity-50"
+              >
+                {createBooking.isPending || createCheckout.isPending
+                  ? "Processing..."
+                  : "Confirm & Pay"}
+              </button>
+            ) : (
+              <button
+                onClick={handleCheckoutForm}
+                className="opacity-75 tracking-widest uppercase disabled:opacity-50"
+              >
+                Confirm & Pay
+              </button>
+            )}
+          </div>
         ) : (
           <Link href={`/shop/checkout/${data?._id}`}>
             <button className="opacity-75 tracking-widest uppercase disabled:opacity-50">
