@@ -24,30 +24,37 @@ import {
 import { useShoppingStore } from "@/zustand/shopingStore";
 
 const FormSchema = z.object({
-  startDate: z.date({
-    required_error: "Start date is required.",
-  }),
-  endDate: z.date({
-    required_error: "End date is required.",
-  }),
+  startDate: z.date({ required_error: "Start date is required." }),
+  endDate: z.date({ required_error: "End date is required." }),
 });
 
 const RentalDates = () => {
-  const { rent } = useShoppingStore();
+  const { rent, startDate, endDate, setStartDate, setEndDate } =
+    useShoppingStore();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      startDate: startDate || undefined,
+      endDate: endDate || undefined,
+    },
   });
 
-  const startDate = form.watch("startDate");
+  // keep form in sync with zustand
+  useEffect(() => {
+    if (startDate) form.setValue("startDate", startDate);
+    if (endDate) form.setValue("endDate", endDate);
+  }, [startDate, endDate, form]);
 
+  // auto-calc endDate when startDate or rent changes
   useEffect(() => {
     if (startDate && rent) {
       const newEndDate = new Date(startDate);
       newEndDate.setDate(startDate.getDate() + Number(rent));
+      setEndDate(newEndDate);
       form.setValue("endDate", newEndDate, { shouldValidate: true });
     }
-  }, [startDate, rent, form]);
+  }, [startDate, rent, form, setEndDate]);
 
   return (
     <div className="font-avenir uppercase mt-3">
@@ -83,7 +90,10 @@ const RentalDates = () => {
                     <Calendar
                       mode="single"
                       selected={field.value}
-                      onSelect={field.onChange}
+                      onSelect={(date) => {
+                        field.onChange(date);
+                        setStartDate(date ?? null);
+                      }}
                       disabled={(date) =>
                         date < new Date(new Date().setHours(0, 0, 0, 0))
                       }
@@ -126,7 +136,10 @@ const RentalDates = () => {
                     <Calendar
                       mode="single"
                       selected={field.value}
-                      onSelect={field.onChange}
+                      onSelect={(date) => {
+                        field.onChange(date);
+                        setEndDate(date ?? null);
+                      }}
                       disabled={(date) =>
                         date < new Date(new Date().setHours(0, 0, 0, 0))
                       }
