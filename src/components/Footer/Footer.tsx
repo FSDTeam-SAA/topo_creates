@@ -1,16 +1,16 @@
-"use client";
-import { ArrowRight, Facebook, Instagram } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
-import { FaTiktok } from "react-icons/fa6";
-import CustomerTermsConditionsDialog from "../tmc/customer-terms-conditions-dialog";
-import LenderTermsConditions from "../tmc/lender -terms-Conditions";
-import { Button } from "../ui/button";
+'use client'
+import { ArrowRight, Facebook, Instagram } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useState } from 'react'
+import { FaTiktok } from 'react-icons/fa6'
+import CustomerTermsConditionsDialog from '../tmc/customer-terms-conditions-dialog'
+import LenderTermsConditions from '../tmc/lender -terms-Conditions'
+import { Button } from '../ui/button'
 
 const Footer = () => {
-  const [open, setOpne] = useState(false);
-  const [open1, setOpne1] = useState(false);
+  const [open, setOpne] = useState(false)
+  const [open1, setOpne1] = useState(false)
   return (
     <footer className="w-full  bg-white">
       <div className="container mx-auto">
@@ -34,10 +34,16 @@ const Footer = () => {
               <Link href="#" className="text-gray-600 hover:text-gray-900">
                 Contact Us
               </Link>
-              <Link href="/refund-policy" className="text-gray-600 hover:text-gray-900">
+              <Link
+                href="/refund-policy"
+                className="text-gray-600 hover:text-gray-900"
+              >
                 Refund Policy
               </Link>
-              <Link href="/insurance-policy" className="text-gray-600 hover:text-gray-900">
+              <Link
+                href="/insurance-policy"
+                className="text-gray-600 hover:text-gray-900"
+              >
                 Insurance Policy
               </Link>
             </nav>
@@ -53,7 +59,10 @@ const Footer = () => {
               >
                 Become a Lender
               </Link>
-              <Link href="#" className="text-gray-600 hover:text-gray-900">
+              <Link
+                href="lender-faq"
+                className="text-gray-600 hover:text-gray-900"
+              >
                 Lender FAQ
               </Link>
               <Link href="#" className="text-gray-600 hover:text-gray-900">
@@ -77,7 +86,10 @@ const Footer = () => {
               <Link href="/about" className="text-gray-600 hover:text-gray-900">
                 About
               </Link>
-              <Link href="#" className="text-gray-600 hover:text-gray-900">
+              <Link
+                href="/privacy-policy"
+                className="text-gray-600 hover:text-gray-900"
+              >
                 Privacy Policy
               </Link>
               <Link
@@ -88,7 +100,10 @@ const Footer = () => {
                 Terms & Conditions
               </Link>
               <CustomerTermsConditionsDialog open={open1} setOpen={setOpne1} />
-              <Link href="#" className="text-gray-600 hover:text-gray-900">
+              <Link
+                href="/dispute-resolution"
+                className="text-gray-600 hover:text-gray-900"
+              >
                 Dispute Resolution
               </Link>
               <Link href="#" className="text-gray-600 hover:text-gray-900">
@@ -144,7 +159,7 @@ const Footer = () => {
                 </Button>
               </div>
               <p className="text-[12px] text-gray-500">
-                By subscribing, you agree to our{" "}
+                By subscribing, you agree to our{' '}
                 <Link href="#" className="text-gray-700 hover:underline">
                   Privacy Policy
                 </Link>
@@ -191,7 +206,7 @@ const Footer = () => {
           <div className="flex flex-col items-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 my-5">
             <div>
               <Image
-                src={"/logo-black.svg"}
+                src={'/logo-black.svg'}
                 width={300}
                 height={300}
                 alt="logo"
@@ -209,7 +224,7 @@ const Footer = () => {
         © MUSE GALA 2025
       </p>
     </footer>
-  );
-};
+  )
+}
 
-export default Footer;
+export default Footer

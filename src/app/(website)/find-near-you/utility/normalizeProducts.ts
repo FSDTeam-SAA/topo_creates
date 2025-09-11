@@ -13,7 +13,7 @@ export interface ProductCardData {
   latitude: number
   longitude: number
 
-  // 🆕 Extra fields
+  // Extra fields
   lenderId?: string
   lenderName?: string
   approvalStatus?: string
