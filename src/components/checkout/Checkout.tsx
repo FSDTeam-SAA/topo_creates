@@ -8,7 +8,7 @@ import CheckoutForm from "../checkout-form/CheckoutForm";
 const Checkout = () => {
   const params = useParams();
 
-  const { data: singleProduct = {} } = useQuery({
+  const { data: singleProduct = {}, isLoading } = useQuery({
     queryKey: ["single-product"],
     queryFn: async () => {
       const res = await fetch(
@@ -29,7 +29,7 @@ const Checkout = () => {
         </div>
 
         <div className="lg:w-[40%]">
-          <ShopDetails singleProduct={singleProduct} />
+          <ShopDetails singleProduct={singleProduct} isLoading={isLoading} />
         </div>
       </div>
     </div>

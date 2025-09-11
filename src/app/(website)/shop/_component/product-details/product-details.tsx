@@ -32,7 +32,7 @@ const ProductDetails = () => {
         </div>
 
         <div className="lg:w-[40%]">
-          <ShopDetails singleProduct={singleProduct} />
+          <ShopDetails singleProduct={singleProduct} isLoading={isLoading} />
         </div>
       </div>
 

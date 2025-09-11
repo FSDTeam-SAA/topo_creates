@@ -4,6 +4,7 @@ import DeliveryOption from "./delivery-option";
 import PriceBreakDown from "./price-breakdown";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import ShopDetailsSkeleton from "@/skeleton/ShopDetailsSkeleton";
 
 interface RentalPrice {
   fourDays?: string | number;
@@ -21,14 +22,20 @@ interface ShopDetailsProps {
   singleProduct: {
     data?: ProductData;
   };
+  isLoading: boolean;
 }
 
-const ShopDetails: React.FC<ShopDetailsProps> = ({ singleProduct }) => {
+const ShopDetails: React.FC<ShopDetailsProps> = ({
+  singleProduct,
+  isLoading,
+}) => {
   const { rent, setRent } = useShoppingStore();
 
   const pathName = usePathname();
 
   const data = singleProduct?.data;
+
+  if (isLoading) return <ShopDetailsSkeleton />;
 
   return (
     <div className="lg:min-h-[660px] font-avenir">
@@ -65,14 +72,18 @@ const ShopDetails: React.FC<ShopDetailsProps> = ({ singleProduct }) => {
             </div>
 
             <div>
-              <h1 className="font-light opacity-75 tracking-[0.1rem] uppercase">{data?.dressName}</h1>
+              <h1 className="font-light opacity-75 tracking-[0.1rem] uppercase">
+                {data?.dressName}
+              </h1>
               <p className="tracking-wider mt-2 opacity-75 uppercase text-sm">
                 {rent === "4"
                   ? `$${data?.rentalPrice?.fourDays} / 4 days`
                   : `$${data?.rentalPrice?.eightDays} / 8 days`}
               </p>
 
-              <p className="tracking-wider mt-2 opacity-75 uppercase text-sm">Dress Id : {data?.dressId}</p>
+              <p className="tracking-wider mt-2 opacity-75 uppercase text-sm">
+                Dress Id : {data?.dressId}
+              </p>
             </div>
           </div>
         )}
