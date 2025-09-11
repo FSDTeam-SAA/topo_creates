@@ -31,7 +31,7 @@ const ProductDetails = () => {
           <ShopCard allImages={allImages} isLoading={isLoading} />
         </div>
 
-        <div className="lg:w-[35%]">
+        <div className="lg:w-[40%]">
           <ShopDetails singleProduct={singleProduct} />
         </div>
       </div>
