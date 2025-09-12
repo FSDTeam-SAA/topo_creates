@@ -100,7 +100,7 @@ const ProductPopover = ({
       </div>
 
       {/* Scrollable content */}
-      <div className="divide-y divide-gray-200">
+      <div className="divide-y divide-gray-200 font-inter ">
         {products.map((product) => (
           <Link key={product.id} href={`/shop/${product.id}`}>
             <div
@@ -127,16 +127,16 @@ const ProductPopover = ({
 
               {/* Info */}
 
-              <div className="flex-1 flex flex-col justify-between">
+              <div className="flex-1 flex flex-col justify-between uppercase tracking-[.05em]">
                 <div className="space-y-3">
                   <div className="text-sm font-light text-gray-800 line-clamp-1">
                     {product?.name ?? (product as any)?.dressName ?? 'Untitled'}
                   </div>
 
                   {/* Shipping & Pickup */}
-                  <div className="flex flex-col md:flex-row items-start md:items-center gap-[10px] md:gap-[13px] lg:gap-[15px] text-xs text-gray-500">
+                  <div className="flex flex-col md:flex-row items-start md:items-center gap-[10px] md:gap-[13px] lg:gap-[15px] text-xs text-gray-900">
                     {product?.shipping && (
-                      <div className="flex items-center gap-[5px] md:gap-[8px]">
+                      <div className="flex items-center gap-[5px] md:gap-[8px] capitalize">
                         <Truck width={20} height={16} />
                         <span>SHIPPING</span>
                       </div>
@@ -149,7 +149,14 @@ const ProductPopover = ({
                       </div>
                     )}
 
-                    {!product?.shipping && !product?.pickup && <span>N/A</span>}
+                    {!product?.shipping && !product?.pickup && (
+                      <div className="flex items-center gap-3">
+                        <Truck className="size-5" />
+                        <span className="text-base tracking-[.1em] font-light text-gray-700">
+                          SHIPPING
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="text-xs text-gray-500">
@@ -157,7 +164,7 @@ const ProductPopover = ({
                   </div>
                 </div>
 
-                <div className="text-sm font-light text-[#800000]">
+                <div className="text-sm font-light text-gray-800">
                   {(product as any)?.rentalPrice?.fourDays ??
                     product?.price ??
                     '—'}{' '}

@@ -2,15 +2,15 @@
 import { ArrowRight, Facebook, Instagram } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+// import { useState } from 'react'
 import { FaTiktok } from 'react-icons/fa6'
-import CustomerTermsConditionsDialog from '../tmc/customer-terms-conditions-dialog'
-import LenderTermsConditions from '../tmc/lender -terms-Conditions'
+// import CustomerTermsConditionsDialog from '../tmc/customer-terms-conditions-dialog'
+// import LenderTermsConditions from '../tmc/lender -terms-Conditions'
 import { Button } from '../ui/button'
 
 const Footer = () => {
-  const [open, setOpne] = useState(false)
-  const [open1, setOpne1] = useState(false)
+  // const [open, setOpne] = useState(false)
+  // const [open1, setOpne1] = useState(false)
   return (
     <footer className="w-full  bg-white">
       <div className="container mx-auto">
@@ -46,6 +46,12 @@ const Footer = () => {
               >
                 Insurance Policy
               </Link>
+              <Link
+                href="/dispute-resolution-policy"
+                className="text-gray-600 hover:text-gray-900"
+              >
+                Dispute Resolution Policy
+              </Link>
             </nav>
           </div>
 
@@ -65,17 +71,17 @@ const Footer = () => {
               >
                 Lender FAQ
               </Link>
-              <Link href="#" className="text-gray-600 hover:text-gray-900">
+              <Link href="/login" className="text-gray-600 hover:text-gray-900">
                 Lender Login
               </Link>
               <Link
-                onClick={() => setOpne(true)}
-                href=""
+                // onClick={() => setOpne(true)}
+                href="lender-terms-and-conditions"
                 className="text-gray-600 hover:text-gray-900"
               >
                 Lender Terms & Conditions
               </Link>
-              <LenderTermsConditions open={open} setOpen={setOpne} />
+              {/* <LenderTermsConditions open={open} setOpen={setOpne} /> */}
             </nav>
           </div>
 
@@ -93,20 +99,22 @@ const Footer = () => {
                 Privacy Policy
               </Link>
               <Link
-                onClick={() => setOpne1(true)}
-                href=""
+                href="terms-and-conditions"
                 className="text-gray-600 hover:text-gray-900"
               >
                 Terms & Conditions
               </Link>
-              <CustomerTermsConditionsDialog open={open1} setOpen={setOpne1} />
+              {/* <CustomerTermsConditionsDialog open={open1} setOpen={setOpne1} /> */}
               <Link
                 href="/dispute-resolution"
                 className="text-gray-600 hover:text-gray-900"
               >
                 Dispute Resolution
               </Link>
-              <Link href="#" className="text-gray-600 hover:text-gray-900">
+              <Link
+                href="/refund-policy"
+                className="text-gray-600 hover:text-gray-900"
+              >
                 Refund Policy
               </Link>
             </nav>

@@ -122,10 +122,10 @@ export default function FindNearYou() {
 
   return (
     <section className="container mx-auto py-12">
-      <h1 className="text-center text-xl md:text-4xl lg:text-[56px] uppercase font-normal tracking-[5px] lg:tracking-[20px] mb-6 font-avenir">
+      <h1 className="text-center text-xl md:text-4xl lg:text-[56px] uppercase font-light tracking-[5px] lg:tracking-[.4em] mb-6 md:mb-10 font-inter">
         Find Near You
       </h1>
-      <p className="text-center text-lg md:text-xl lg:text-2xl font-normal tracking-[3px] lg:tracking-[10px] mb-8 font-avenir">
+      <p className="text-center text-lg md:text-xl lg:text-2xl font-light tracking-[3px] lg:tracking-[10px] mb-8 font-inter">
         FIND YOUR DRESS NEAR YOU FOR LOCAL PICK UP
       </p>
 
@@ -134,7 +134,7 @@ export default function FindNearYou() {
         <Button
           variant="outline"
           onClick={() => setShowMap(!showMap)}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 font-light tracking-[.08em]"
         >
           <Map size={16} />
           {showMap ? 'Hide Map' : 'Show Map'}
@@ -142,7 +142,7 @@ export default function FindNearYou() {
         <Button
           variant="outline"
           onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 font-light tracking-[.08em]"
         >
           <Filter size={16} />
           Filters{' '}
@@ -193,7 +193,7 @@ export default function FindNearYou() {
 
       {/* Radius Slider */}
       <div className="mb-6">
-        <p className="font-normal mb-2">
+        <p className="font-light tracking-[.05em] mb-2">
           Radius: <span className="font-light">{radius} km</span>
         </p>
         <Slider
@@ -208,22 +208,24 @@ export default function FindNearYou() {
       {/* Filters */}
       {showFilters && (
         <div className="mb-6 p-4 border rounded-lg shadow-sm bg-white">
-          <p className="font-normal text-xl mb-4">Filter Options</p>
+          <p className="font-light tracking-[.08em] text-xl mb-4">
+            Filter Options
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-[30px] md:gap-[45px] lg:gap-[60px]">
             {/* Size */}
             <div>
               <Label className="text-lg text-black font-thin">Size</Label>
               <Select
-                value={size}
+                value={size || 'CLEAR'} // default empty value
                 onValueChange={(val) =>
-                  setState({ size: val === 'clear' ? '' : val })
+                  setState({ size: val === 'CLEAR' ? '' : val })
                 }
               >
                 <SelectTrigger className="w-full border-b shadow-none rounded-none pt-5 pb-3 h-auto">
                   <SelectValue placeholder="Please Select" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value=" ">Clear Filter</SelectItem>
+                  <SelectItem value="CLEAR">Clear Filter</SelectItem>
                   <SelectItem value="SM">SM</SelectItem>
                   <SelectItem value="S">S</SelectItem>
                   <SelectItem value="M">M</SelectItem>
@@ -239,14 +241,14 @@ export default function FindNearYou() {
               <Select
                 value={category}
                 onValueChange={(val) =>
-                  setState({ category: val === 'clear' ? '' : val })
+                  setState({ category: val === 'Clear' ? '' : val })
                 }
               >
                 <SelectTrigger className="w-full border-b shadow-none rounded-none pt-5 pb-3 h-auto">
                   <SelectValue placeholder="Please Select" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value=" ">Clear Filter</SelectItem>
+                  <SelectItem value="Clear">Clear Filter</SelectItem>
                   <SelectItem value="Formal">Formal</SelectItem>
                   <SelectItem value="Evening">Evening</SelectItem>
                   <SelectItem value="Casual">Casual</SelectItem>
