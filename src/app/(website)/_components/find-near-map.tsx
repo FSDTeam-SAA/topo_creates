@@ -11,6 +11,7 @@ import {
   ProductCardData,
   normalizeProducts,
 } from '../find-near-you/utility/normalizeProducts'
+import Link from 'next/link'
 
 const MAPBOX_TOKEN =
   process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || 'your-mapbox-token-here'
@@ -101,67 +102,70 @@ const ProductPopover = ({
       {/* Scrollable content */}
       <div className="divide-y divide-gray-200">
         {products.map((product) => (
-          <div
-            key={product.id}
-            className="flex gap-3 p-3 hover:bg-gray-50 transition"
-          >
-            {/* Image */}
-            <div className="w-28 h-28 relative flex-shrink-0">
-              <Image
-                src={
-                  product?.image ||
-                  (product as any)?.media?.[0] ||
-                  '/images/dress.png'
-                }
-                alt={
-                  product?.name ??
-                  (product as any)?.dressName ??
-                  'Product image'
-                }
-                fill
-                className="object-cover rounded-md"
-              />
-            </div>
-
-            {/* Info */}
-            <div className="flex-1 flex flex-col justify-between">
-              <div className="space-y-2">
-                <div className="text-sm font-light text-gray-800 line-clamp-1">
-                  {product?.name ?? (product as any)?.dressName ?? 'Untitled'}
-                </div>
-
-                {/* Shipping & Pickup */}
-                <div className="flex flex-col md:flex-row items-start md:items-center gap-[10px] md:gap-[13px] lg:gap-[15px] text-xs text-gray-500">
-                  {product?.shipping && (
-                    <div className="flex items-center gap-[5px] md:gap-[8px]">
-                      <Truck width={20} height={16} />
-                      <span>SHIPPING</span>
-                    </div>
-                  )}
-
-                  {product?.pickup && (
-                    <div className="flex items-center gap-[5px] md:gap-[8px]">
-                      <MapPin className="w-[16px] h-[16px]" />
-                      <span>PICKUP</span>
-                    </div>
-                  )}
-
-                  {!product?.shipping && !product?.pickup && <span>N/A</span>}
-                </div>
-
-                <div className="text-xs text-gray-500">
-                  Size: {product?.size ?? 'N/A'}
-                </div>
+          <Link key={product.id} href={`/shop/${product.id}`}>
+            <div
+              key={product.id}
+              className="flex gap-5 p-3 hover:bg-gray-50 transition"
+            >
+              {/* Image */}
+              <div className="w-28 h-28 relative flex-shrink-0">
+                <Image
+                  src={
+                    product?.image ||
+                    (product as any)?.media?.[0] ||
+                    '/images/dress.png'
+                  }
+                  alt={
+                    product?.name ??
+                    (product as any)?.dressName ??
+                    'Product image'
+                  }
+                  fill
+                  className="object-cover rounded-md"
+                />
               </div>
 
-              <div className="text-sm font-bold text-[#800000]">
-                {(product as any)?.rentalPrice?.fourDays ??
-                  product?.price ??
-                  '—'}{' '}
-                / 4 Days
+              {/* Info */}
+
+              <div className="flex-1 flex flex-col justify-between">
+                <div className="space-y-3">
+                  <div className="text-sm font-light text-gray-800 line-clamp-1">
+                    {product?.name ?? (product as any)?.dressName ?? 'Untitled'}
+                  </div>
+
+                  {/* Shipping & Pickup */}
+                  <div className="flex flex-col md:flex-row items-start md:items-center gap-[10px] md:gap-[13px] lg:gap-[15px] text-xs text-gray-500">
+                    {product?.shipping && (
+                      <div className="flex items-center gap-[5px] md:gap-[8px]">
+                        <Truck width={20} height={16} />
+                        <span>SHIPPING</span>
+                      </div>
+                    )}
+
+                    {product?.pickup && (
+                      <div className="flex items-center gap-[5px] md:gap-[8px]">
+                        <MapPin className="w-[16px] h-[16px]" />
+                        <span>PICKUP</span>
+                      </div>
+                    )}
+
+                    {!product?.shipping && !product?.pickup && <span>N/A</span>}
+                  </div>
+
+                  <div className="text-xs text-gray-500">
+                    Size: {product?.size ?? 'N/A'}
+                  </div>
+                </div>
+
+                <div className="text-sm font-light text-[#800000]">
+                  {(product as any)?.rentalPrice?.fourDays ??
+                    product?.price ??
+                    '—'}{' '}
+                  / 4 Days
+                </div>
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
@@ -190,6 +194,7 @@ const FindNearMap = ({
 
   // normalize
   const normalizedProducts = normalizeProducts(products as any)
+  console.log('this is map site products', normalizedProducts)
 
   // group products by coordinates
   const markersMap = new Map<string, Marker>()

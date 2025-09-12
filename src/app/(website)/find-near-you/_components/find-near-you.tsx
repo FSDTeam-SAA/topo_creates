@@ -94,8 +94,6 @@ export default function FindNearYou() {
     staleTime: 1000 * 60 * 5,
   })
 
-  console.log('Fetched products:', data)
-
   // Merge fetched products into Zustand
   useEffect(() => {
     if (!data) return
@@ -123,7 +121,7 @@ export default function FindNearYou() {
   }
 
   return (
-    <section className="container mx-auto py-12 mt-16 md:mt-20">
+    <section className="container mx-auto py-12">
       <h1 className="text-center text-xl md:text-4xl lg:text-[56px] uppercase font-normal tracking-[5px] lg:tracking-[20px] mb-6 font-avenir">
         Find Near You
       </h1>
@@ -163,7 +161,7 @@ export default function FindNearYou() {
                     latitude: selectedLocation.latitude,
                     longitude: selectedLocation.longitude,
                     placeName: selectedLocation.placeName,
-                    address: selectedLocation.placeName, // store-এ আলাদা address না থাকলে এটাকে use করুন
+                    address: selectedLocation.placeName,
                     country: 'Australia', //required field fix
                     precision: 'exact',
                   }
@@ -225,11 +223,12 @@ export default function FindNearYou() {
                   <SelectValue placeholder="Please Select" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="clear">Clear Filter</SelectItem>
-                  <SelectItem value="s">S</SelectItem>
-                  <SelectItem value="m">M</SelectItem>
-                  <SelectItem value="l">L</SelectItem>
-                  <SelectItem value="xl">XL</SelectItem>
+                  <SelectItem value=" ">Clear Filter</SelectItem>
+                  <SelectItem value="SM">SM</SelectItem>
+                  <SelectItem value="S">S</SelectItem>
+                  <SelectItem value="M">M</SelectItem>
+                  <SelectItem value="L">L</SelectItem>
+                  <SelectItem value="XL">XL</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -247,11 +246,12 @@ export default function FindNearYou() {
                   <SelectValue placeholder="Please Select" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="clear">Clear Filter</SelectItem>
-                  <SelectItem value="evening">Evening</SelectItem>
-                  <SelectItem value="casual">Casual</SelectItem>
-                  <SelectItem value="wedding">Wedding</SelectItem>
-                  <SelectItem value="cocktail">Cocktail</SelectItem>
+                  <SelectItem value=" ">Clear Filter</SelectItem>
+                  <SelectItem value="Formal">Formal</SelectItem>
+                  <SelectItem value="Evening">Evening</SelectItem>
+                  <SelectItem value="Casual">Casual</SelectItem>
+                  <SelectItem value="Wedding">Wedding</SelectItem>
+                  <SelectItem value="Cocktail">Cocktail</SelectItem>
                 </SelectContent>
               </Select>
             </div>

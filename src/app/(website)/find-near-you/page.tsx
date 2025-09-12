@@ -8,15 +8,17 @@ export default function FindNearYouPage() {
   const trendingProducts = getTrendingProducts()
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-white ">
       <FindNearYou />
-      
-      <HowItWork />
-      <ProductGrid
-        title="TRENDING NOW"
-        subtitle="EXPLORE THE EDIT"
-        products={trendingProducts}
-      />
+
+      <div className="space-y-8 md:space-y-12">
+        <HowItWork />
+        <ProductGrid
+          title="TRENDING NOW"
+          subtitle="EXPLORE THE EDIT"
+          products={trendingProducts}
+        />
+      </div>
     </main>
   )
 }
