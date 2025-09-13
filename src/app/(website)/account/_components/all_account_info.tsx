@@ -19,7 +19,7 @@ const AllAccountInfo = ({ session }: Props) => {
 
   return (
     <div className="">
-      <div className="mt-20">
+      <div>
         <Headers setTab={setTab} tab={tab} />
         <div className="mb-10">
           <DocumentVerification session={session} />
