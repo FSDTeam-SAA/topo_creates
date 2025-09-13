@@ -20,7 +20,7 @@ const ShopCard = ({ allImages, isLoading }: ShopCardProps) => {
     return (
       <div className="flex flex-col lg:flex-row gap-5 animate-pulse">
         {/* Left Sidebar Skeleton */}
-        <div className="flex flex-row lg:flex-col gap-5 lg:w-[20%] w-full overflow-x-auto  lg:overflow-visible">
+        <div className="flex flex-row lg:flex-col gap-5 lg:w-[20%] w-full overflow-x-auto lg:overflow-visible">
           {[...Array(4)].map((_, i) => (
             <div
               key={i}
