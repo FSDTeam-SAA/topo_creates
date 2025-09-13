@@ -126,7 +126,7 @@ const getBorderColor = () => {
   return scrolling ||
     pathname === "/become-lender" ||
     pathname.startsWith("/product/") ||
-    pathname.startsWith("/shop/") || // ✅ add this
+    pathname.startsWith("/shop/") ||
     pathname === "/checkout" ||
     pathname === "/shop" ||
     pathname === "/account" ||

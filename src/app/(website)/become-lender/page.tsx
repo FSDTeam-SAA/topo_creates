@@ -3,7 +3,7 @@ import BecomeLender from './_components/BecomeLender'
 
 const page = () => {
   return (
-    <div className='pt-20'>
+    <div className=''>
     <BecomeLender/>
     </div>
   )
