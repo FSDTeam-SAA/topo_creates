@@ -15,6 +15,7 @@ interface ProductData {
   _id?: string;
   dressName?: string;
   rentalPrice?: RentalPrice;
+  size?: string;
 }
 
 interface ShopDetailsProps {
@@ -30,7 +31,8 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
 
   const pathName = usePathname();
 
-  const { isConfirm, setIsConfirm, idPreview } = useShoppingStore();
+  const { isConfirm, setIsConfirm, idPreview, startDate, endDate } =
+    useShoppingStore();
 
   const data = singleProduct?.data;
 
@@ -55,10 +57,10 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
           },
           body: JSON.stringify({
             listingId: data?._id,
-            rentalStartDate: "2025-08-21T10:00:00.000Z",
-            rentalEndDate: "2025-08-25T10:00:00.000Z",
+            rentalStartDate: startDate,
+            rentalEndDate: endDate,
             rentalDurationDays: rent === "4" ? 4 : 8,
-            size: "M",
+            size: data?.size,
             deliveryMethod: "Shipping",
           }),
         }
@@ -68,7 +70,8 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
       return res.json();
     },
     onSuccess: (bookingResponse) => {
-      const bookingId = bookingResponse?.data?._id;
+      const bookingId = bookingResponse?.data?.id;
+
       if (bookingId) {
         createCheckout.mutate(bookingId);
       } else {
