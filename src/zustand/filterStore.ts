@@ -3,8 +3,8 @@ import { create } from "zustand";
 interface IFilter {
   search: string;
   setSearch: (value: string) => void;
-  rental: string;
-  setRental: (value: string) => void;
+  fourDayRental: boolean;
+  setFourDayRental: (value: boolean) => void;
   localPickup: string;
   setLocalPickup: (value: string) => void;
   eventDate: string;
@@ -19,7 +19,7 @@ interface IFilter {
 
 const initialState = {
   search: "",
-  rental: "",
+  fourDayRental: false,
   localPickup: "",
   eventDate: "",
   minPrice: "",
@@ -30,7 +30,7 @@ const initialState = {
 export const useFilterStore = create<IFilter>((set) => ({
   ...initialState,
   setSearch: (value: string) => set({ search: value }),
-  setRental: (value: string) => set({ rental: value }),
+  setFourDayRental: (value: boolean) => set({ fourDayRental: value }),
   setLocalPickup: (value: string) => set({ localPickup: value }),
   setEventDate: (value: string) => set({ eventDate: value }),
   setMinPrice: (value: string) => set({ minPrice: value }),
