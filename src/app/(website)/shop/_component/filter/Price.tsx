@@ -1,12 +1,16 @@
+'use client'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Slider } from "@/components/ui/slider";
+import { Input } from "@/components/ui/input";
+import { useFilterStore } from "@/zustand/filterStore";
 
 const Price = () => {
+  const { setMinPrice, setMaxPrice } = useFilterStore();
+
   return (
     <Accordion
       type="single"
@@ -18,8 +22,18 @@ const Price = () => {
         <AccordionTrigger className="uppercase font-avenir tracking-widest opacity-75 border-b border-black pb-2">
           Price
         </AccordionTrigger>
-        <AccordionContent className="flex flex-col gap-4 text-balance mt-4">
-          <Slider defaultValue={[20]} max={100} step={1} className="w-full" />
+        <AccordionContent className="flex items-center gap-4 text-balance mt-4">
+          <Input
+            className="focus-visible:ring-0 placeholder:font-avenir placeholder:uppercase placeholder:tracking-widest placeholder:text-xs"
+            placeholder="min"
+            onChange={(e) => setMinPrice(e.target.value)}
+          />
+          <div className="w-10 border-b border-gray-300"></div>
+          <Input
+            className="focus-visible:ring-0 placeholder:font-avenir placeholder:uppercase placeholder:tracking-widest placeholder:text-xs"
+            placeholder="max"
+            onChange={(e) => setMaxPrice(e.target.value)}
+          />
         </AccordionContent>
       </AccordionItem>
     </Accordion>
