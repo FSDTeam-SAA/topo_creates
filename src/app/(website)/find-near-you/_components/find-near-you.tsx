@@ -190,7 +190,6 @@ export default function FindNearYou() {
           </div>
         </div>
       )}
-
       {/* Radius Slider */}
       <div className="mb-6">
         <p className="font-light tracking-[.05em] mb-2">

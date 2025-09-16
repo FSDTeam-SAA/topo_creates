@@ -1,6 +1,6 @@
 'use client'
 
-import { Alert, AlertDescription } from '@/components/ui/alert'
+// import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -42,7 +42,7 @@ export default function AustraliaLocationSelector({
   initialLocation,
   placeholder = 'Search for exact locations in Australia...',
   className = '',
-  mapHeight = '500px',
+  // mapHeight = '500px',
   showCurrentLocation = true,
 }: AustraliaLocationSelectorProps) {
   const mapContainer = useRef<HTMLDivElement>(null)
@@ -481,7 +481,7 @@ export default function AustraliaLocationSelector({
       )}
 
       {/* Map Container */}
-      <div
+      {/* <div
         ref={mapContainer}
         className="w-full rounded-lg border overflow-hidden"
         style={{ height: mapHeight }}
@@ -494,7 +494,7 @@ export default function AustraliaLocationSelector({
           Drag the marker to fine-tune position. Red marker shows exact selected
           location within Australia.
         </AlertDescription>
-      </Alert>
+      </Alert> */}
     </div>
   )
 }
