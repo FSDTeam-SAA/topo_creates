@@ -1,57 +1,57 @@
-"use client";
+'use client'
 
-import type React from "react";
+import type React from 'react'
 
 // Packages
-import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
-import { signOut } from "next-auth/react";
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { Menu, Search, ShoppingBag, User, X } from 'lucide-react'
+import { signOut } from 'next-auth/react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
 // Components
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button'
 import {
   Sheet,
   SheetClose,
   SheetContent,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import { Session } from "next-auth";
+} from '@/components/ui/sheet'
+import { Session } from 'next-auth'
 // import { Input } from "@/components/ui/input";
 
 interface Props {
-  isLoggedin?: boolean;
-  session?: Session;
+  isLoggedin?: boolean
+  session?: Session
 }
 
 const Navbar = ({ isLoggedin, session }: Props) => {
-  const [scrolling, setScrolling] = useState(false);
-  const pathname = usePathname();
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const searchRef = useRef<HTMLDivElement>(null);
-  const searchModalRef = useRef<HTMLDivElement>(null);
-  const [isAccountOpen, setIsAccountOpen] = useState(false);
-  const accountRef = useRef<HTMLDivElement>(null);
+  const [scrolling, setScrolling] = useState(false)
+  const pathname = usePathname()
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const searchRef = useRef<HTMLDivElement>(null)
+  const searchModalRef = useRef<HTMLDivElement>(null)
+  const [isAccountOpen, setIsAccountOpen] = useState(false)
+  const accountRef = useRef<HTMLDivElement>(null)
 
   const menus = [
-    { id: 1, href: "/", linkText: "HOME" },
-    { id: 2, href: "/shop", linkText: "SHOP" },
+    { id: 1, href: '/', linkText: 'HOME' },
+    { id: 2, href: '/shop', linkText: 'SHOP' },
     // { id: 3, href: "/about", linkText: "ABOUT" },
-    { id: 4, href: "/how-it-works", linkText: "HOW IT WORKS" },
-    { id: 5, href: "/become-lender", linkText: "BECOME A LENDER" },
-    { id: 6, href: "/find-near-you", linkText: "FIND NEAR YOU" },
-  ];
+    { id: 4, href: '/how-it-works', linkText: 'HOW IT WORKS' },
+    { id: 5, href: '/become-lender', linkText: 'BECOME A LENDER' },
+    { id: 6, href: '/find-near-you', linkText: 'FIND NEAR YOU' },
+  ]
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolling(window.scrollY > 0);
-    };
+      setScrolling(window.scrollY > 0)
+    }
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -63,7 +63,7 @@ const Navbar = ({ isLoggedin, session }: Props) => {
         searchModalRef.current &&
         !searchModalRef.current.contains(event.target as Node)
       ) {
-        setIsSearchOpen(false);
+        setIsSearchOpen(false)
       }
 
       // Handle account dropdown click outside
@@ -72,78 +72,77 @@ const Navbar = ({ isLoggedin, session }: Props) => {
         accountRef.current &&
         !accountRef.current.contains(event.target as Node)
       ) {
-        setIsAccountOpen(false);
+        setIsAccountOpen(false)
       }
-    };
+    }
 
     const handleEscapeKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setIsSearchOpen(false);
-        setIsAccountOpen(false);
+      if (event.key === 'Escape') {
+        setIsSearchOpen(false)
+        setIsAccountOpen(false)
       }
-    };
+    }
 
     if (isSearchOpen || isAccountOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-      document.addEventListener("keydown", handleEscapeKey);
+      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('keydown', handleEscapeKey)
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleEscapeKey);
-    };
-  }, [isSearchOpen, isAccountOpen]);
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEscapeKey)
+    }
+  }, [isSearchOpen, isAccountOpen])
 
   const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (searchQuery.trim()) {
       // Handle search logic here
-      console.log("Searching for:", searchQuery);
+      console.log('Searching for:', searchQuery)
       // You can redirect to search results page or handle search
       // router.push(`/search?q=${encodeURIComponent(searchQuery)}`)
     }
-  };
+  }
 
-  const isHomePage = pathname === "/";
+  const isHomePage = pathname === '/'
 
   const getTextColor = () => {
-  return scrolling ||
-    pathname === "/become-lender" ||
-    pathname.startsWith("/product/") ||
-    pathname.startsWith("/shop/") ||  // ✅ add this
-    pathname === "/checkout" ||
-    pathname === "/shop" ||
-    pathname === "/account" ||
-    pathname === "/about" ||
-    pathname === "/how-it-works" ||
-    pathname === "/find-near-you" ||
-    pathname === "/login"
-    ? "text-black"
-    : "text-white";
-};
+    return scrolling ||
+      pathname === '/become-lender' ||
+      pathname.startsWith('/product/') ||
+      pathname.startsWith('/shop/') || // ✅ add this
+      pathname === '/checkout' ||
+      pathname === '/shop' ||
+      pathname === '/account' ||
+      pathname === '/about' ||
+      pathname === '/how-it-works' ||
+      pathname === '/find-near-you' ||
+      pathname === '/login'
+      ? 'text-black'
+      : 'text-white'
+  }
 
-const getBorderColor = () => {
-  return scrolling ||
-    pathname === "/become-lender" ||
-    pathname.startsWith("/product/") ||
-    pathname.startsWith("/shop/") || // ✅ add this
-    pathname === "/checkout" ||
-    pathname === "/shop" ||
-    pathname === "/account" ||
-    pathname === "/about" ||
-    pathname === "/how-it-works" ||
-    pathname === "/find-near-you" ||
-    pathname === "/login"
-    ? "border-black"
-    : "border-white";
-};
-
+  const getBorderColor = () => {
+    return scrolling ||
+      pathname === '/become-lender' ||
+      pathname.startsWith('/product/') ||
+      pathname.startsWith('/shop/') || // ✅ add this
+      pathname === '/checkout' ||
+      pathname === '/shop' ||
+      pathname === '/account' ||
+      pathname === '/about' ||
+      pathname === '/how-it-works' ||
+      pathname === '/find-near-you' ||
+      pathname === '/login'
+      ? 'border-black'
+      : 'border-white'
+  }
 
   return (
     <>
       <div
-        className={`fixed top-0 z-50 min-w-full h-[70px] py-3 transition duration-300 ${
-          scrolling ? "bg-white" : isHomePage ? "" : "bg-transparent mt-0"
+        className={`fixed top-0 z-50 min-w-full  py-3 transition duration-300 ${
+          scrolling ? 'bg-white' : isHomePage ? '' : 'bg-transparent mt-0'
         }`}
       >
         <div className="container mx-auto">
@@ -161,7 +160,7 @@ const getBorderColor = () => {
                   <Link
                     href={menu.href}
                     className={`${
-                      pathname === menu.href ? "font-normal" : "font-light"
+                      pathname === menu.href ? 'font-normal' : 'font-light'
                     } leading-[20px] tracking-[0.1em]`}
                   >
                     {menu.linkText}
@@ -170,22 +169,26 @@ const getBorderColor = () => {
               ))}
 
               <div className="flex-shrink-0">
-               {scrolling ||
- pathname === "/account" ||
- pathname.startsWith("/product/") ||
- pathname.startsWith("/shop/") ||  // ✅ add this
- pathname === "/login" ||
- pathname === "/checkout" ||
- pathname === "/become-lender" ||
- pathname === "/shop" ||
- pathname === "/about" ||
- pathname === "/how-it-works" ||
- pathname === "/find-near-you" ? (
-   <Image src="/logo-black.svg" height={60} width={60} alt="Logo" />
- ) : (
-   <Image src="/logo.svg" height={60} width={60} alt="Logo" />
- )}
-
+                {scrolling ||
+                pathname === '/account' ||
+                pathname.startsWith('/product/') ||
+                pathname.startsWith('/shop/') || // ✅ add this
+                pathname === '/login' ||
+                pathname === '/checkout' ||
+                pathname === '/become-lender' ||
+                pathname === '/shop' ||
+                pathname === '/about' ||
+                pathname === '/how-it-works' ||
+                pathname === '/find-near-you' ? (
+                  <Image
+                    src="/logo-black.svg"
+                    height={60}
+                    width={60}
+                    alt="Logo"
+                  />
+                ) : (
+                  <Image src="/logo.svg" height={60} width={60} alt="Logo" />
+                )}
               </div>
             </div>
 
@@ -213,8 +216,8 @@ const getBorderColor = () => {
                 <Search
                   className="cursor-pointer hover:opacity-70 transition-opacity"
                   onClick={(e) => {
-                    e.stopPropagation();
-                    setIsSearchOpen(!isSearchOpen);
+                    e.stopPropagation()
+                    setIsSearchOpen(!isSearchOpen)
                   }}
                   size={20}
                 />
@@ -253,7 +256,7 @@ const getBorderColor = () => {
                       onClick={() => setIsAccountOpen(!isAccountOpen)}
                       className={`border rounded-full w-7 h-7 flex items-center justify-center text-sm font-medium ${getBorderColor()} hover:opacity-70 transition-opacity`}
                     >
-                      {session?.user?.firstName?.slice(0, 1) || "U"}
+                      {session?.user?.firstName?.slice(0, 1) || 'U'}
                     </div>
                     {isAccountOpen && (
                       <div className="absolute top-8 right-0 mt-1 z-50 bg-white p-6 shadow-md min-w-[180px]">
@@ -270,8 +273,8 @@ const getBorderColor = () => {
                           </Link>
                           <button
                             onClick={() => {
-                              signOut();
-                              setIsAccountOpen((prev) => !prev);
+                              signOut()
+                              setIsAccountOpen((prev) => !prev)
                             }}
                             className="block text-center w-full"
                           >
@@ -312,8 +315,8 @@ const getBorderColor = () => {
                           href={menu.href}
                           className={`${
                             pathname === menu.href
-                              ? "font-semibold"
-                              : "font-light"
+                              ? 'font-semibold'
+                              : 'font-light'
                           } text-lg hover:text-gray-600 transition-colors`}
                         >
                           <SheetClose>{menu.linkText}</SheetClose>
@@ -336,8 +339,8 @@ const getBorderColor = () => {
                 <Search
                   className={`${getTextColor()} cursor-pointer`}
                   onClick={(e) => {
-                    e.stopPropagation();
-                    setIsSearchOpen(!isSearchOpen);
+                    e.stopPropagation()
+                    setIsSearchOpen(!isSearchOpen)
                   }}
                   size={20}
                 />
@@ -382,8 +385,8 @@ const getBorderColor = () => {
               <button
                 type="button"
                 onClick={(e) => {
-                  e.stopPropagation();
-                  setIsSearchOpen(false);
+                  e.stopPropagation()
+                  setIsSearchOpen(false)
                 }}
                 className="text-gray-400 hover:text-black transition-colors p-2"
               >
@@ -401,12 +404,12 @@ const getBorderColor = () => {
           onClick={(e) => {
             // This will be handled by the click outside detection
             // We don't want to close here directly as it would interfere with our logic
-            e.stopPropagation();
+            e.stopPropagation()
           }}
         />
       )}
     </>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar
