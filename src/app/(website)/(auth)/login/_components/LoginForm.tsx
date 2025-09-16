@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
 
-import { loginAction } from "@/actions/auth/login";
+import { loginAction } from '@/actions/auth/login'
 import {
   Form,
   FormControl,
@@ -11,40 +11,40 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { PasswordInput } from "@/components/ui/password-input";
-import { cn } from "@/lib/utils";
-import { loginformSchema, LoginFormValues } from "@/schemas/auth";
-import Image from "next/image";
-import Link from "next/link";
-import { useTransition } from "react";
-import { toast } from "sonner";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/password-input'
+import { cn } from '@/lib/utils'
+import { loginformSchema, LoginFormValues } from '@/schemas/auth'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useTransition } from 'react'
+import { toast } from 'sonner'
 
 const LoginForm = () => {
-  const [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition()
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginformSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
-  });
+  })
 
   // 2. Define a submit handler.
   async function onSubmit(values: LoginFormValues) {
     startTransition(() => {
       loginAction(values).then((res) => {
         if (!res.success) {
-          toast.error(res.message || "Login failed. Please try again.");
-          return;
+          toast.error(res.message || 'Login failed. Please try again.')
+          return
         }
 
-        window.location.href = "/";
-        toast.success(res.message || "Login successful");
-      });
-    });
+        window.location.href = '/'
+        toast.success(res.message || 'Login successful')
+      })
+    })
   }
   return (
     <div className="mt-20">
@@ -52,10 +52,12 @@ const LoginForm = () => {
         {/* left side image part  */}
         <div className="md:col-span-3">
           <Image
-            src="/images/auth.jpg"
+            src="/images/login_banner.jpg"
             alt="sign-up"
             width={500}
             height={500}
+            quality={100}
+            priority
             className="w-full h-[400px] md:h-[496px] object-cover"
           />
         </div>
@@ -124,12 +126,12 @@ const LoginForm = () => {
               <div className="w-full flex justify-center items-center pt-[20px]">
                 <button
                   className={cn(
-                    "text-base font-normal text-black leading-[20px] border-b border-black py-[10px] uppercase",
-                    isPending && "text-black/50"
+                    'text-base font-normal text-black leading-[20px] border-b border-black py-[10px] uppercase',
+                    isPending && 'text-black/50'
                   )}
                   type="submit"
                 >
-                  {isPending ? "Signing in..." : "Sign In"}
+                  {isPending ? 'Signing in...' : 'Sign In'}
                 </button>
               </div>
             </form>
@@ -150,7 +152,7 @@ const LoginForm = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default LoginForm;
+export default LoginForm
