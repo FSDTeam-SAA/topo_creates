@@ -54,11 +54,11 @@ const LoginForm = () => {
           <Image
             src="/images/login_banner.jpg"
             alt="sign-up"
-            width={500}
-            height={500}
+            width={600}
+            height={460}
             quality={100}
             priority
-            className="w-full h-[400px] md:h-[496px] object-cover"
+            className="w-full h-[400px] md:h-[596px] object-cover"
           />
         </div>
         {/* form part  */}

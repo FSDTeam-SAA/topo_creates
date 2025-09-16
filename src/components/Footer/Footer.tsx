@@ -31,7 +31,10 @@ const Footer = () => {
               >
                 How It Works
               </Link>
-              <Link href="#" className="text-gray-600 hover:text-gray-900">
+              <Link
+                href="/contact-us"
+                className="text-gray-600 hover:text-gray-900"
+              >
                 Contact Us
               </Link>
               <Link
