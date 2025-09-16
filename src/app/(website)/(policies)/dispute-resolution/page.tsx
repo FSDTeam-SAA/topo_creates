@@ -8,7 +8,7 @@ export default function DisputeResolutionPage() {
       title="Dispute Resolution"
       description="A streamlined dispute resolution process aligned with insurance, damage, and loss policies — designed for fairness, transparency, and timely outcomes."
     >
-      <ul className="list-disc ml-6 space-y-3">
+      <ul className="list-disc ml-6 space-y-3 ">
         <li>
           <span className="font-normal">Confirm Insurance Coverage</span>
           <ul className="list-disc ml-6 mt-2 space-y-2 font-light text-gray-600">

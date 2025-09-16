@@ -137,7 +137,7 @@ export default function FindNearYou() {
           className="flex items-center gap-2 font-light tracking-[.08em]"
         >
           <Map size={16} />
-          {showMap ? 'Hide Map' : 'Show Map'}
+          {showMap ? 'Hide Search Bar' : 'Show Search Bar'}
         </Button>
         <Button
           variant="outline"
@@ -176,7 +176,7 @@ export default function FindNearYou() {
                 },
               })
             }}
-            placeholder="Search for your business location..."
+            placeholder="Search for your location..."
             mapHeight="300px"
           />
           <div className="mt-6 text-center w-full">
@@ -190,7 +190,6 @@ export default function FindNearYou() {
           </div>
         </div>
       )}
-
       {/* Radius Slider */}
       <div className="mb-6">
         <p className="font-light tracking-[.05em] mb-2">

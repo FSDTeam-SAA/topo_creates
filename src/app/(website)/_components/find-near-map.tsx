@@ -247,7 +247,7 @@ const FindNearMap = ({
 
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/streets-v11',
+        style: 'mapbox://styles/mapbox/light-v10',
         center: center,
         zoom: zoom,
         maxZoom: 13,

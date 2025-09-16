@@ -1,6 +1,6 @@
 'use client'
 
-import { Alert, AlertDescription } from '@/components/ui/alert'
+// import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -11,6 +11,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 // Mapbox CSS
 import 'mapbox-gl/dist/mapbox-gl.css'
+import { toast } from 'sonner'
 
 export interface PreciseLocationData {
   longitude: number
@@ -41,7 +42,7 @@ export default function AustraliaLocationSelector({
   initialLocation,
   placeholder = 'Search for exact locations in Australia...',
   className = '',
-  mapHeight = '500px',
+  // mapHeight = '500px',
   showCurrentLocation = true,
 }: AustraliaLocationSelectorProps) {
   const mapContainer = useRef<HTMLDivElement>(null)
@@ -178,7 +179,7 @@ export default function AustraliaLocationSelector({
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v11',
+      style: 'mapbox://styles/mapbox/light-v10',
       center: initialLocation
         ? [initialLocation.longitude, initialLocation.latitude]
         : [151.2093, -33.8688], // Sydney fallback
@@ -265,7 +266,7 @@ export default function AustraliaLocationSelector({
 
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
-      alert('Geolocation is not supported by this browser.')
+      toast.error('Your current location appears to be outside Australia.')
       return
     }
 
@@ -290,13 +291,13 @@ export default function AustraliaLocationSelector({
           addPreciseMarker(longitude, latitude)
           reverseGeocodeAustralia(longitude, latitude)
         } else {
-          alert('Your current location appears to be outside Australia.')
+          toast.error('Your current location appears to be outside Australia.')
         }
         setIsGettingLocation(false)
       },
       (error) => {
         console.error('Geolocation error:', error)
-        alert('Unable to get your current location.')
+        toast.error('Your current location appears to be outside Australia.')
         setIsGettingLocation(false)
       },
       {
@@ -480,7 +481,7 @@ export default function AustraliaLocationSelector({
       )}
 
       {/* Map Container */}
-      <div
+      {/* <div
         ref={mapContainer}
         className="w-full rounded-lg border overflow-hidden"
         style={{ height: mapHeight }}
@@ -493,7 +494,7 @@ export default function AustraliaLocationSelector({
           Drag the marker to fine-tune position. Red marker shows exact selected
           location within Australia.
         </AlertDescription>
-      </Alert>
+      </Alert> */}
     </div>
   )
 }

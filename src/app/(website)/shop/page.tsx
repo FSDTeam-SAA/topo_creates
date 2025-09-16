@@ -1,16 +1,16 @@
-import HowItWork from "@/components/HowItWork";
-import GiveAndTake from "@/components/section/GiveAndTake";
-import React from "react";
-import FilterProduct from "./_component/FilterProduct";
-import AllProduct from "./_component/AllProduct";
-import { FilterDrawer } from "./_component/FilterDrawer";
+import HowItWork from '@/components/HowItWork'
+import GiveAndTake from '@/components/section/GiveAndTake'
+import React from 'react'
+import FilterProduct from './_component/FilterProduct'
+import AllProduct from './_component/AllProduct'
+import { FilterDrawer } from './_component/FilterDrawer'
 
 const page = () => {
   return (
-    <div className=" container mx-auto pb-8">
+    <div className=" container mx-auto pb-8 pt-[100px]">
       <div className="text-center">
-        <h1 className=" uppercase headerClass">Shop</h1>
-        <p className=" uppercase sub-title text-black/70">
+        <h1 className=" uppercase headerClass font-light">Shop</h1>
+        <p className=" font-inter text-sm tracking-[0.20rem] font-thin uppercase sub-title text-black/70">
           Curated designer rentals for every moment.
         </p>
       </div>
@@ -33,7 +33,7 @@ const page = () => {
 
       <GiveAndTake />
     </div>
-  );
-};
+  )
+}
 
-export default page;
+export default page
