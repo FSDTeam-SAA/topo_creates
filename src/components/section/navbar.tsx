@@ -141,7 +141,7 @@ const Navbar = ({ isLoggedin, session }: Props) => {
   return (
     <>
       <div
-        className={`fixed top-0 z-50 min-w-full  py-3 transition duration-300 ${
+        className={`fixed top-0 z-50 min-w-full py-3 transition duration-300 ${
           scrolling ? 'bg-white' : isHomePage ? '' : 'bg-transparent mt-0'
         }`}
       >

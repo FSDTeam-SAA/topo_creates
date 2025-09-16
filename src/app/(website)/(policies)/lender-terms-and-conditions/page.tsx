@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function LenderTermsConditions() {
   return (
-    <div className="min-h-screen container mx-auto px-8 py-12 font-avenir">
+    <div className="min-h-screen container mx-auto px-8 py-12 pt-[100px] font-avenir">
       {/* Header */}
       <div className="text-center space-y-5 mb-12">
         <h1 className="text-3xl tracking-[0.35rem] uppercase font-normal text-gray-900">

@@ -137,7 +137,7 @@ export default function FindNearYou() {
           className="flex items-center gap-2 font-light tracking-[.08em]"
         >
           <Map size={16} />
-          {showMap ? 'Hide Map' : 'Show Map'}
+          {showMap ? 'Hide Search Bar' : 'Show Search Bar'}
         </Button>
         <Button
           variant="outline"

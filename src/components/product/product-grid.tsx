@@ -11,7 +11,7 @@ interface ProductGridProps {
 
 export function ProductGrid({ title, subtitle, products }: ProductGridProps) {
   return (
-    <section className=" container mx-auto mb-12">
+    <section className=" container mx-auto mb-12 mt-[50px] md:my-[60px]">
       <div className="text-center mb-5">
         <h2 className={cn('headerClass')}>{title}</h2>
         {subtitle && (
@@ -24,7 +24,7 @@ export function ProductGrid({ title, subtitle, products }: ProductGridProps) {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
         {products?.slice(0, 5).map((product) => (
-          <div key={product.id} className="flex">
+          <div key={product._id} className="flex">
             <div className="w-full flex flex-col h-full">
               <ProductCard product={product} />
             </div>

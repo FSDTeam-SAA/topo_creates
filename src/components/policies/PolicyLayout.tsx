@@ -11,7 +11,7 @@ export default function PolicyLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen container mx-auto px-8 py-12 font-avenir">
+    <div className="min-h-screen container mx-auto px-8 py-12 pt-[100px] font-avenir">
       {/* Header */}
       <div className="text-center space-y-5 mb-12">
         <h1 className="text-3xl tracking-[0.35rem] mb-6 md:mb-10 uppercase font-normal text-gray-900">
