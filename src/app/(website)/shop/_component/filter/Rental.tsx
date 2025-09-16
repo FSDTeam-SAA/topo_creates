@@ -1,34 +1,46 @@
 "use client";
 
+import { useFilterStore } from "@/zustand/filterStore";
+
 const Rental = () => {
-  const labels = [
-    {
-      id: 1,
-      label: "Available Near Me",
-    },
-    {
-      id: 2,
-      label: "4-Day Rental",
-    },
-    {
-      id: 3,
-      label: "8-DAY RENTAL",
-    },
-  ];
+  const { setFourDayRental } = useFilterStore();
 
   return (
     <div className="space-y-4">
-      {labels.map((item) => (
-        <div key={item.id} className="flex items-center gap-3">
-          <input className="h-4 w-4" type="checkbox" id="XXS" />
-          <label
-            htmlFor="XXS"
-            className="font-avenir tracking-[0.2rem] opacity-75 uppercase"
-          >
-            {item.label}
-          </label>
-        </div>
-      ))}
+      <div className="flex items-center gap-3">
+        <input className="h-4 w-4" type="checkbox" id="XXS" />
+        <label
+          htmlFor="XXS"
+          className="font-avenir tracking-[0.2rem] opacity-75 uppercase"
+        >
+          Available Near Me
+        </label>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <input
+          className="h-4 w-4"
+          type="checkbox"
+          id="XXS"
+          onChange={() => setFourDayRental(true)}
+        />
+        <label
+          htmlFor="XXS"
+          className="font-avenir tracking-[0.2rem] opacity-75 uppercase"
+        >
+          4-Day Rental
+        </label>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <input className="h-4 w-4" type="checkbox" id="XXS" />
+        <label
+          htmlFor="XXS"
+          className="font-avenir tracking-[0.2rem] opacity-75 uppercase"
+        >
+          8-DAY RENTAL
+        </label>
+      </div>
     </div>
   );
 };

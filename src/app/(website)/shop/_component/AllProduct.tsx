@@ -7,13 +7,13 @@ import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 
 const AllProduct = () => {
-  const { search, size } = useFilterStore();
+  const { search, size, minPrice, maxPrice, fourDayRental } = useFilterStore();
 
   const { data: allProduct, isLoading } = useQuery({
-    queryKey: ["all-product", search, size],
+    queryKey: ["all-product", search, size, minPrice, maxPrice, fourDayRental],
     queryFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin?search=${search}&size=${size}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin?search=${search}&size=${size}&min=${minPrice}&max=${maxPrice}&fourDaysSelected=${fourDayRental}`
       );
       const data = res.json();
 
@@ -42,13 +42,15 @@ const AllProduct = () => {
       {allProduct?.data.length === 0 && (
         <div className="text-center min-h-[calc(100vh-400px)] flex flex-col items-center justify-center">
           <Image
-          src={'/no-product.webp'}
-          alt="no-product.png"
-          width={1000}
-          height={1000}
-          className="h-[300px] w-[300px] mx-auto"
+            src={"/no-product.webp"}
+            alt="no-product.png"
+            width={1000}
+            height={1000}
+            className="h-[300px] w-[300px] mx-auto"
           />
-          <h1 className="uppercase font-avenir text-xl tracking-[15px]">No Product Available</h1>
+          <h1 className="uppercase font-avenir text-xl tracking-[15px]">
+            No Product Available
+          </h1>
         </div>
       )}
     </div>

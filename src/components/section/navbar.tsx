@@ -107,6 +107,7 @@ const Navbar = ({ isLoggedin, session }: Props) => {
   const isHomePage = pathname === '/'
 
   const getTextColor = () => {
+
     return scrolling ||
       pathname === '/become-lender' ||
       pathname.startsWith('/product/') ||
@@ -122,21 +123,25 @@ const Navbar = ({ isLoggedin, session }: Props) => {
       : 'text-white'
   }
 
-  const getBorderColor = () => {
-    return scrolling ||
-      pathname === '/become-lender' ||
-      pathname.startsWith('/product/') ||
-      pathname.startsWith('/shop/') || // ✅ add this
-      pathname === '/checkout' ||
-      pathname === '/shop' ||
-      pathname === '/account' ||
-      pathname === '/about' ||
-      pathname === '/how-it-works' ||
-      pathname === '/find-near-you' ||
-      pathname === '/login'
-      ? 'border-black'
-      : 'border-white'
-  }
+
+const getBorderColor = () => {
+  return scrolling ||
+    pathname === "/become-lender" ||
+    pathname.startsWith("/product/") ||
+    pathname.startsWith("/shop/") ||
+    pathname === "/checkout" ||
+    pathname === "/shop" ||
+    pathname === "/account" ||
+    pathname === "/about" ||
+    pathname === "/how-it-works" ||
+    pathname === "/find-near-you" ||
+    pathname === "/login"
+    ? "border-black"
+    : "border-white";
+};
+
+
+
 
   return (
     <>

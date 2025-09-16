@@ -2,15 +2,15 @@ import Image from "next/image";
 
 const AboutPage = () => {
   return (
-    <div className="my-[80px]">
+    <div className="mb-24 font-avenir">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
         <div className="bg-[#891D33] md:grid-cols-1 h-[500px] md:h-[794px] w-full flex flex-col justify-center items-center px-[1rem]">
           <Image
             src="/logo.svg"
             alt="about logo"
-            width={146}
-            height={122}
-            className="object-cover "
+            width={1000}
+            height={1000}
+            className="object-cover h-[122px] w-[146px]"
           />
           <div className="pt-5 md:pt-6 lg:pt-[30px]">
             <Image
@@ -22,6 +22,7 @@ const AboutPage = () => {
             />
           </div>
         </div>
+
         <div className="md:grid-cols-1 bg-white w-full flex flex-col justify-center px-[1rem] lg:pr-16 ">
           <h2 className="headerClass font-avenir uppercase text-center">
             about

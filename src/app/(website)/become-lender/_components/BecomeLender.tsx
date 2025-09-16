@@ -7,7 +7,7 @@ const BecomeLender = () => {
     <div>
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="py-12 text-center md:py-20">
+        <section className="py-12 text-center">
           <div className="container px-4 md:px-6">
             <h1 className="mb-6 headerClass font-inter">
               Partner with Muse Gala
