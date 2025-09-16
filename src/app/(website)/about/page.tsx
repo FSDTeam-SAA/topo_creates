@@ -1,8 +1,8 @@
-import Image from "next/image";
+import Image from 'next/image'
 
 const AboutPage = () => {
   return (
-    <div className="mb-24 font-avenir">
+    <div className="mb-24 font-avenir pt-[100px]">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
         <div className="bg-[#891D33] md:grid-cols-1 h-[500px] md:h-[794px] w-full flex flex-col justify-center items-center px-[1rem]">
           <Image
@@ -62,7 +62,7 @@ const AboutPage = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AboutPage;
+export default AboutPage
