@@ -11,6 +11,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 // Mapbox CSS
 import 'mapbox-gl/dist/mapbox-gl.css'
+import { toast } from 'sonner'
 
 export interface PreciseLocationData {
   longitude: number
@@ -178,7 +179,7 @@ export default function AustraliaLocationSelector({
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v11',
+      style: 'mapbox://styles/mapbox/light-v10',
       center: initialLocation
         ? [initialLocation.longitude, initialLocation.latitude]
         : [151.2093, -33.8688], // Sydney fallback
@@ -265,7 +266,7 @@ export default function AustraliaLocationSelector({
 
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
-      alert('Geolocation is not supported by this browser.')
+      toast.error('Your current location appears to be outside Australia.')
       return
     }
 
@@ -290,13 +291,13 @@ export default function AustraliaLocationSelector({
           addPreciseMarker(longitude, latitude)
           reverseGeocodeAustralia(longitude, latitude)
         } else {
-          alert('Your current location appears to be outside Australia.')
+          toast.error('Your current location appears to be outside Australia.')
         }
         setIsGettingLocation(false)
       },
       (error) => {
         console.error('Geolocation error:', error)
-        alert('Unable to get your current location.')
+        toast.error('Your current location appears to be outside Australia.')
         setIsGettingLocation(false)
       },
       {

@@ -176,7 +176,7 @@ export default function FindNearYou() {
                 },
               })
             }}
-            placeholder="Search for your business location..."
+            placeholder="Search for your location..."
             mapHeight="300px"
           />
           <div className="mt-6 text-center w-full">

@@ -8,7 +8,7 @@ export default function FindNearYouPage() {
   const trendingProducts = getTrendingProducts()
 
   return (
-    <main className="min-h-screen bg-white ">
+    <main className="min-h-screen bg-white pt-[100px]">
       <FindNearYou />
 
       <div className="space-y-8 md:space-y-12">

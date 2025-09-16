@@ -16,7 +16,7 @@ export default function ProductList({ products }: ProductListProps) {
 
   return (
     <section className="container mx-auto px-4">
-      <div className="mb-8 grid grid-cols-1 gap-6">
+      <div className="mb-8 grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-20 xl:gap-24 items-center">
         {normalizedProducts.map((product) => (
           <ProductCard key={product.id} {...product} />
         ))}
