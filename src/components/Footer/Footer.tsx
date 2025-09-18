@@ -12,7 +12,7 @@ const Footer = () => {
   // const [open, setOpne] = useState(false)
   // const [open1, setOpne1] = useState(false)
   return (
-    <footer className="w-full  bg-white">
+    <footer className="w-full bg-white">
       <div className="container mx-auto">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* CUSTOMER SECTION */}
