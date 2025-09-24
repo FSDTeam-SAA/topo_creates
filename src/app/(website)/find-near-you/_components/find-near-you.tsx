@@ -122,7 +122,7 @@ export default function FindNearYou() {
 
   return (
     <section className="container mx-auto py-12">
-      <h1 className="text-center text-xl md:text-4xl lg:text-[56px] uppercase font-light tracking-[5px] lg:tracking-[.4em] mb-6 md:mb-10 font-inter">
+      <h1 className="text-center  text-[32px]  md:text-[40px] lg:text-[56px] uppercase font-light tracking-[5px] lg:tracking-[.4em] mb-6 md:mb-10 font-inter">
         Find Near You
       </h1>
       <p className="text-center text-lg md:text-xl lg:text-2xl font-light tracking-[3px] lg:tracking-[10px] mb-8 font-inter">

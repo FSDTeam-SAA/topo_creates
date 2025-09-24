@@ -103,7 +103,7 @@ export default function Home() {
           </section>
 
           {/* List With Us */}
-          <section className="text-center mb-16 md:mb-24">
+          <section className="text-center mb-16">
             <h2 className="headerClass">LIST WITH US</h2>
             <p className=" sub-title max-w-3xl mx-auto mb-8">
               No listing fees. No lock-ins. Just more exposure, more rentals,

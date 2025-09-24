@@ -22,7 +22,7 @@ export default function ProductList({ products }: ProductListProps) {
         ))}
       </div>
 
-      <p className="text-sm text-center mt-6 uppercase">
+      <p className="text-sm text-center mt-6 md:mt-16 uppercase">
         Showing {normalizedProducts.length} of {normalizedProducts.length}{' '}
         dresses near you
       </p>

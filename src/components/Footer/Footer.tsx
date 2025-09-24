@@ -12,7 +12,7 @@ const Footer = () => {
   // const [open, setOpne] = useState(false)
   // const [open1, setOpne1] = useState(false)
   return (
-    <footer className="w-full  bg-white">
+    <footer className="w-full bg-white">
       <div className="container mx-auto">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* CUSTOMER SECTION */}
@@ -31,7 +31,10 @@ const Footer = () => {
               >
                 How It Works
               </Link>
-              <Link href="#" className="text-gray-600 hover:text-gray-900">
+              <Link
+                href="/contact-us"
+                className="text-gray-600 hover:text-gray-900"
+              >
                 Contact Us
               </Link>
               <Link

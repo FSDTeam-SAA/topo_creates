@@ -8,10 +8,10 @@ export default function FindNearYouPage() {
   const trendingProducts = getTrendingProducts()
 
   return (
-    <main className="min-h-screen bg-white pt-[100px]">
+    <main className="min-h-screen bg-white py-[100px]">
       <FindNearYou />
 
-      <div className="space-y-8 md:space-y-12">
+      <div className="space-y-14 md:space-y-20">
         <HowItWork />
         <ProductGrid
           title="TRENDING NOW"

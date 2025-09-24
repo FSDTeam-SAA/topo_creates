@@ -84,7 +84,7 @@ const ProductPopover = ({
       ref={popoverRef}
       className="fixed z-[9999] bg-white rounded-lg shadow-2xl border border-gray-200 w-[340px] max-h-[400px] overflow-y-auto"
       style={{
-        top: `${position.top + 20}px`,
+        top: `${position.top}px`,
         left: `${position.left}px`,
         transform: 'translateX(-50%)',
       }}
