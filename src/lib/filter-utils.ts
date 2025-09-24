@@ -1,4 +1,19 @@
-import type { Product, ProductSize, RentalDuration } from "@/types/product"
+import type { Product as ImportedProduct } from "@/types/product"
+
+// Ensure Product type includes 'name' and 'description'
+export interface Product extends ImportedProduct {
+  id: string
+  name: string
+  description: string
+  price: number
+  // Add other required fields if necessary
+}
+
+// Define ProductSize type if not imported from elsewhere
+export type ProductSize = string // Replace 'string' with the correct type if needed
+
+// Define RentalDuration type if not imported from elsewhere
+export type RentalDuration = string // Replace 'string' with the correct type if needed
 
 export interface FilterOptions {
   searchQuery?: string
@@ -28,7 +43,7 @@ export function filterProducts(products: Product[], filters: FilterOptions): Pro
 
     // Size filter
     if (filters.sizes && filters.sizes.length > 0) {
-      if (!filters.sizes.some((size) => product.sizes.includes(size))) {
+      if (!filters.sizes.some((size) => product.size.includes(size))) {
         return false
       }
     }

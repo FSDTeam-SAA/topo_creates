@@ -1,15 +1,15 @@
 import HowItWork from '@/components/HowItWork'
-import { ProductGrid } from '@/components/product/product-grid'
+// import { ProductGrid } from '@/components/product/product-grid'
 import StyledByYou from '@/components/product/styled_By_You'
 import ServiceFeatures from '@/components/ServiceFeatures'
 import { Button } from '@/components/ui/button'
-import { getTrendingProducts } from '@/data/product-data'
+// import { getTrendingProducts } from '@/data/product-data'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import FindNearDressSection from '../_components/find-near-dress-section'
 
 export default function Home() {
-  const trendingProducts = getTrendingProducts()
+  // const trendingProducts = getTrendingProducts()
   return (
     <div className="space-y-16">
       <div
@@ -27,21 +27,21 @@ export default function Home() {
         </div>
       </div>
       <div className=" bg-white space-y-16">
-        <ProductGrid
+        {/* <ProductGrid
           title="TRENDING NOW"
           subtitle="EXPLORE THE EDIT"
           products={trendingProducts}
-        />
+        /> */}
 
         {/* FIND YOUR DRESS NEAR YOUr map */}
         <FindNearDressSection />
 
         <HowItWork />
-        <ProductGrid
+        {/* <ProductGrid
           title="THE MUSE EDIT"
           subtitle="EXPLORE THE EDIT"
           products={trendingProducts}
-        />
+        /> */}
 
         <ServiceFeatures />
 
