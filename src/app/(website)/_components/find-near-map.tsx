@@ -3,7 +3,6 @@
 
 import { MapPin, Truck, X } from 'lucide-react'
 import mapboxgl from 'mapbox-gl'
-import 'mapbox-gl/dist/mapbox-gl.css'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import ReactDOMServer from 'react-dom/server'
 import Image from 'next/image'
@@ -250,7 +249,7 @@ const FindNearMap = ({
         style: 'mapbox://styles/mapbox/light-v10',
         center: center,
         zoom: zoom,
-        maxZoom: 13,
+        maxZoom: 15,
         attributionControl: false,
       })
 

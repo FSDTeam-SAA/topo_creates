@@ -21,8 +21,11 @@ export default function Home() {
             EFFORTLESS FASHION HIRE
           </h1> */}
 
-          <Button variant="link" className="sub-header text-white mt-[200px]">
-            <Link href="/login">Browse the Edit</Link>
+          <Button
+            variant="link"
+            className="sub-header text-slate-200 mt-[200px] text-[24px] md:text-[36px] font-light leading-[64px] tracking-[.5em]"
+          >
+            <Link href="/login">EFFORTLESS FASHION HIRE</Link>
           </Button>
         </div>
       </div>
@@ -118,7 +121,7 @@ export default function Home() {
               </Button> */}
 
               <Link
-                href="#"
+                href="/become-lender"
                 className="inline-block border-b border-black px-6 py-2 text-[14px] uppercase tracking-widest hover:bg-black hover:text-white"
               >
                 BECOME A LENDER
