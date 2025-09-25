@@ -46,7 +46,7 @@ export default function FindNearYou() {
 
   // UI
   const [showMap, setShowMap] = useState(true)
-  const [showFilters, setShowFilters] = useState(false)
+  const [showFilters, setShowFilters] = useState(true)
   const mapboxtoken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
 
   // Fetcher

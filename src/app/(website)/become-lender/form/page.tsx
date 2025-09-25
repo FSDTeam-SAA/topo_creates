@@ -1,11 +1,11 @@
-"use client";
+'use client'
 
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
+} from '@/components/ui/accordion'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,16 +13,16 @@ import {
   AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import AustraliaLocationSelector from "@/components/ui/australia-location-selector";
+} from '@/components/ui/alert-dialog'
+import AustraliaLocationSelector from '@/components/ui/australia-location-selector'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+} from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Form,
   FormControl,
@@ -30,109 +30,110 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/select'
+import { cn } from '@/lib/utils'
 import {
   becomeLenderForm,
   BecomeLenderFormType,
-} from "@/types/become-lender-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
-import { CheckCircle, ChevronDown } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+} from '@/types/become-lender-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
+import { CheckCircle, ChevronDown } from 'lucide-react'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
-const mapboxtoken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
+const mapboxtoken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!
 
 const BecomeALenderForm = () => {
-  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
 
   const form = useForm<BecomeLenderFormType>({
     resolver: zodResolver(becomeLenderForm),
     defaultValues: {
-      businessName: "",
-      abnNumber: "",
-      instagramHandle: "",
-      businessWebsite: "",
-      fullName: "",
-      email: "",
-      phoneNumber: "",
-      businessAddress: "",
-      numberOfDresses: "",
+      businessName: '',
+      abnNumber: '',
+      instagramHandle: '',
+      businessWebsite: '',
+      fullName: '',
+      email: '',
+      phoneNumber: '',
+      businessAddress: '',
+      numberOfDresses: '',
 
       reviewStockMethod: {
         website: true,
         instagram: false,
         keyBrands: true,
       },
-      notes: "",
-      allowLocalPickup: "no",
-      shipAustraliaWide: "yes",
-      allowTryOn: "yes",
+      notes: '',
+      allowLocalPickup: 'no',
+      shipAustraliaWide: 'yes',
+      allowTryOn: 'yes',
       agreedTerms: false,
       agreedCurationPolicy: false,
     },
-  });
+  })
 
-  const isAllowedLocalPickup = form.watch("allowLocalPickup").includes("yes");
+  const isAllowedLocalPickup = form.watch('allowLocalPickup').includes('yes')
 
   const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
+    setIsOpen(!isOpen)
+  }
 
   useEffect(() => {
-    const value = form.watch("allowLocalPickup");
+    const value = form.watch('allowLocalPickup')
 
-    if (value.includes("no")) {
-      form.resetField("address", undefined);
-      form.resetField("country", undefined);
-      form.resetField("city", undefined);
-      form.resetField("postcode", undefined);
-      form.resetField("state", undefined);
-      form.resetField("suburb", undefined);
-      form.resetField("latitude", undefined);
-      form.resetField("longitude", undefined);
-      form.resetField("placeName", undefined);
+    if (value.includes('no')) {
+      form.resetField('address', undefined)
+      form.resetField('country', undefined)
+      form.resetField('city', undefined)
+      form.resetField('postcode', undefined)
+      form.resetField('state', undefined)
+      form.resetField('suburb', undefined)
+      form.resetField('latitude', undefined)
+      form.resetField('longitude', undefined)
+      form.resetField('placeName', undefined)
     }
-  }, [form]);
+  }, [form])
 
   const { mutate, isPending } = useMutation({
-    mutationKey: ["become-a-lender"],
+    mutationKey: ['become-a-lender'],
     mutationFn: (values: BecomeLenderFormType) =>
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/application/apply`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(values),
       }).then((res) => res.json()),
     onSuccess: (data) => {
       if (!data?.status) {
-        toast.error(data.message || "Something went wrong");
-        return;
+        toast.error(data.message || 'Something went wrong')
+        return
       } else {
-        setShowSuccessDialog(true);
-        form.reset();
+        setShowSuccessDialog(true)
+        form.reset()
       }
     },
-  });
+  })
 
   // 2. Define a submit handler.
   function onSubmit(values: BecomeLenderFormType) {
     // console.log(values, values.numberOfDresses);
-    mutate(values);
+    mutate(values)
   }
   return (
     <>
@@ -164,7 +165,7 @@ const BecomeALenderForm = () => {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-sm font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
-                              Business Name{" "}
+                              Business Name{' '}
                               <sup className="pl-1 text-[#891D33]">*</sup>
                             </FormLabel>
                             <FormControl>
@@ -185,7 +186,7 @@ const BecomeALenderForm = () => {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-sm font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
-                              Business ABN{" "}
+                              Business ABN{' '}
                               <span className="pl-4 md:pl-5 text-lg font-normal tracking-[0%] text-[#595959] font-nimbus leading-[24px] ">
                                 (if available)
                               </span>
@@ -208,7 +209,7 @@ const BecomeALenderForm = () => {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-sm font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
-                              Instagram Handle{" "}
+                              Instagram Handle{' '}
                               <sup className="pl-1 text-[#891D33]">*</sup>
                             </FormLabel>
                             <FormControl>
@@ -412,8 +413,8 @@ const BecomeALenderForm = () => {
                                   </span>
                                   <ChevronDown
                                     className={cn(
-                                      "h-4 w-4 transition-transform",
-                                      isOpen && "rotate-180"
+                                      'h-4 w-4 transition-transform',
+                                      isOpen && 'rotate-180'
                                     )}
                                   />
                                 </div>
@@ -483,7 +484,7 @@ const BecomeALenderForm = () => {
                                                 (Optional)
                                               </span>
 
-                                              {form.watch("reviewStockMethod")
+                                              {form.watch('reviewStockMethod')
                                                 ?.keyBrands && (
                                                 <div className=" flex items-center -mt-1">
                                                   <span className="mr-2 text-sm">
@@ -534,7 +535,7 @@ const BecomeALenderForm = () => {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-sm font-normal font-nimbus tracking-[15%] leading-[28px] text-black ">
-                              Do you offer local pickup?{" "}
+                              Do you offer local pickup?{' '}
                               <span className="text-red-500">*</span>
                             </FormLabel>
                             <FormControl>
@@ -581,15 +582,15 @@ const BecomeALenderForm = () => {
                               <AustraliaLocationSelector
                                 accessToken={mapboxtoken}
                                 onLocationSelect={(data) => {
-                                  form.setValue("address", data.address);
-                                  form.setValue("country", data.country);
-                                  form.setValue("city", data.city);
-                                  form.setValue("postcode", data.postcode);
-                                  form.setValue("state", data.state);
-                                  form.setValue("suburb", data.suburb);
-                                  form.setValue("latitude", data.latitude);
-                                  form.setValue("longitude", data.longitude);
-                                  form.setValue("placeName", data.placeName);
+                                  form.setValue('address', data.address)
+                                  form.setValue('country', data.country)
+                                  form.setValue('city', data.city)
+                                  form.setValue('postcode', data.postcode)
+                                  form.setValue('state', data.state)
+                                  form.setValue('suburb', data.suburb)
+                                  form.setValue('latitude', data.latitude)
+                                  form.setValue('longitude', data.longitude)
+                                  form.setValue('placeName', data.placeName)
                                 }}
                                 placeholder="Search for your business location..."
                                 mapHeight="300px"
@@ -722,10 +723,12 @@ const BecomeALenderForm = () => {
                         />
                       </FormControl>
                       <FormLabel className="text-base md:text-[14px] font-nimbus font-normal leading-[24px] tracking-[0%] text-black">
-                        I agree to Muse Gala&apos;s{" "}
-                        <span className="text-[#891D33] underline">
-                          Lender Terms & Conditions.
-                        </span>
+                        I agree to Muse Gala&apos;s{' '}
+                        <Link href={'/lender-terms-and-conditions'}>
+                          <span className="text-[#891D33] underline">
+                            Lender Terms & Conditions.
+                          </span>
+                        </Link>
                       </FormLabel>
                     </FormItem>
                   )}
@@ -736,12 +739,12 @@ const BecomeALenderForm = () => {
                 <button
                   disabled={isPending}
                   className={cn(
-                    "text-base font-normal font-nimbus leading-[20px] tracking-[20%] uppercase text-black border-b border-black py-[10px]",
-                    isPending && "text-black/60"
+                    'text-base font-normal font-nimbus leading-[20px] tracking-[20%] uppercase text-black border-b border-black py-[10px]',
+                    isPending && 'text-black/60'
                   )}
                   type="submit"
                 >
-                  {isPending ? "Submitting..." : "Submit"}
+                  {isPending ? 'Submitting...' : 'Submit'}
                 </button>
               </div>
             </form>
@@ -756,7 +759,7 @@ const BecomeALenderForm = () => {
               <CheckCircle
                 className="h-16 w-16 text-green-500 animate-bounce"
                 style={{
-                  animation: "checkBounce 0.6s ease-in-out",
+                  animation: 'checkBounce 0.6s ease-in-out',
                 }}
               />
             </div>
@@ -793,7 +796,7 @@ const BecomeALenderForm = () => {
         }
       `}</style>
     </>
-  );
-};
+  )
+}
 
-export default BecomeALenderForm;
+export default BecomeALenderForm
