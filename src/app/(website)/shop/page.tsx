@@ -10,7 +10,7 @@ const page = () => {
     <div className=" container mx-auto pb-8 pt-[100px]">
       <div className="text-center">
         <h1 className=" uppercase headerClass font-light">Shop</h1>
-        <p className=" font-inter text-sm tracking-[0.20rem] font-thin uppercase sub-title text-black/70">
+        <p className="font-avenir text-sm font-light uppercase sub-title text-black/70 !tracking-[.2rem]">
           Curated designer rentals for every moment.
         </p>
       </div>

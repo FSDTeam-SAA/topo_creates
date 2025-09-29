@@ -1,29 +1,29 @@
-"use client";
+'use client'
 
-import { ProductCard } from "@/components/product/product-card";
-import { Product } from "@/types/product";
-import { useFilterStore } from "@/zustand/filterStore";
-import { useQuery } from "@tanstack/react-query";
-import Image from "next/image";
+import { ProductCard } from '@/components/product/product-card'
+import { Product } from '@/types/product'
+import { useFilterStore } from '@/zustand/filterStore'
+import { useQuery } from '@tanstack/react-query'
+import Image from 'next/image'
 
 const AllProduct = () => {
-  const { search, size, minPrice, maxPrice, fourDayRental } = useFilterStore();
+  const { search, size, minPrice, maxPrice, fourDayRental } = useFilterStore()
 
   const { data: allProduct, isLoading } = useQuery({
-    queryKey: ["all-product", search, size, minPrice, maxPrice, fourDayRental],
+    queryKey: ['all-product', search, size, minPrice, maxPrice, fourDayRental],
     queryFn: async () => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin?search=${search}&size=${size}&min=${minPrice}&max=${maxPrice}&fourDaysSelected=${fourDayRental}`
-      );
-      const data = res.json();
+      )
+      const data = res.json()
 
-      return data;
+      return data
     },
-  });
+  })
 
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 lg:gap-5 gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 lg:gap-12 gap-10">
         {isLoading
           ? Array.from({ length: 16 }).map((_, index) => (
               <div key={index} className="flex flex-col h-full animate-pulse">
@@ -42,7 +42,7 @@ const AllProduct = () => {
       {allProduct?.data.length === 0 && (
         <div className="text-center min-h-[calc(100vh-400px)] flex flex-col items-center justify-center">
           <Image
-            src={"/no-product.webp"}
+            src={'/no-product.webp'}
             alt="no-product.png"
             width={1000}
             height={1000}
@@ -54,7 +54,7 @@ const AllProduct = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default AllProduct;
+export default AllProduct
