@@ -19,9 +19,11 @@ import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/ui/password-input'
 import { cn } from '@/lib/utils'
 import { loginformSchema, LoginFormValues } from '@/schemas/auth'
+// import { useRouter } from 'next/navigation'
 
 const LoginForm = () => {
   const [isPending, startTransition] = useTransition()
+  // const router = useRouter()
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginformSchema),
@@ -41,6 +43,7 @@ const LoginForm = () => {
         }
 
         toast.success(res.message || 'Login successful')
+        // router.push('/')
         window.location.href = '/'
       })
     })

@@ -64,8 +64,7 @@ const pricingPlans: PricingPlan[] = [
   },
 ]
 
-// API call function
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// API call
 const createSubscription = async ({
   data,
   token,
@@ -95,23 +94,32 @@ const createSubscription = async ({
 
 export default function PricingPlan() {
   const router = useRouter()
-  const session = useSession()
-  const accessToken = session?.data?.user?.accessToken || ''
+  const { data: session } = useSession()
+  const accessToken = session?.user?.accessToken || ''
 
   const { mutate } = useMutation({
     mutationFn: createSubscription,
     onSuccess: () => {
-      toast.success(' Subscription created successfully!')
+      toast.success('Subscription created successfully!')
       setTimeout(() => {
         router.push('/become-lender/form')
       }, 2000)
     },
     onError: () => {
-      toast.error(' Something went wrong, please try again.')
+      toast.error('Something went wrong, please try again.')
     },
   })
 
   const handleChoosePlan = (plan: PricingPlan) => {
+    // check user login
+    if (!accessToken) {
+      toast.error('You must be signed in to choose a plan!', {
+        position: 'bottom-right',
+      })
+      setTimeout(() => router.push('/login'), 2000)
+      return
+    }
+
     const data = {
       name: plan.title,
       description: `${plan.subtitle}.${plan.price} ${plan.period}`,

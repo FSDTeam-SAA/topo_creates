@@ -7,7 +7,7 @@ import { Menu, Search, ShoppingBag, User, X } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 // Components
 import { Button } from '@/components/ui/button'
@@ -34,6 +34,7 @@ const Navbar = ({ isLoggedin, session }: Props) => {
   const searchModalRef = useRef<HTMLDivElement>(null)
   const [isAccountOpen, setIsAccountOpen] = useState(false)
   const accountRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
 
   const menus = [
     { id: 1, href: '/', linkText: 'HOME' },
@@ -104,10 +105,17 @@ const Navbar = ({ isLoggedin, session }: Props) => {
     }
   }
 
+  const handleSignOut = async () => {
+    await signOut({ redirect: false })
+    router.refresh()
+    // router.push('/')
+    window.location.href = '/'
+    console.log('user logged out!')
+  }
+
   const isHomePage = pathname === '/'
 
   const getTextColor = () => {
-
     return scrolling ||
       pathname === '/become-lender' ||
       pathname.startsWith('/product/') ||
@@ -123,25 +131,21 @@ const Navbar = ({ isLoggedin, session }: Props) => {
       : 'text-white'
   }
 
-
-const getBorderColor = () => {
-  return scrolling ||
-    pathname === "/become-lender" ||
-    pathname.startsWith("/product/") ||
-    pathname.startsWith("/shop/") ||
-    pathname === "/checkout" ||
-    pathname === "/shop" ||
-    pathname === "/account" ||
-    pathname === "/about" ||
-    pathname === "/how-it-works" ||
-    pathname === "/find-near-you" ||
-    pathname === "/login"
-    ? "border-black"
-    : "border-white";
-};
-
-
-
+  const getBorderColor = () => {
+    return scrolling ||
+      pathname === '/become-lender' ||
+      pathname.startsWith('/product/') ||
+      pathname.startsWith('/shop/') ||
+      pathname === '/checkout' ||
+      pathname === '/shop' ||
+      pathname === '/account' ||
+      pathname === '/about' ||
+      pathname === '/how-it-works' ||
+      pathname === '/find-near-you' ||
+      pathname === '/login'
+      ? 'border-black'
+      : 'border-white'
+  }
 
   return (
     <>
@@ -277,10 +281,7 @@ const getBorderColor = () => {
                             <div className="h-[1px] bg-black w-full mt-1"></div>
                           </Link>
                           <button
-                            onClick={() => {
-                              signOut()
-                              setIsAccountOpen((prev) => !prev)
-                            }}
+                            onClick={handleSignOut}
                             className="block text-center w-full"
                           >
                             <span className="text-black text-sm tracking-[0.2em] uppercase">

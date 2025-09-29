@@ -1,20 +1,20 @@
-"use client";
-import { Upload } from "lucide-react";
-import React from "react";
-import Image from "next/image";
-import { useShoppingStore } from "@/zustand/shopingStore";
+'use client'
+import { Upload } from 'lucide-react'
+import React from 'react'
+import Image from 'next/image'
+import { useShoppingStore } from '@/zustand/shopingStore'
 
 const CheckoutForm = () => {
   const { fullName, email, phone, address, idPreview, setField, isConfirm } =
-    useShoppingStore();
+    useShoppingStore()
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) setField("idVerification", file);
-  };
+    const file = event.target.files?.[0]
+    if (file) setField('idVerification', file)
+  }
 
   return (
-    <div className="font-avenir">
+    <div className="font-sans">
       <div>
         {/* Header */}
         <h1 className="font-light opacity-75 text-[18px] tracking-[0.5rem] uppercase">
@@ -27,12 +27,12 @@ const CheckoutForm = () => {
             CUSTOMER DETAILS
           </h2>
 
-          {isConfirm &&  idPreview ? (
-            <div>
+          {isConfirm && idPreview ? (
+            <div className="font-sans border-b border-black pb-2">
               <h1 className="block text-sm text-black mb-2 uppercase opacity-75">
                 Full Name : {fullName}
               </h1>
-              <h1 className="block text-sm text-black mb-2 uppercase opacity-75">
+              <h1 className="block text-sm text-black mb-2  opacity-75">
                 Email : {email}
               </h1>
               <h1 className="block text-sm text-black mb-2 uppercase opacity-75">
@@ -45,7 +45,7 @@ const CheckoutForm = () => {
                 ID Verification :
               </h1>
 
-              {idPreview && (
+              {/* {idPreview && (
                 <Image
                   src={idPreview}
                   alt="ID Preview"
@@ -53,7 +53,7 @@ const CheckoutForm = () => {
                   height={1000}
                   className="h-32 w-32 mb-2"
                 />
-              )}
+              )} */}
             </div>
           ) : (
             <div>
@@ -66,7 +66,7 @@ const CheckoutForm = () => {
                   <input
                     type="text"
                     value={fullName}
-                    onChange={(e) => setField("fullName", e.target.value)}
+                    onChange={(e) => setField('fullName', e.target.value)}
                     className="w-full bg-transparent border-0 border-b border-black pb-2 text-black opacity-75 placeholder-gray-400 focus:outline-none focus:border-black uppercase"
                   />
                 </div>
@@ -79,8 +79,9 @@ const CheckoutForm = () => {
                   <input
                     type="email"
                     value={email}
-                    onChange={(e) => setField("email", e.target.value)}
-                    className="w-full bg-transparent border-0 border-b border-black pb-2 text-black opacity-75 placeholder-gray-400 focus:outline-none focus:border-black uppercase"
+                    required
+                    onChange={(e) => setField('email', e.target.value)}
+                    className="w-full bg-transparent border-0 border-b border-black pb-2 text-black opacity-75 placeholder-gray-400 focus:outline-none focus:border-black"
                   />
                 </div>
 
@@ -92,7 +93,7 @@ const CheckoutForm = () => {
                   <input
                     type="tel"
                     value={phone}
-                    onChange={(e) => setField("phone", e.target.value)}
+                    onChange={(e) => setField('phone', e.target.value)}
                     className="w-full bg-transparent border-0 border-b border-black pb-2 text-black opacity-75 placeholder-gray-400 focus:outline-none focus:border-black uppercase"
                   />
                 </div>
@@ -105,7 +106,7 @@ const CheckoutForm = () => {
                   <input
                     type="text"
                     value={address}
-                    onChange={(e) => setField("address", e.target.value)}
+                    onChange={(e) => setField('address', e.target.value)}
                     className="w-full bg-transparent border-0 border-b border-black pb-2 text-black opacity-75 placeholder-gray-400 focus:outline-none focus:border-black uppercase"
                   />
                 </div>
@@ -137,14 +138,14 @@ const CheckoutForm = () => {
                         <Upload className="w-8 h-8 mx-auto mb-4 opacity-50 font-thin" />
                       )}
                       <p className="text-sm text-black opacity-75 uppercase">
-                        {idPreview ? "Change file" : "Click to upload"}
+                        {idPreview ? 'Change file' : 'Click to upload'}
                       </p>
                     </label>
                   </div>
                 </div>
               </div>
 
-              <p className="text-xs text-gray-600 mt-6 leading-relaxed">
+              <p className="text-sm font-light text-gray-600 mt-6 leading-relaxed font-sans tracking-[.05rem]">
                 Upload a valid photo ID to complete your booking. No 3D field
                 will be placed.
               </p>
@@ -153,7 +154,7 @@ const CheckoutForm = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default CheckoutForm;
+export default CheckoutForm
