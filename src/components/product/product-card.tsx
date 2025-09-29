@@ -1,44 +1,44 @@
-"use client";
+'use client'
 
-import { Product } from "@/types/product";
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Product } from '@/types/product'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
 interface ProductCardProps {
-  product: Product;
+  product: Product
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [isHovered, setIsHovered] = useState(false)
 
   // Map media strings to objects with src and alt
   const images =
     product?.media && product.media.length > 0
       ? product.media.map((url) => ({ src: url, alt: product.dressName }))
-      : [{ src: "/placeholder.svg", alt: "Product image" }];
+      : [{ src: '/placeholder.svg', alt: 'Product image' }]
 
   useEffect(() => {
-    if (!isHovered || images.length <= 1) return;
+    if (!isHovered || images.length <= 1) return
 
     const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 1500); // 1.5s interval
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length)
+    }, 1500) // 1.5s interval
 
-    return () => clearInterval(interval);
-  }, [isHovered, images.length]);
+    return () => clearInterval(interval)
+  }, [isHovered, images.length])
 
   const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
+    setIsHovered(true)
+  }
 
   const handleMouseLeave = () => {
-    setIsHovered(false);
+    setIsHovered(false)
     setTimeout(() => {
-      setCurrentImageIndex(0);
-    }, 150);
-  };
+      setCurrentImageIndex(0)
+    }, 150)
+  }
 
   return (
     <div className="flex flex-col h-full">
@@ -64,16 +64,16 @@ export function ProductCard({ product }: ProductCardProps) {
             </button>
           </div>
         </div>
-        <div className="text-center space-y-1 mt-auto">
-          <h3 className="text-[14px] tracking-widest transition-colors duration-300 group-hover:text-gray-700">
+        <div className="text-center space-y-2 mt-auto">
+          <h3 className="text-[14px] font-light tracking-[0.1rem] transition-colors duration-300 group-hover:text-gray-700">
             {product.dressName}
           </h3>
-          <p className="text-[10px] tracking-wider transition-colors duration-300 group-hover:text-gray-600">
+          <p className="text-[10px] tracking-[.1rem] font-light transition-colors duration-300 group-hover:text-gray-600">
             RENT ${product?.rentalPrice?.fourDays} | RRP $
             {Math.round(product?.rentalPrice?.fourDays * 3.5)}
           </p>
         </div>
       </Link>
     </div>
-  );
+  )
 }

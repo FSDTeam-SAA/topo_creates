@@ -1,16 +1,16 @@
-"use client";
+'use client'
 
-import * as React from "react";
+import * as React from 'react'
 
-import { Button } from "@/components/ui/button";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
-import { Filter } from "lucide-react";
-import SearchProduct from "./filter/SearchProduct";
-import Rental from "./filter/Rental";
-import { LocalPickup } from "./filter/LocalPickup";
-import EventDate from "./filter/EventDate";
-import Price from "./filter/Price";
-import Size from "./filter/Size";
+import { Button } from '@/components/ui/button'
+import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer'
+import { Filter } from 'lucide-react'
+import SearchProduct from './filter/SearchProduct'
+import Rental from './filter/Rental'
+// import { LocalPickup } from "./filter/LocalPickup";
+import EventDate from './filter/EventDate'
+import Price from './filter/Price'
+import Size from './filter/Size'
 
 export function FilterDrawer() {
   return (
@@ -27,12 +27,12 @@ export function FilterDrawer() {
         <div className=" space-y-3 mt-3">
           <SearchProduct />
           <Rental />
-          <LocalPickup />
+          {/* <LocalPickup /> */}
           <EventDate />
           <Price />
           <Size />
         </div>
       </DrawerContent>
     </Drawer>
-  );
+  )
 }
