@@ -1,75 +1,131 @@
-"use client";
-import { Check } from "lucide-react";
-import { useRouter } from "next/navigation";
+'use client'
+import { Check } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useMutation } from '@tanstack/react-query'
+import { useSession } from 'next-auth/react'
+import { toast } from 'sonner'
 
 type PlanFeature = {
-  text: string;
-};
+  text: string
+}
 
 type PricingPlan = {
-  id: string;
-  title: string;
-  subtitle: string;
-  price: string;
-  period: string;
-  commission: string;
-  features: PlanFeature[];
-};
+  id: string
+  title: string
+  subtitle: string
+  price: string
+  period: string
+  commission: string
+  features: PlanFeature[]
+}
 
 const pricingPlans: PricingPlan[] = [
   {
-    id: "founders-collective",
+    id: 'founders-collective',
     title: "FOUNDER'S COLLECTIVE",
-    subtitle: "Exclusive Onboarding Tier",
-    price: "FREE",
-    period: "FIRST 3 MONTHS",
-    commission: "0% Commission",
+    subtitle: 'Exclusive Onboarding Tier',
+    price: 'FREE',
+    period: 'FIRST 3 MONTHS',
+    commission: '0% Commission',
     features: [
-      { text: "Early Platform Access" },
-      { text: "No Monthly Fees (3 Months)" },
-      { text: "Zero Commission Rate" },
+      { text: 'Early Platform Access' },
+      { text: 'No Monthly Fees (3 Months)' },
+      { text: 'Zero Commission Rate' },
     ],
   },
   {
-    id: "signature",
-    title: "SIGNATURE",
-    subtitle: "Growth Plan",
-    price: "$79",
-    period: "PER MONTH",
-    commission: "10% Commission",
+    id: 'signature',
+    title: 'SIGNATURE',
+    subtitle: 'Growth Plan',
+    price: '$79',
+    period: 'PER MONTH',
+    commission: '10% Commission',
     features: [
-      { text: "Standard Platform Access" },
-      { text: "Affordable Monthly Fee" },
-      { text: "Premium Exposure" },
-      { text: "Invite-Based VIP Events" },
+      { text: 'Standard Platform Access' },
+      { text: 'Affordable Monthly Fee' },
+      { text: 'Premium Exposure' },
+      { text: 'Invite-Based VIP Events' },
     ],
   },
   {
-    id: "vault-society",
-    title: "VAULT SOCIETY",
-    subtitle: "Premium Plan",
-    price: "$129",
-    period: "PER MONTH",
-    commission: "5% Commission",
+    id: 'vault-society',
+    title: 'VAULT SOCIETY',
+    subtitle: 'Premium Plan',
+    price: '$129',
+    period: 'PER MONTH',
+    commission: '5% Commission',
     features: [
-      { text: "Premium Platform Access" },
-      { text: "Top-Tier Boutique Status" },
-      { text: "Lowest Commission Rate" },
-      { text: "Free Return Shipping" },
-      { text: "Guaranteed VIP Invites" },
+      { text: 'Premium Platform Access' },
+      { text: 'Top-Tier Boutique Status' },
+      { text: 'Lowest Commission Rate' },
+      { text: 'Free Return Shipping' },
+      { text: 'Guaranteed VIP Invites' },
     ],
   },
-];
+]
+
+// API call function
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const createSubscription = async ({
+  data,
+  token,
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: any
+  token: string
+}) => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/subscription/create`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    }
+  )
+
+  if (!res.ok) {
+    throw new Error('Failed to create subscription')
+  }
+
+  return res.json()
+}
 
 export default function PricingPlan() {
-  const router = useRouter();
+  const router = useRouter()
+  const session = useSession()
+  const accessToken = session?.data?.user?.accessToken || ''
 
-  const handleChoosePlan = (planId: string) => {
-    // Store the selected plan in localStorage
-    localStorage.setItem("selectedPlan", planId);
-    // Navigate to the form page
-    router.push("/become-lender/form");
-  };
+  const { mutate } = useMutation({
+    mutationFn: createSubscription,
+    onSuccess: () => {
+      toast.success(' Subscription created successfully!')
+      setTimeout(() => {
+        router.push('/become-lender/form')
+      }, 2000)
+    },
+    onError: () => {
+      toast.error(' Something went wrong, please try again.')
+    },
+  })
+
+  const handleChoosePlan = (plan: PricingPlan) => {
+    const data = {
+      name: plan.title,
+      description: `${plan.subtitle}.${plan.price} ${plan.period}`,
+      price:
+        plan.price === 'FREE' ? 0 : parseInt(plan.price.replace(/[^0-9]/g, '')),
+      commission: parseInt(plan.commission.replace(/[^0-9]/g, '')),
+      currency: 'AUD',
+      billingCycle: 'monthly',
+      isActive: true,
+      features: plan.features.map((f) => f.text),
+    }
+
+    mutate({ data, token: accessToken })
+  }
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
@@ -115,8 +171,8 @@ export default function PricingPlan() {
 
             <div className="mt-auto">
               <button
-                onClick={() => handleChoosePlan(plan.id)}
-                className="w-full py-3 border-t border-gray-200 text-sm font-medium hover:bg-gray-50 transition-colors"
+                onClick={() => handleChoosePlan(plan)}
+                className="w-full py-3 border-t border-gray-200 text-sm font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
               >
                 CHOOSE PLAN
               </button>
@@ -125,5 +181,5 @@ export default function PricingPlan() {
         ))}
       </div>
     </div>
-  );
+  )
 }
