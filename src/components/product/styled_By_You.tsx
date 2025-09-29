@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { styledByYouProducts } from "@/data/product-data";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,8 +19,8 @@ const StyledByYou = () => {
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 container">
-          {styledByYouProducts.map((styledProduct) => (
-            <div key={styledProduct.id} className="flex flex-col">
+          {styledByYouProducts.map((styledProduct : any) => (
+            <div key={styledProduct.slug} className="flex flex-col">
               <Link href={`/product/${styledProduct.slug}`} className="group">
                 <div className="overflow-hidden mb-4">
                   <Image

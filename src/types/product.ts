@@ -41,3 +41,6 @@ export interface ProductCardData {
   longitude?: number
   rentalPrice?: { fourDays?: string | number }
 }
+
+
+export type DeliveryOption = "shipping" | "local-pickup";

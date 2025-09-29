@@ -4,7 +4,6 @@ import type React from "react";
 import { useState, useEffect } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import type { FilterOptions } from "@/lib/filter-utils";
-import type { ProductSize, RentalDuration } from "@/types/product";
 import { DualRangeSlider } from "../ui/DualRangeSlider";
 
 interface ShopFiltersProps {
@@ -45,7 +44,7 @@ export function ShopFilters({ filters, onFilterChange }: ShopFiltersProps) {
     });
   };
 
-  const handleSizeChange = (size: ProductSize, checked: boolean) => {
+  const handleSizeChange = (size: string, checked: boolean) => {
     const newSizes = checked
       ? [...(filters.sizes || []), size]
       : (filters.sizes || []).filter((s) => s !== size);
@@ -53,6 +52,7 @@ export function ShopFilters({ filters, onFilterChange }: ShopFiltersProps) {
     onFilterChange({ sizes: newSizes });
   };
 
+  type RentalDuration = string;
   const handleRentalDurationChange = (
     duration: RentalDuration,
     checked: boolean
@@ -284,9 +284,9 @@ export function ShopFilters({ filters, onFilterChange }: ShopFiltersProps) {
         <Checkbox
           id="size-xxs"
           label="XXS"
-          checked={filters.sizes?.includes("XXS" as ProductSize) || false}
+          checked={filters.sizes?.includes("XXS") || false}
           onChange={(checked) =>
-            handleSizeChange("XXS" as ProductSize, checked)
+            handleSizeChange("XXS", checked)
           }
         />
         <Checkbox

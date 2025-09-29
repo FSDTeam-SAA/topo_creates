@@ -2,7 +2,17 @@
 
 import { useState } from "react"
 import { ChevronDown, ChevronUp } from "lucide-react"
-import { type ProductSize, sizeGuideOptions } from "@/types/product"
+// TODO: Ensure ProductSize is exported from '@/types/product'.
+// If not, replace 'ProductSize' with the correct type or define it here temporarily.
+// type ProductSize = string; // Uncomment this line if '@/types/product' does not export ProductSize
+type ProductSize = string;
+// import type { ProductSize } from "@/types/product"
+
+const sizeGuideOptions = [
+  { value: "small", label: "Runs Small" },
+  { value: "true", label: "True to Size" },
+  { value: "large", label: "Runs Large" },
+]
 
 interface SizeGuideProps {
   availableSizes: ProductSize[]

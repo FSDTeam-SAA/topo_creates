@@ -1,7 +1,10 @@
 "use client"
 
 import Image from "next/image"
-import type { ProductImage } from "@/types/product"
+export interface ProductImage {
+  src: string
+  alt: string
+}
 
 interface ProductThumbnailsProps {
   images: ProductImage[]

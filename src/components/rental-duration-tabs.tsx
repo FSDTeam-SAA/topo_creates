@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import type { RentalDuration } from "@/types/product"
+type RentalDuration = "4" | "8";
 
 interface RentalDurationTabsProps {
   price: number

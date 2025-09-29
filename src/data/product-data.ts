@@ -1,7 +1,5 @@
-import type { Product } from "@/types/product";
 
-// Main product data
-export const mainProduct: Product = {
+export const mainProduct = {
   id: "1",
   name: "DRESS NAME",
   price: 99,
@@ -22,7 +20,7 @@ export const mainProduct: Product = {
 };
 
 // Styled by you products
-export const styledByYouProducts: Product[] = [
+export const styledByYouProducts = [
   {
     id: "1",
     name: "WEDDING GUEST READY",
@@ -129,23 +127,23 @@ export const styledByYouProducts: Product[] = [
 ];
 
 // All products combined for easy lookup
-export const allProducts: Product[] = [mainProduct, ...styledByYouProducts];
+export const allProducts = [mainProduct, ...styledByYouProducts];
 
 // Function to get product by slug
-export function getProductBySlug(slug: string): Product | undefined {
+export function getProductBySlug(slug: string) {
   return allProducts.find((product) => product.slug === slug);
 }
 
 // Function to get trending products - return ALL products instead of just 5
-export function getTrendingProducts(): Product[] {
+export function getTrendingProducts() {
   // Return all products instead of just the first 5
   return allProducts;
 }
 
 // Function to get more products for pagination demo
-export function getMoreProducts(count = 40): Product[] {
+export function getMoreProducts(count = 40) {
   // Create multiple copies of the products to have enough for pagination
-  const result: Product[] = [];
+  const result = [];
   const baseProducts = styledByYouProducts;
 
   // Generate the requested number of products by duplicating and modifying existing ones

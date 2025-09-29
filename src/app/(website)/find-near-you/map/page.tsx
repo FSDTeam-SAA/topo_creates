@@ -6,15 +6,46 @@ import FindNearYou from '../_components/find-near-you'
 // import MapView from '../_components/map-view'
 import MapProductCard from '../_components/map-product-card'
 import HowItWork from '@/components/HowItWork'
-import { ProductGrid } from '@/components/product/product-grid'
-import { getTrendingProducts } from '@/data/product-data'
+// import { ProductGrid } from '@/components/product/product-grid'
+// import { getTrendingProducts } from '@/data/product-data'
 import { MapPinOff } from 'lucide-react'
 import FindNearMap from '../../_components/find-near-map'
 import { normalizeProducts } from '../utility/normalizeProducts'
 
 export default function MapPage() {
   const { allProducts } = useFindNearYouStore()
-  const trendingProducts = getTrendingProducts()
+  // const trendingProductsRaw = getTrendingProducts()
+  // Map trending products to Product type (adjust mapping as needed)
+  // const trendingProducts = trendingProductsRaw.map((p: any, idx: number) => ({
+  //   _id: p.id ?? `trending-${idx}`,
+  //   lenderId: '', // Provide actual lenderId if available
+  //   dressId: p.id ?? `trending-${idx}`,
+  //   dressName: p.name,
+  //   size: p.sizes?.[0] ?? 'N/A',
+  //   media: p.images?.map((img: any) => img.src) ?? ['/placeholder.svg'],
+  //   rentalPrice: {
+  //     fourDays: p.rentalFee ?? 0,
+  //     eightDays: p.rentalFee ? p.rentalFee * 2 : 0,
+  //   },
+  //   pickupOption: 'shipping', // or set as needed
+  //   slug: p.slug,
+  //   description: p.description,
+  //   // Required Product fields with defaults or mapped values
+  //   brand: p.brand ?? 'Unknown',
+  //   status: p.status ?? 'available',
+  //   colour: p.colour ?? 'Unknown',
+  //   condition: p.condition ?? 'Unknown',
+  //   location: p.location ?? { lat: 0, lng: 0, address: 'Unknown' },
+  //   createdAt: p.createdAt ?? new Date().toISOString(),
+  //   updatedAt: p.updatedAt ?? new Date().toISOString(),
+  //   owner: p.owner ?? '',
+  //   isActive: p.isActive ?? true,
+  //   isDeleted: p.isDeleted ?? false,
+  //   category: p.category ?? 'Unknown',
+  //   tags: p.tags ?? [],
+  //   views: p.views ?? 0,
+  //   // Add any other required Product fields with defaults or mapped values
+  // }))
   console.log('All Products:', allProducts)
 
   const hasProducts = allProducts && allProducts.length > 0
@@ -100,11 +131,11 @@ export default function MapPage() {
 
       {/* Bottom Sections */}
       <HowItWork />
-      <ProductGrid
+      {/* <ProductGrid
         title="TRENDING NOW"
         subtitle="EXPLORE THE EDIT"
         products={trendingProducts}
-      />
+      /> */}
     </main>
   )
 }
