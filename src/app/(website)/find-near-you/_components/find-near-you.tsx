@@ -97,13 +97,17 @@ export default function FindNearYou() {
   // Merge fetched products into Zustand
   useEffect(() => {
     if (!data) return
+
     if (page === 1) {
-      setAllProducts(data)
+      setAllProducts(data) // reset list
     } else {
-      setAllProducts([...allProducts, ...data])
+      setAllProducts((prev) => {
+        const ids = new Set(prev.map((p) => p._id))
+        const newOnes = data.filter((p) => !ids.has(p._id))
+        return [...prev, ...newOnes]
+      })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, page])
+  }, [data, page, setAllProducts])
 
   // Manual trigger functions
   const handleSearchNearYou = () => {
@@ -119,6 +123,9 @@ export default function FindNearYou() {
     setAllProducts([])
     refetch()
   }
+
+  // console's for test
+  console.log('map route all products: ', allProducts)
 
   return (
     <section className="container mx-auto py-12">
