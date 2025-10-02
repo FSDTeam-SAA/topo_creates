@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import ShoppinghMap from '../shopping-map'
 
 const DeliveryOption = () => {
   const [option, setOption] = useState('shipping')
@@ -43,8 +44,8 @@ const DeliveryOption = () => {
             1-2 business days
           </p>
         ) : (
-          <div className="pt-5 font-light text-sm font-sans tracking-[0.1rem]">
-            Map will be appear here
+          <div className="pt-5 w-full">
+            <ShoppinghMap />
           </div>
         )}
       </div>
