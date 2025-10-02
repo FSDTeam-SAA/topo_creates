@@ -1,6 +1,6 @@
-import clsx from "clsx";
-import React from "react";
-import { Card } from "./ui/card";
+import clsx from 'clsx'
+import React from 'react'
+import { Card } from './ui/card'
 
 const Paymentcard = () => {
   return (
@@ -9,9 +9,9 @@ const Paymentcard = () => {
         title="Muse Member"
         price="$0+"
         benefits={[
-          "Free shipping on all orders over $100",
-          "Early access to new styles",
-          "Style and trend updates",
+          'Free shipping on all orders over $100',
+          'Early access to new styles',
+          'Style and trend updates',
         ]}
       />
 
@@ -20,8 +20,8 @@ const Paymentcard = () => {
         price="$300+"
         benefits={[
           '$20 "Welcome to Silver" voucher',
-          "$15 birthday voucher",
-          "Surprise perks: bonus credits, small gifts",
+          '$15 birthday voucher',
+          'Surprise perks: bonus credits, small gifts',
         ]}
         highlighted
       />
@@ -31,22 +31,22 @@ const Paymentcard = () => {
         price="$600+"
         benefits={[
           '$30 "Welcome to Gold" voucher',
-          "$30 birthday voucher",
-          "Free insurance on 1 rental per year",
-          "Priority customer support",
+          '$30 birthday voucher',
+          'Free insurance on 1 rental per year',
+          'Priority customer support',
         ]}
       />
     </div>
-  );
-};
+  )
+}
 
-export default Paymentcard;
+export default Paymentcard
 
 interface MembershipCardProps {
-  title: string;
-  price: string;
-  benefits: string[];
-  highlighted?: boolean;
+  title: string
+  price: string
+  benefits: string[]
+  highlighted?: boolean
 }
 
 const MembershipCard: React.FC<MembershipCardProps> = ({
@@ -58,17 +58,17 @@ const MembershipCard: React.FC<MembershipCardProps> = ({
   return (
     <Card
       className={clsx(
-        "rounded-none p-6 flex flex-col items-center text-center h-full",
-        highlighted ? "border-2 border-[#891D33]" : "border border-black"
+        'rounded-none p-6 flex flex-col items-center text-center font-light h-full',
+        highlighted ? 'border-2 border-[#891D33]' : 'border border-black'
       )}
     >
-      <h3 className="text-cl font-medium mb-6">{title}</h3>
-      <p className="text-2xl font-semibold mb-6">{price}</p>
-      <ul className="text-[13px] space-y-3">
+      <h3 className="text-cl font-light tracking-widest mb-6">{title}</h3>
+      <p className="text-2xl font-light tracking-widest  mb-6">{price}</p>
+      <ul className="text-[13px] font-light tracking-widest space-y-3">
         {benefits.map((benefit, idx) => (
           <li key={idx}>{benefit}</li>
         ))}
       </ul>
     </Card>
-  );
-};
+  )
+}

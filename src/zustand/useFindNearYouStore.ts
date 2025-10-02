@@ -29,7 +29,9 @@ interface FindNearYouState {
   setState: (partial: Partial<FindNearYouState>) => void
   resetPage: () => void
   nextPage: () => void
-  setAllProducts: (products: ApiProduct[]) => void
+  setAllProducts: (
+    products: ApiProduct[] | ((prev: ApiProduct[]) => ApiProduct[])
+  ) => void
   appendProducts: (products: ApiProduct[]) => void
   setPagination: (pagination: Pagination | null) => void
   resetAll: () => void
@@ -52,7 +54,13 @@ export const useFindNearYouStore = create<FindNearYouState>()(
       setState: (partial) => set((state) => ({ ...state, ...partial })),
       resetPage: () => set({ page: 1 }),
       nextPage: () => set((state) => ({ page: state.page + 1 })),
-      setAllProducts: (products) => set({ allProducts: products }),
+      setAllProducts: (products) =>
+        set((state) => ({
+          allProducts:
+            typeof products === 'function'
+              ? products(state.allProducts)
+              : products,
+        })),
       appendProducts: (products) =>
         set((state) => ({ allProducts: [...state.allProducts, ...products] })),
       setPagination: (pagination) => set({ pagination }),

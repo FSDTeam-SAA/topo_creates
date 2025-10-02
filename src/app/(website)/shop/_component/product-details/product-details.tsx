@@ -1,28 +1,30 @@
-"use client";
-import { useParams } from "next/navigation";
-import React from "react";
-import ShopCard from "./shop-card";
-import ShopDetails from "./shop-details";
-import { useQuery } from "@tanstack/react-query";
-import StyledByYou from "@/components/product/styled_By_You";
-import HowItWork from "@/components/HowItWork";
-import GiveAndTake from "@/components/section/GiveAndTake";
+'use client'
+import { useParams } from 'next/navigation'
+import React from 'react'
+import ShopCard from './shop-card'
+import ShopDetails from './shop-details'
+import { useQuery } from '@tanstack/react-query'
+import StyledByYou from '@/components/product/styled_By_You'
+import HowItWork from '@/components/HowItWork'
+import GiveAndTake from '@/components/section/GiveAndTake'
 
 const ProductDetails = () => {
-  const params = useParams();
+  const params = useParams()
 
   const { data: singleProduct = {}, isLoading } = useQuery({
-    queryKey: ["single-product"],
+    queryKey: ['single-product'],
     queryFn: async () => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin/dress/${params.id}`
-      );
-      const data = await res.json();
-      return data;
+      )
+      const data = await res.json()
+      return data
     },
-  });
+  })
 
-  const allImages = singleProduct?.data?.media || [];
+  const allImages = singleProduct?.data?.media || []
+
+  console.log('data', singleProduct)
 
   return (
     <div>
@@ -48,7 +50,7 @@ const ProductDetails = () => {
         <GiveAndTake />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ProductDetails;
+export default ProductDetails

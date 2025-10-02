@@ -1,62 +1,77 @@
+'use client'
 
-
-"use client";
-
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Search, User, Send } from "lucide-react";
+import { useState } from 'react'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Search, User, Send } from 'lucide-react'
 
 interface ChatMessage {
-  id: string;
-  content: string;
-  sender: "user" | "support";
-  timestamp: string;
+  id: string
+  content: string
+  sender: 'user' | 'support'
+  timestamp: string
 }
 
 interface ChatConversation {
-  id: string;
-  orderId: string;
-  preview: string;
-  timestamp: string;
-  messages: ChatMessage[];
+  id: string
+  orderId: string
+  preview: string
+  timestamp: string
+  messages: ChatMessage[]
 }
 
 export default function ChatSystem() {
-  const [newMessage, setNewMessage] = useState("");
-  const [activeConversation, setActiveConversation] = useState("1");
+  const [newMessage, setNewMessage] = useState('')
+  const [activeConversation, setActiveConversation] = useState('1')
 
   const conversations: ChatConversation[] = [
     {
-      id: "1",
-      orderId: "XXXXX",
-      preview: "Hi, I have a question...",
-      timestamp: "10:15 AM",
+      id: '1',
+      orderId: 'XXXXX',
+      preview: 'Hi, I have a question...',
+      timestamp: '10:15 AM',
       messages: [
-        { id: "1", content: "Hi, Mindy", sender: "user", timestamp: "09:41 AM" },
-        { id: "2", content: "I've tried the app", sender: "user", timestamp: "09:41 AM" },
-        { id: "3", content: "Really?", sender: "support", timestamp: "09:42 AM" },
+        {
+          id: '1',
+          content: 'Hi, Mindy',
+          sender: 'user',
+          timestamp: '09:41 AM',
+        },
+        {
+          id: '2',
+          content: "I've tried the app",
+          sender: 'user',
+          timestamp: '09:41 AM',
+        },
+        {
+          id: '3',
+          content: 'Really?',
+          sender: 'support',
+          timestamp: '09:42 AM',
+        },
       ],
     },
     {
-      id: "2",
-      orderId: "XXXXX",
-      preview: "Hi, I have a question...",
-      timestamp: "10:15 AM",
+      id: '2',
+      orderId: 'XXXXX',
+      preview: 'Hi, I have a question...',
+      timestamp: '10:15 AM',
       messages: [],
     },
-  ];
+  ]
 
   const handleSendMessage = () => {
-    if (newMessage.trim() === "") return;
-    console.log("Sending message:", newMessage);
-    setNewMessage("");
-  };
+    if (newMessage.trim() === '') return
+    console.log('Sending message:', newMessage)
+    setNewMessage('')
+  }
 
-  const activeChat = conversations.find((conv) => conv.id === activeConversation);
+  const activeChat = conversations.find(
+    (conv) => conv.id === activeConversation
+  )
 
   return (
-    <div className="font-sans px-4 sm:px-6 md:px-8">
+    <div className="font-sans px-4 sm:px-6 md:px-8 pb-5">
       <div className="flex flex-col md:flex-row md:h-[600px] gap-6 rounded-lg overflow-hidden mb-[100px]">
         {/* Left Panel - Conversation List */}
         <div className="w-full md:w-1/3">
@@ -74,7 +89,7 @@ export default function ChatSystem() {
               <div
                 key={conversation.id}
                 className={`p-4 flex items-start gap-3 cursor-pointer hover:bg-gray-50 border-b ${
-                  activeConversation === conversation.id ? "bg-gray-100" : ""
+                  activeConversation === conversation.id ? 'bg-gray-100' : ''
                 }`}
                 onClick={() => setActiveConversation(conversation.id)}
               >
@@ -83,10 +98,16 @@ export default function ChatSystem() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-center">
-                    <p className="font-medium text-sm">Order #{conversation.orderId}</p>
-                    <span className="text-xs text-gray-500">{conversation.timestamp}</span>
+                    <p className="font-medium text-sm">
+                      Order #{conversation.orderId}
+                    </p>
+                    <span className="text-xs text-gray-500">
+                      {conversation.timestamp}
+                    </span>
                   </div>
-                  <p className="text-sm text-gray-500 truncate">{conversation.preview}</p>
+                  <p className="text-sm text-gray-500 truncate">
+                    {conversation.preview}
+                  </p>
                 </div>
               </div>
             ))}
@@ -100,7 +121,9 @@ export default function ChatSystem() {
             <div className="bg-gray-100 rounded-full p-2">
               <User className="h-6 w-6 sm:h-7 sm:w-7 text-gray-500" />
             </div>
-            <p className="font-normal text-lg sm:text-2xl">Order #{activeChat?.orderId}</p>
+            <p className="font-normal text-lg sm:text-2xl">
+              Order #{activeChat?.orderId}
+            </p>
           </div>
 
           {/* Messages Area */}
@@ -117,14 +140,16 @@ export default function ChatSystem() {
                     <div
                       key={message.id}
                       className={`flex ${
-                        message.sender === "user" ? "justify-end" : "justify-start"
+                        message.sender === 'user'
+                          ? 'justify-end'
+                          : 'justify-start'
                       }`}
                     >
                       <div
                         className={`max-w-[85%] sm:max-w-[70%] rounded-lg px-4 py-2 ${
-                          message.sender === "user"
-                            ? "bg-black text-white"
-                            : "bg-gray-100 text-gray-800"
+                          message.sender === 'user'
+                            ? 'bg-black text-white'
+                            : 'bg-gray-100 text-gray-800'
                         }`}
                       >
                         <p className="text-sm">{message.content}</p>
@@ -147,7 +172,7 @@ export default function ChatSystem() {
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") handleSendMessage();
+                    if (e.key === 'Enter') handleSendMessage()
                   }}
                   className="rounded-full py-4 px-5 border w-full outline-none bg-white text-sm"
                 />
@@ -164,5 +189,5 @@ export default function ChatSystem() {
         </div>
       </div>
     </div>
-  );
+  )
 }

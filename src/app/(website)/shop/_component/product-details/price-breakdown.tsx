@@ -32,7 +32,7 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
 
   const pathName = usePathname()
 
-  console.log('access token', token)
+  // console.log('access token', token)
 
   const { isConfirm, setIsConfirm, idPreview, startDate, endDate } =
     useShoppingStore()

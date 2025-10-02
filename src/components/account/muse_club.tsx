@@ -1,25 +1,24 @@
-import Paymentcard from "../payment_card";
+import Paymentcard from '../payment_card'
 
 const MuseClub = () => {
-  const progressValue = 70;
+  const progressValue = 70
 
   return (
     <div className="w-full">
       <section>
         {/* Title */}
         <div className="mb-12">
-          <h2 className="text-xltracking-wide font-normal mb-4 sm:mb-6">
+          <h2 className="text-xl tracking-widest font-light border-black border-b-[1px] pb-5 mb-4 sm:mb-6">
             Muse Club
           </h2>
-          <hr className="border border-black" />
         </div>
 
         {/* Spend Info */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-          <p className="text-xl sm:text-2xl lg:text-[32px] font-normal">
+          <p className="sm:text-lg md:text-xl lg:text-[30px] font-light tracking-[.2rem]">
             Your Annual Spend: $625
           </p>
-          <p className="text-xl sm:text-2xl lg:text-[32px] font-normal">
+          <p className="text-xl md:text-[24px] lg:text-[30px] font-light tracking-[.2rem]">
             $375 more to reach Muse Icon
           </p>
         </div>
@@ -31,14 +30,14 @@ const MuseClub = () => {
               className="h-2 rounded transition-all duration-300"
               style={{
                 width: `${progressValue}%`,
-                backgroundColor: progressValue > 0 ? "#891D33" : "transparent",
+                backgroundColor: progressValue > 0 ? '#891D33' : 'transparent',
               }}
             ></div>
           </div>
-          <div className="flex justify-between text-[14px] text-gray-700 mt-4 sm:mt-6">
-            <span className="font-normal">$0 Member</span>
-            <span className=" font-normal">$300 Silver</span>
-            <span className=" font-normal">$600 Gold</span>
+          <div className="flex justify-between text-[14px] text-gray-700 mt-10 md:mt-16">
+            <span className="font-light tracking-wider">$0 Member</span>
+            <span className=" font-light tracking-wider">$300 Silver</span>
+            <span className="font-light tracking-wider">$600 Gold</span>
           </div>
         </div>
 
@@ -48,7 +47,7 @@ const MuseClub = () => {
         </div>
       </section>
     </div>
-  );
-};
+  )
+}
 
-export default MuseClub;
+export default MuseClub
