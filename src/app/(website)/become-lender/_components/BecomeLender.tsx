@@ -1,6 +1,6 @@
-import Image from "next/image";
-import Link from "next/link";
-import PricingPlan from "./pricing-plan";
+import Image from 'next/image'
+import Link from 'next/link'
+import PricingPlan from './pricing-plan'
 
 const BecomeLender = () => {
   return (
@@ -9,7 +9,7 @@ const BecomeLender = () => {
         {/* Hero Section */}
         <section className="py-12 text-center">
           <div className="container px-4 md:px-6">
-            <h1 className="mb-6 headerClass font-inter">
+            <h1 className="mb-6 text-2xl md:text-4xl font-light tracking-[1rem] font-inter">
               Partner with Muse Gala
             </h1>
             <Link
@@ -343,7 +343,7 @@ const BecomeLender = () => {
         </section>
       </main>
     </div>
-  );
-};
+  )
+}
 
-export default BecomeLender;
+export default BecomeLender

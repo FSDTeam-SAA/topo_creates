@@ -58,6 +58,62 @@ export default function ChatSystem() {
       timestamp: '10:15 AM',
       messages: [],
     },
+    {
+      id: '3',
+      orderId: 'XXXXX',
+      preview: 'Hi, I have a question...',
+      timestamp: '10:15 AM',
+      messages: [],
+    },
+    {
+      id: '4',
+      orderId: 'XXXXX',
+      preview: 'Hi, I have a question...',
+      timestamp: '10:15 AM',
+      messages: [],
+    },
+    {
+      id: '5',
+      orderId: 'XXXXX',
+      preview: 'Hi, I have a question...',
+      timestamp: '10:15 AM',
+      messages: [],
+    },
+    {
+      id: '6',
+      orderId: 'XXXXX',
+      preview: 'Hi, I have a question...',
+      timestamp: '10:15 AM',
+      messages: [],
+    },
+    {
+      id: '7',
+      orderId: 'XXXXX',
+      preview: 'Hi, I have a question...',
+      timestamp: '10:15 AM',
+      messages: [],
+    },
+    {
+      id: '8',
+      orderId: 'XXXXX',
+      preview: 'Hi, I have a question...',
+      timestamp: '10:15 AM',
+      messages: [],
+    },
+    {
+      id: '9',
+      orderId: 'XXXXX',
+      preview: 'Hi, I have a question...',
+      timestamp: '10:15 AM',
+      messages: [],
+    },
+    {
+      id: '10',
+      orderId: 'XXXXX',
+      preview: 'Hi, I have a question...',
+      timestamp: '10:15 AM',
+      messages: [],
+    },
   ]
 
   const handleSendMessage = () => {
@@ -84,7 +140,7 @@ export default function ChatSystem() {
               />
             </div>
           </div>
-          <div className="overflow-y-auto max-h-[400px] md:max-h-[544px]">
+          <div className="overflow-y-auto scrollbar-hide max-h-[400px] md:max-h-[544px]">
             {conversations.map((conversation) => (
               <div
                 key={conversation.id}
