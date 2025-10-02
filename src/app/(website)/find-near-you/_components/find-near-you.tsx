@@ -204,7 +204,7 @@ export default function FindNearYou() {
         </p>
         <Slider
           value={[radius]}
-          max={50}
+          max={100}
           step={2}
           className="w-full"
           onValueChange={(val) => setState({ radius: val[0] })}
