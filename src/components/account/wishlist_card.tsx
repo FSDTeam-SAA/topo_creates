@@ -13,10 +13,10 @@ const WishlistCard = () => {
             className="object-cover"
           />
         </div>
-        <h3 className="text-2xl tracking-widest font-light text-center text-black mb-[10px]">
+        <h3 className="text-lg md:text-xl tracking-widest font-light text-center text-black mb-[10px]">
           Olivia Dress
         </h3>
-        <p className="text-sm font-light text-black text-center tracking-widest">
+        <p className="text-[12px] md:text-sm font-light text-black text-center tracking-widest">
           RENT $XX | RRP $XX
         </p>
       </div>

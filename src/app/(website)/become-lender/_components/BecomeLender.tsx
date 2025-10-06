@@ -324,7 +324,7 @@ const BecomeLender = () => {
         </section>
 
         {/* List With Muse Gala */}
-        <section className="py-12 text-center md:py-16">
+        <section className="py-12 text-center md:py-12 mb-5 md:mb-10">
           <div className="container px-4 md:px-6">
             <h2 className="mb-4 text-2xl font-normal uppercase tracking-widest headerClass">
               List With Muse Gala

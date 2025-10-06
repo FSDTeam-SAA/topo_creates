@@ -57,7 +57,7 @@ const AccountInfo = () => {
 
   return (
     <section>
-      <div className="mb-10">
+      <div className="">
         <h2 className="text-lg tracking-widest font-light mb-6 border-black border-b-[1px] pb-5">
           Account Info
         </h2>

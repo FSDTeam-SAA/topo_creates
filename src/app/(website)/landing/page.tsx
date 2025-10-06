@@ -37,7 +37,9 @@ export default function Home() {
         /> */}
 
         {/* FIND YOUR DRESS NEAR YOUr map */}
-        <FindNearDressSection />
+        <div className="mt-5">
+          <FindNearDressSection />
+        </div>
 
         <HowItWork />
         {/* <ProductGrid
@@ -52,7 +54,7 @@ export default function Home() {
 
         <StyledByYou />
 
-        <div className="container mx-auto  py-8 md:py-12 lg:py-16">
+        <div className="container mx-auto  py-8 md:py-12 lg:py-16 space-y-12 md:space-y-24">
           {/* Header */}
           <header className="text-center mb-12 md:mb-16">
             <h1 className="headerClass">MUSE GALS SAY</h1>
