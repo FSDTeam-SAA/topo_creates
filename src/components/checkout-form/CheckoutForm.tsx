@@ -17,13 +17,13 @@ const CheckoutForm = () => {
     <div className="font-sans">
       <div>
         {/* Header */}
-        <h1 className="font-light opacity-75 text-[18px] tracking-[0.5rem] uppercase">
+        <h1 className="font-light opacity-75 text-[18px] md:text-2xl tracking-[0.5rem] uppercase">
           checkout
         </h1>
 
         {/* Customer Details Section */}
         <div className="mt-5">
-          <h2 className="text-[16px] font-light text-black mb-8 border-b border-black pb-2 opacity-75 tracking-[0.2rem]">
+          <h2 className="text-[14px] font-light text-black mb-8 border-b border-black pb-2 opacity-75 tracking-[0.2rem]">
             CUSTOMER DETAILS
           </h2>
 

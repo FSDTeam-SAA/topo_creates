@@ -1,6 +1,6 @@
 'use client'
 import AccountInfo from '@/components/account/account_info'
-import ChatSystem from '@/components/account/chat'
+// import ChatSystem from '@/components/account/chat'
 import Dispute from '@/components/account/dispute_components'
 import MuseClub from '@/components/account/muse_club'
 import OrderHistory from '@/components/account/order_history'
@@ -9,6 +9,7 @@ import { Session } from 'next-auth'
 import { useState } from 'react'
 import DocumentVerification from './document-verification'
 import Headers from './headers'
+import ChatPage from './chatLayout'
 
 interface Props {
   session: Session
@@ -39,7 +40,8 @@ const AllAccountInfo = ({ session }: Props) => {
         )}
         {tab === 'Chats' && (
           <div>
-            <ChatSystem />
+            {/* <ChatSystem /> */}
+            <ChatPage />
           </div>
         )}
       </div>

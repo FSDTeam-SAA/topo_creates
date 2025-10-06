@@ -15,10 +15,10 @@ const MuseClub = () => {
 
         {/* Spend Info */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-          <p className="sm:text-lg md:text-xl lg:text-[30px] font-light tracking-[.2rem]">
+          <p className="sm:text-lg md:text-2xl font-light tracking-[.2rem]">
             Your Annual Spend: $625
           </p>
-          <p className="text-xl md:text-[24px] lg:text-[30px] font-light tracking-[.2rem]">
+          <p className="text-xl md:text-[24px]  font-light tracking-[.2rem]">
             $375 more to reach Muse Icon
           </p>
         </div>
