@@ -24,14 +24,16 @@ const page = () => {
           <FilterProduct />
         </div>
 
-        <div className="flex-1">
+        <div className="flex-1 mb-5 md:mb-8">
           <AllProduct />
         </div>
       </div>
 
-      <HowItWork />
+      <div className="space-y-6 md:space-y-10">
+        <HowItWork />
 
-      <GiveAndTake />
+        <GiveAndTake />
+      </div>
     </div>
   )
 }
