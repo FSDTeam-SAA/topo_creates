@@ -6,7 +6,7 @@ export const useConversations = () => {
   const accessToken = session?.user?.accessToken || ''
 
   return useQuery({
-    queryKey: ['messages'],
+    queryKey: ['conversations'],
     queryFn: async () => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/message/chatrooms`,

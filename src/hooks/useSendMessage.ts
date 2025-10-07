@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useSocketStore } from '@/zustand/socketStore'
 import { useSession } from 'next-auth/react'
 
 interface MessagePayload {
@@ -10,10 +10,9 @@ interface MessagePayload {
 }
 
 export const useSendMessage = (roomId: string) => {
-  const { socket } = useSocketStore()
   const queryClient = useQueryClient()
-  const session = useSession()
-  const accessToken = session?.data?.user?.accessToken || ''
+  const { data: session } = useSession()
+  const accessToken = session?.user?.accessToken || ''
 
   return useMutation({
     mutationFn: async (payload: MessagePayload) => {
@@ -27,34 +26,20 @@ export const useSendMessage = (roomId: string) => {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/message`,
         {
           method: 'POST',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+          headers: { Authorization: `Bearer ${accessToken}` },
           body: formData,
         }
       )
 
-      if (!res.ok) {
-        throw new Error('Failed to send message')
-      }
-
-      // Parse response JSON
+      if (!res.ok) throw new Error('Failed to send message')
       const result = await res.json()
-      return result.data // 👈 শুধু data অংশ return করো
+      return result.data
     },
 
-    onSuccess: async (newMessage) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      queryClient.setQueryData(['messages', roomId], (old: any = []) => [
-        ...old,
-        newMessage,
-      ])
-
-      // Socket event পাঠাও
-      socket?.emit('message:new', newMessage)
-
-      // Latest fetch করাও
-      await queryClient.invalidateQueries({ queryKey: ['messages', roomId] })
+    onSuccess: () => {
+      // ⚠️ socket নিজে থেকেই নতুন মেসেজ পাঠাবে, তাই এখানে append করার দরকার নেই
+      // শুধু conversation sidebar রিফ্রেশ করার জন্য invalidate করো
+      queryClient.invalidateQueries({ queryKey: ['conversations'] })
     },
   })
 }

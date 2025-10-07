@@ -14,6 +14,7 @@ export default function ChatList({
   activeConversation,
   onSelect,
 }: Props) {
+  console.log('conversations ', conversations)
   return (
     <div className="w-full md:w-1/3">
       <div className="p-3 mb-4">

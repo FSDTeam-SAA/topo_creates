@@ -13,7 +13,7 @@ export default function ChatPage() {
     null
   )
 
-  // Map conversation list
+  // 🗂️ Conversation List Mapping
   const conversations =
     data?.data?.data?.map((item: any) => {
       const user = item.participants.find((p: any) => p.role === 'USER')
@@ -31,8 +31,9 @@ export default function ChatPage() {
       }
     }) || []
 
-  // Determine which room to load messages for
+  // 🧠 Determine active chat room
   const activeRoomId = activeConversation || conversations?.[0]?.id
+  console.log('active id', activeRoomId)
   const { messages } = useChat(activeRoomId)
 
   if (isFetching)

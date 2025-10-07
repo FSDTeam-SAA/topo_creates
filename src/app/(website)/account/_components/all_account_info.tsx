@@ -1,22 +1,37 @@
 'use client'
 import AccountInfo from '@/components/account/account_info'
-// import ChatSystem from '@/components/account/chat'
 import Dispute from '@/components/account/dispute_components'
 import MuseClub from '@/components/account/muse_club'
 import OrderHistory from '@/components/account/order_history'
 import YourWishlist from '@/components/account/your_wishlist'
 import { Session } from 'next-auth'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import DocumentVerification from './document-verification'
 import Headers from './headers'
 import ChatPage from './chatpage'
+import { useSession } from 'next-auth/react'
+import { useSocketStore } from '@/zustand/socketStore'
 
 interface Props {
   session: Session
 }
 
 const AllAccountInfo = ({ session }: Props) => {
-  const [tab, setTab] = useState<string>('Account Info')
+  const [tab, setTab] = useState('Account Info')
+  const { connectSocket, disconnectSocket, socket } = useSocketStore()
+  const { data } = useSession()
+  const userId = data?.user?.id
+
+  useEffect(() => {
+    if (userId && !socket) {
+      connectSocket(userId)
+    }
+
+    // Cleanup on unmount
+    return () => {
+      disconnectSocket()
+    }
+  }, [userId, connectSocket, disconnectSocket, socket])
 
   return (
     <div className="">
@@ -38,12 +53,7 @@ const AllAccountInfo = ({ session }: Props) => {
             <Dispute />
           </div>
         )}
-        {tab === 'Chats' && (
-          <div>
-            {/* <ChatSystem /> */}
-            <ChatPage />
-          </div>
-        )}
+        {tab === 'Chats' && <ChatPage />}
       </div>
     </div>
   )
