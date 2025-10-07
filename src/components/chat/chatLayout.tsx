@@ -5,11 +5,14 @@ import ChatList from './chatList'
 import ChatHeader from './chatHeader'
 import ChatMessages from './chatMessages'
 import ChatInput from './chatInput'
+import { useSendMessage } from '@/hooks/useSendMessage'
+import { useSession } from 'next-auth/react'
 
 interface ChatLayoutProps {
   conversations: any[]
   activeConversation: string
   onSelect: (id: string) => void
+
   messages: {
     _id: string
     message: string
@@ -24,12 +27,9 @@ export default function ChatLayout({
   onSelect,
   messages,
 }: ChatLayoutProps) {
-  const handleSendMessage = (text: string) => {
-    console.log('Sending message:', text)
-  }
+  const { mutate: sendMessage } = useSendMessage(activeConversation)
 
-  console.log('active messages', messages)
-  // Transform real messages to displayable format
+  // Transform for display
   const formattedMessages = messages.map((m) => ({
     id: m._id,
     content: m.message,
@@ -39,6 +39,18 @@ export default function ChatLayout({
       minute: '2-digit',
     }),
   }))
+
+  const cu = useSession()
+  const senderId = cu?.data?.user?.id || ''
+
+  const handleSendMessage = (text: string, file?: File) => {
+    sendMessage({
+      text,
+      file,
+      chatRoom: activeConversation,
+      sender: senderId,
+    })
+  }
 
   return (
     <div className="font-sans px-4 sm:px-6 md:px-8 pb-5">
@@ -56,9 +68,12 @@ export default function ChatLayout({
             }
           />
           <div className="flex-1 flex flex-col border-[#E6E6E6] border mt-5 rounded-xl overflow-hidden">
+            {/* Message List */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide">
               <ChatMessages messages={formattedMessages} />
             </div>
+
+            {/* Input Section */}
             <ChatInput onSend={handleSendMessage} />
           </div>
         </div>

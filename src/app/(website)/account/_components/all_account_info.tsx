@@ -9,7 +9,7 @@ import { Session } from 'next-auth'
 import { useState } from 'react'
 import DocumentVerification from './document-verification'
 import Headers from './headers'
-import ChatPage from './chatLayout'
+import ChatPage from './chatpage'
 
 interface Props {
   session: Session
