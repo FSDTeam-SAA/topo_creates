@@ -1,4 +1,4 @@
-interface Props {
+interface MessageProps {
   messages: {
     id: string
     content: string
@@ -7,8 +7,9 @@ interface Props {
   }[]
 }
 
-export default function ChatMessages({ messages }: Props) {
-  if (!messages.length)
+export default function ChatMessages({ messages }: MessageProps) {
+  console.log('message', messages)
+  if (!messages?.length)
     return (
       <div className="h-full flex items-center justify-center">
         <p className="text-gray-400 text-sm">No messages yet</p>
@@ -17,16 +18,17 @@ export default function ChatMessages({ messages }: Props) {
 
   return (
     <>
-      <div className="text-center">
+      <div className="text-center mb-2 scrollbar-hide">
         <span className="text-xs text-gray-400 bg-white px-2">
           {messages[0].timestamp}
         </span>
       </div>
+
       {messages.map((message) => (
         <div
           key={message.id}
           className={`flex ${
-            message.sender === 'user' ? 'justify-end' : 'justify-start'
+            message?.sender === 'user' ? 'justify-end' : 'justify-start'
           }`}
         >
           <div

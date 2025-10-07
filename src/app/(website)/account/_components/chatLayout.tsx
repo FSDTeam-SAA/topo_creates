@@ -1,41 +1,61 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+'use client'
+
+import { useState } from 'react'
+import { Loader2 } from 'lucide-react'
 import ChatLayout from '@/components/chat/chatLayout'
+import { useChat } from '@/hooks/useChat'
+import { useConversations } from '@/hooks/useConversations'
 
 export default function ChatPage() {
-  const conversations = [
-    {
-      id: '1',
-      orderId: 'XXXXX',
-      preview: 'Hi, I have a question...',
-      timestamp: '10:15 AM',
-      messages: [
-        {
-          id: '1',
-          content: 'Hi, Mindy',
-          sender: 'user',
-          timestamp: '09:41 AM',
-        },
-        {
-          id: '2',
-          content: "I've tried the app",
-          sender: 'user',
-          timestamp: '09:41 AM',
-        },
-        {
-          id: '3',
-          content: 'Really?',
-          sender: 'support',
-          timestamp: '09:42 AM',
-        },
-      ],
-    },
-    {
-      id: '2',
-      orderId: 'XXXXX',
-      preview: 'Hi, I have a question...',
-      timestamp: '10:15 AM',
-      messages: [],
-    },
-  ]
+  const { data, isError, error, isFetching } = useConversations()
+  const [activeConversation, setActiveConversation] = useState<string | null>(
+    null
+  )
 
-  return <ChatLayout conversations={conversations} />
+  // Map conversation list
+  const conversations =
+    data?.data?.data?.map((item: any) => {
+      const user = item.participants.find((p: any) => p.role === 'USER')
+      const firstName = user?.firstName || 'Unknown'
+      return {
+        id: item._id,
+        orderId: firstName,
+        preview: item.lastMessage || 'No messages yet',
+        timestamp: new Date(
+          item.lastMessageAt || item.createdAt
+        ).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+      }
+    }) || []
+
+  // Determine which room to load messages for
+  const activeRoomId = activeConversation || conversations?.[0]?.id
+  const { messages } = useChat(activeRoomId)
+
+  if (isFetching)
+    return (
+      <div className="flex justify-center flex-col py-10 items-center gap-2">
+        <Loader2 className="animate-spin size-8" />
+        <p>Loading chats...</p>
+      </div>
+    )
+
+  if (isError)
+    return (
+      <p className="text-center text-red-500 py-10">
+        {(error as Error)?.message}
+      </p>
+    )
+
+  return (
+    <ChatLayout
+      conversations={conversations}
+      activeConversation={activeRoomId}
+      onSelect={setActiveConversation}
+      messages={messages || []}
+    />
+  )
 }

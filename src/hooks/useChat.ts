@@ -1,27 +1,69 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useSocketStore } from '@/zustand/socketStore'
+import { useSession } from 'next-auth/react'
+
+interface Attachment {
+  url: string
+  type: string
+  fileName: string
+  size: number
+  mimeType: string
+}
+
+interface Sender {
+  _id: string
+  firstName: string
+  lastName: string
+  profileImage: string
+}
 
 interface Message {
   _id: string
-  text: string
-  sender: string
   chatRoom: string
+  sender: Sender
+  message: string
+  attachments: Attachment[]
+  readBy: string[]
   createdAt: string
+  updatedAt: string
+}
+
+interface MessageResponse {
+  status: boolean
+  message: string
+  data: {
+    messages: Message[]
+    pagination: {
+      total: number
+      page: number
+      limit: number
+      pages: number
+    }
+  }
 }
 
 export const useChat = (roomId?: string) => {
   const queryClient = useQueryClient()
   const { socket } = useSocketStore()
+  const { data: session } = useSession()
+  const accessToken = session?.user?.accessToken
 
   const { data: messages } = useQuery<Message[]>({
     queryKey: ['messages', roomId],
     queryFn: async () => {
       if (!roomId) return []
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/message/${roomId}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/message/${roomId}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
       )
-      return res.json()
+      const json: MessageResponse = await res.json()
+      return json?.data?.messages || []
     },
     enabled: !!roomId,
   })

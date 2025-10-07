@@ -6,7 +6,7 @@ export default function ChatHeader({ orderId }: { orderId?: string }) {
       <div className="bg-gray-100 rounded-full p-2">
         <User className="h-6 w-6 sm:h-7 sm:w-7 text-gray-500" />
       </div>
-      <p className="font-normal text-lg sm:text-2xl">Order #{orderId}</p>
+      <p className="font-normal text-lg sm:text-2xl">{orderId}</p>
     </div>
   )
 }

@@ -17,13 +17,17 @@ export const useConversations = () => {
           },
         }
       )
-
-      if (!res.ok) {
-        throw new Error('Failed to fetch conversations')
-      }
-
+      if (!res.ok) throw new Error('Failed to fetch conversations')
       return res.json()
     },
-    enabled: !!accessToken,
+    enabled: Boolean(accessToken),
+
+    // v5-compatible options
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false, // or "ifStale" if you prefer to refetch only when outdated
+    staleTime: 1000 * 60 * 10, // 10 minutes
+    gcTime: 1000 * 60 * 10, // replaces `cacheTime`
+    placeholderData: (previousData) => previousData, // keeps old data instantly visible
   })
 }

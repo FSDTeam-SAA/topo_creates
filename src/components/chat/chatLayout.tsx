@@ -1,25 +1,44 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
+
 import ChatList from './chatList'
 import ChatHeader from './chatHeader'
 import ChatMessages from './chatMessages'
 import ChatInput from './chatInput'
-import { useState } from 'react'
+
+interface ChatLayoutProps {
+  conversations: any[]
+  activeConversation: string
+  onSelect: (id: string) => void
+  messages: {
+    _id: string
+    message: string
+    sender: { _id: string; firstName: string; role?: 'USER' | 'LENDER' }
+    createdAt: string
+  }[]
+}
 
 export default function ChatLayout({
   conversations,
-}: {
-  conversations: any[]
-}) {
-  const [activeConversation, setActiveConversation] = useState('1')
-
-  const activeChat = conversations.find(
-    (conv) => conv.id === activeConversation
-  )
-
+  activeConversation,
+  onSelect,
+  messages,
+}: ChatLayoutProps) {
   const handleSendMessage = (text: string) => {
     console.log('Sending message:', text)
   }
+
+  console.log('active messages', messages)
+  // Transform real messages to displayable format
+  const formattedMessages = messages.map((m) => ({
+    id: m._id,
+    content: m.message,
+    sender: m.sender?.role === 'USER' ? 'user' : 'support',
+    timestamp: new Date(m.createdAt).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    }),
+  }))
 
   return (
     <div className="font-sans px-4 sm:px-6 md:px-8 pb-5">
@@ -27,15 +46,18 @@ export default function ChatLayout({
         <ChatList
           conversations={conversations}
           activeConversation={activeConversation}
-          onSelect={setActiveConversation}
+          onSelect={onSelect}
         />
 
         <div className="w-full md:w-2/3 flex flex-col">
-          <ChatHeader orderId={activeChat?.orderId} />
-
+          <ChatHeader
+            orderId={
+              conversations.find((c) => c.id === activeConversation)?.orderId
+            }
+          />
           <div className="flex-1 flex flex-col border-[#E6E6E6] border mt-5 rounded-xl overflow-hidden">
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              <ChatMessages messages={activeChat?.messages || []} />
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide">
+              <ChatMessages messages={formattedMessages} />
             </div>
             <ChatInput onSend={handleSendMessage} />
           </div>
