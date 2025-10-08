@@ -1,10 +1,12 @@
 'use client'
 
+import { useMemo } from 'react'
 import ChatList from './chatList'
 import ChatHeader from './chatHeader'
 import ChatMessages from './chatMessages'
 import ChatInput from './chatInput'
 import { useSendMessage } from '@/hooks/useSendMessage'
+import { useUserStore } from '@/zustand/useUserStore'
 import { useSession } from 'next-auth/react'
 
 interface ChatLayoutProps {
@@ -32,20 +34,41 @@ export default function ChatLayout({
 }: ChatLayoutProps) {
   const { mutate: sendMessage } = useSendMessage()
   const { data: session } = useSession()
+  const { user } = useUserStore()
 
-  const currentRole = session?.user?.role?.toUpperCase() // USER or LENDER
+  // ✅ Get current user ID - try Zustand first, fallback to session
+  const currentUserId = user?.id || session?.user?.id
 
-  // 🧠 Format messages
-  const formattedMessages = messages.map((m) => ({
-    id: m._id,
-    content: m.message,
-    // ✅ Determine if this message is sent by current user
-    sender: m.sender.role?.toUpperCase() === currentRole,
-    timestamp: new Date(m.createdAt).toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-    }),
-  }))
+  // 🧠 Format messages - ALWAYS call hook unconditionally
+  const formattedMessages = useMemo(() => {
+    if (!currentUserId || !messages.length) return []
+
+    console.log('🔄 Formatting messages with userId:', currentUserId)
+
+    return messages.map((m) => {
+      const isMine = m.sender._id === currentUserId
+
+      // Debug first and last message only
+      if (m === messages[0] || m === messages[messages.length - 1]) {
+        console.log('💬 Format:', {
+          messageId: m._id.substring(0, 8),
+          senderId: m.sender._id,
+          currentUserId,
+          isMine: isMine ? '✅ RIGHT (black)' : '❌ LEFT (gray)',
+        })
+      }
+
+      return {
+        id: m._id,
+        content: m.message,
+        sender: isMine,
+        timestamp: new Date(m.createdAt).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+      }
+    })
+  }, [messages, currentUserId])
 
   // 📨 Handle sending new message
   const handleSendMessage = (text: string, file?: File) => {
@@ -55,6 +78,15 @@ export default function ChatLayout({
       chatRoom: activeConversation,
       file,
     })
+  }
+
+  // ✅ Don't render if no user ID
+  if (!currentUserId) {
+    return (
+      <div className="flex items-center justify-center h-[600px]">
+        <p className="text-gray-500">Loading user data...</p>
+      </div>
+    )
   }
 
   return (
@@ -76,12 +108,10 @@ export default function ChatLayout({
           />
 
           <div className="flex-1 flex flex-col border border-[#E6E6E6] mt-5 rounded-xl overflow-hidden">
-            {/* Chat Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide bg-white">
-              <ChatMessages messages={formattedMessages} />
-            </div>
+            {/* ✅ Chat Messages */}
+            <ChatMessages messages={formattedMessages} />
 
-            {/* Input */}
+            {/* ✅ Input */}
             <ChatInput onSend={handleSendMessage} />
           </div>
         </div>

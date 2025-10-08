@@ -7,8 +7,6 @@ interface SocketState {
   isConnected: boolean
   connectSocket: (userId: string) => void
   disconnectSocket: () => void
-  joinRoom: (roomId: string) => void
-  leaveRoom: (roomId: string) => void
 }
 
 export const useSocketStore = create<SocketState>((set, get) => ({
@@ -17,13 +15,25 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 
   connectSocket: (userId) => {
     const existingSocket = get().socket
-    if (existingSocket && existingSocket.connected) return // ✅ prevent multiple connections
+
+    // ✅ Reuse existing connection if already connected
+    if (existingSocket?.connected) {
+      console.log('✅ Socket already connected, reusing:', existingSocket.id)
+      return
+    }
+
+    // ✅ Disconnect old socket if exists but not connected
+    if (existingSocket) {
+      existingSocket.disconnect()
+    }
 
     const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL!, {
       query: { userId },
       transports: ['websocket'],
       withCredentials: true,
       reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
     })
 
     socket.on('connect', () => {
@@ -36,6 +46,11 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       set({ isConnected: false })
     })
 
+    socket.on('reconnect', (attemptNumber) => {
+      console.log('🔄 Socket reconnected after', attemptNumber, 'attempts')
+      set({ isConnected: true })
+    })
+
     set({ socket })
   },
 
@@ -45,22 +60,6 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       console.log('👋 Socket manually disconnected')
       socket.disconnect()
       set({ socket: null, isConnected: false })
-    }
-  },
-
-  joinRoom: (roomId) => {
-    const socket = get().socket
-    if (socket && roomId) {
-      socket.emit('joinRoom', roomId)
-      console.log('🚀 Joined room:', roomId)
-    }
-  },
-
-  leaveRoom: (roomId) => {
-    const socket = get().socket
-    if (socket && roomId) {
-      socket.emit('leaveRoom', roomId)
-      console.log('🚪 Left room:', roomId)
     }
   },
 }))

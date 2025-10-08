@@ -39,12 +39,13 @@ interface MessageResponse {
 
 export const useChat = (roomId?: string) => {
   const queryClient = useQueryClient()
-  const { socket, joinRoom, leaveRoom, isConnected } = useSocketStore()
+  const { socket, isConnected } = useSocketStore()
   const { user } = useUserStore()
   const accessToken = user?.accessToken
-  const joinedRoomRef = useRef<string | null>(null)
+  const currentRoomRef = useRef<string | null>(null)
+  const listenersAttachedRef = useRef(false)
 
-  // ✅ Fetch initial chat messages
+  // ✅ Fetch initial messages
   const {
     data: messages = [],
     refetch,
@@ -64,40 +65,71 @@ export const useChat = (roomId?: string) => {
     },
     enabled: !!roomId && !!accessToken,
     refetchOnWindowFocus: false,
+    staleTime: 30000, // ✅ Consider data fresh for 30 seconds
+    gcTime: 60000, // ✅ Keep in cache for 1 minute
   })
 
-  // 🔌 Manage room joining + socket listeners
+  // 🔌 Join room when roomId changes
   useEffect(() => {
     if (!socket || !isConnected || !roomId) return
 
-    // join only if room is changed
-    if (joinedRoomRef.current !== roomId) {
-      if (joinedRoomRef.current) {
-        leaveRoom(joinedRoomRef.current)
+    if (currentRoomRef.current !== roomId) {
+      if (currentRoomRef.current) {
+        socket.emit('leaveRoom', currentRoomRef.current)
+        console.log('🚪 Left room:', currentRoomRef.current)
       }
-      joinRoom(roomId)
-      joinedRoomRef.current = roomId
-    }
 
-    // 📨 Handle new message
+      socket.emit('joinRoom', roomId)
+      console.log('🚀 Joined room:', roomId)
+      currentRoomRef.current = roomId
+    }
+  }, [socket, isConnected, roomId])
+
+  // 📡 Attach socket listeners ONCE per connection
+  useEffect(() => {
+    if (!socket || !isConnected) return
+    if (listenersAttachedRef.current) return
+
     const handleNewMessage = (msg: Message) => {
       console.log('📨 New message received:', msg)
-      queryClient.setQueryData<Message[]>(['messages', roomId], (old = []) => {
-        if (old.some((m) => m._id === msg._id)) return old
-        return [...old, msg]
-      })
-    }
+      console.log('📨 Current room:', currentRoomRef.current)
 
-    // ✏️ Handle edit
-    const handleMessageEdited = (msg: Message) => {
-      queryClient.setQueryData<Message[]>(['messages', roomId], (old = []) =>
-        old.map((m) => (m._id === msg._id ? msg : m))
+      // ✅ Always update if message belongs to ANY room we're tracking
+      const targetRoom = msg.chatRoom
+
+      queryClient.setQueryData<Message[]>(
+        ['messages', targetRoom],
+        (old = []) => {
+          if (old.some((m) => m._id === msg._id)) {
+            console.log('⚠️ Duplicate message, skipping')
+            return old
+          }
+          console.log('✅ Adding new message to cache')
+          return [...old, msg]
+        }
       )
     }
 
-    // 🗑️ Handle delete
-    const handleMessageDeleted = ({ messageId }: { messageId: string }) => {
-      queryClient.setQueryData<Message[]>(['messages', roomId], (old = []) =>
+    const handleMessageEdited = (msg: Message) => {
+      console.log('✏️ Message edited:', msg)
+      const targetRoom = msg.chatRoom
+
+      queryClient.setQueryData<Message[]>(
+        ['messages', targetRoom],
+        (old = []) => old.map((m) => (m._id === msg._id ? msg : m))
+      )
+    }
+
+    const handleMessageDeleted = ({
+      messageId,
+      chatRoom,
+    }: {
+      messageId: string
+      chatRoom: string
+    }) => {
+      console.log('🗑️ Message deleted:', messageId)
+
+      queryClient.setQueryData<Message[]>(['messages', chatRoom], (old = []) =>
         old.filter((m) => m._id !== messageId)
       )
     }
@@ -106,15 +138,17 @@ export const useChat = (roomId?: string) => {
     socket.on('message:edited', handleMessageEdited)
     socket.on('message:deleted', handleMessageDeleted)
 
-    console.log('✅ Listeners attached for room:', roomId)
+    listenersAttachedRef.current = true
+    console.log('✅ Socket listeners attached')
 
     return () => {
-      console.log('🧹 Cleaning listeners for room:', roomId)
       socket.off('message:new', handleNewMessage)
       socket.off('message:edited', handleMessageEdited)
       socket.off('message:deleted', handleMessageDeleted)
+      listenersAttachedRef.current = false
+      console.log('🧹 Socket listeners removed')
     }
-  }, [socket, roomId, isConnected, joinRoom, leaveRoom, queryClient])
+  }, [socket, isConnected, queryClient])
 
   return { messages, refetch, isLoading }
 }

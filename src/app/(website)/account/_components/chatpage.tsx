@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Loader2 } from 'lucide-react'
 import ChatLayout from '@/components/chat/chatLayout'
 import { useChat } from '@/hooks/useChat'
@@ -13,27 +13,31 @@ export default function ChatPage() {
     null
   )
 
-  // 🗂️ Conversation List Mapping
-  const conversations =
-    data?.data?.data?.map((item: any) => {
-      const user = item.participants.find((p: any) => p.role === 'USER')
-      const firstName = user?.firstName || 'Unknown'
-      return {
-        id: item._id,
-        orderId: firstName,
-        preview: item.lastMessage || 'No messages yet',
-        timestamp: new Date(
-          item.lastMessageAt || item.createdAt
-        ).toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
-      }
-    }) || []
+  // 🗂️ Memoize conversation list to prevent re-creation
+  const conversations = useMemo(() => {
+    return (
+      data?.data?.data?.map((item: any) => {
+        const user = item.participants.find((p: any) => p.role === 'USER')
+        const firstName = user?.firstName || 'Unknown'
+        return {
+          id: item._id,
+          orderId: firstName,
+          preview: item.lastMessage || 'No messages yet',
+          timestamp: new Date(
+            item.lastMessageAt || item.createdAt
+          ).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
+        }
+      }) || []
+    )
+  }, [data])
 
   // 🧠 Determine active chat room
   const activeRoomId = activeConversation || conversations?.[0]?.id
-  // console.log('active id', activeRoomId)
+
+  // ✅ Only fetch messages for active room
   const { messages } = useChat(activeRoomId)
 
   if (isFetching)
