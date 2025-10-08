@@ -39,40 +39,59 @@ export default function ChatLayout({
   // ✅ Get current user ID - try Zustand first, fallback to session
   const currentUserId = user?.id || session?.user?.id
 
-  // 🧠 Format messages - ALWAYS call hook unconditionally
+  // 🔍 Debug user information
+  console.log('🔍 USER DEBUG:', {
+    zustandUser: user,
+    sessionUser: session?.user,
+    currentUserId,
+    messagesCount: messages.length,
+  })
+
+  // 🧠 Format messages properly
   const formattedMessages = useMemo(() => {
-    if (!currentUserId || !messages.length) return []
+    if (!currentUserId || !messages.length) {
+      console.log('❌ No currentUserId or messages')
+      return []
+    }
 
     console.log('🔄 Formatting messages with userId:', currentUserId)
 
-    return messages.map((m) => {
+    const formatted = messages.map((m) => {
       const isMine = m.sender._id === currentUserId
 
-      // Debug first and last message only
-      if (m === messages[0] || m === messages[messages.length - 1]) {
-        console.log('💬 Format:', {
-          messageId: m._id.substring(0, 8),
-          senderId: m.sender._id,
-          currentUserId,
-          isMine: isMine ? '✅ RIGHT (black)' : '❌ LEFT (gray)',
-        })
-      }
+      // Debug each message
+      console.log('💬 Message Analysis:', {
+        messageId: m._id.substring(0, 8),
+        senderId: m.sender._id,
+        currentUserId,
+        isMine: isMine ? '✅ MY MESSAGE' : '❌ OTHER USER',
+        content: m.message.substring(0, 50),
+      })
 
       return {
         id: m._id,
         content: m.message,
-        sender: isMine,
+        sender: isMine, // true = my message, false = other user
         timestamp: new Date(m.createdAt).toLocaleTimeString([], {
           hour: '2-digit',
           minute: '2-digit',
         }),
+        rawSenderId: m.sender._id, // For additional debugging
       }
     })
+
+    console.log('🎯 Final formatted messages:', formatted)
+    return formatted
   }, [messages, currentUserId])
 
   // 📨 Handle sending new message
   const handleSendMessage = (text: string, file?: File) => {
-    if (!activeConversation) return
+    if (!activeConversation) {
+      console.log('❌ No active conversation')
+      return
+    }
+
+    console.log('📤 Sending message:', { text, file, activeConversation })
     sendMessage({
       text,
       chatRoom: activeConversation,
@@ -109,7 +128,10 @@ export default function ChatLayout({
 
           <div className="flex-1 flex flex-col border border-[#E6E6E6] mt-5 rounded-xl overflow-hidden">
             {/* ✅ Chat Messages */}
-            <ChatMessages messages={formattedMessages} />
+            <ChatMessages
+              messages={formattedMessages}
+              currentUserId={currentUserId}
+            />
 
             {/* ✅ Input */}
             <ChatInput onSend={handleSendMessage} />
