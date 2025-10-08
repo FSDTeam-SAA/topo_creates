@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
-import { useSession } from 'next-auth/react'
+import { useUserStore } from '@/zustand/useUserStore'
 
 export const useConversations = () => {
-  const { data: session } = useSession()
-  const accessToken = session?.user?.accessToken || ''
+  const { user } = useUserStore()
+  const accessToken = user?.accessToken || ''
 
   return useQuery({
     queryKey: ['conversations'],
@@ -21,13 +21,11 @@ export const useConversations = () => {
       return res.json()
     },
     enabled: Boolean(accessToken),
-
-    // v5-compatible options
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    refetchOnMount: false, // or "ifStale" if you prefer to refetch only when outdated
-    staleTime: 1000 * 60 * 10, // 10 minutes
-    gcTime: 1000 * 60 * 10, // replaces `cacheTime`
-    placeholderData: (previousData) => previousData, // keeps old data instantly visible
+    refetchOnMount: false,
+    staleTime: 1000 * 60 * 10,
+    gcTime: 1000 * 60 * 10,
+    placeholderData: (previousData) => previousData,
   })
 }

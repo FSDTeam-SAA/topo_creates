@@ -4,7 +4,7 @@ interface MessageProps {
   messages: {
     id: string
     content: string
-    sender: string
+    sender: boolean
     timestamp: string
   }[]
 }
@@ -20,15 +20,15 @@ export default function ChatMessages({ messages }: MessageProps) {
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Optional: show first timestamp as session start */}
-      <div className="text-center mb-2 scrollbar-hide">
+      {/* Show first message time as session marker */}
+      <div className="text-center mb-2">
         <span className="text-xs text-gray-400 bg-white px-2">
           {messages[0].timestamp}
         </span>
       </div>
 
       {messages.map((message) => {
-        const isUser = message.sender === 'user'
+        const isUser = message.sender // true = my message
 
         return (
           <div

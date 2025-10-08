@@ -33,7 +33,7 @@ export default function ChatPage() {
 
   // 🧠 Determine active chat room
   const activeRoomId = activeConversation || conversations?.[0]?.id
-  console.log('active id', activeRoomId)
+  // console.log('active id', activeRoomId)
   const { messages } = useChat(activeRoomId)
 
   if (isFetching)

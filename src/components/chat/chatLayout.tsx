@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import ChatList from './chatList'
@@ -9,6 +8,7 @@ import { useSendMessage } from '@/hooks/useSendMessage'
 import { useSession } from 'next-auth/react'
 
 interface ChatLayoutProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   conversations: any[]
   activeConversation: string
   onSelect: (id: string) => void
@@ -30,32 +30,30 @@ export default function ChatLayout({
   onSelect,
   messages,
 }: ChatLayoutProps) {
-  const { mutate: sendMessage } = useSendMessage(activeConversation)
+  const { mutate: sendMessage } = useSendMessage()
   const { data: session } = useSession()
-  const senderId = session?.user?.id || ''
-  // const currentUserRole = session?.user?.role || ''
 
-  // Transform messages for ChatMessages component
-  const formattedMessages = messages
-    .map((m) => ({
-      id: m._id,
-      content: m.message,
-      sender: m.sender?._id === senderId ? 'user' : 'support', //  if current user = sender → right side
-      timestamp: new Date(m.createdAt).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-    }))
-    .reverse()
+  const currentRole = session?.user?.role?.toUpperCase() // USER or LENDER
 
-  // Handle send message
+  // 🧠 Format messages
+  const formattedMessages = messages.map((m) => ({
+    id: m._id,
+    content: m.message,
+    // ✅ Determine if this message is sent by current user
+    sender: m.sender.role?.toUpperCase() === currentRole,
+    timestamp: new Date(m.createdAt).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    }),
+  }))
+
+  // 📨 Handle sending new message
   const handleSendMessage = (text: string, file?: File) => {
-    if (!activeConversation || !senderId) return
+    if (!activeConversation) return
     sendMessage({
       text,
-      file,
       chatRoom: activeConversation,
-      sender: senderId,
+      file,
     })
   }
 
@@ -69,7 +67,7 @@ export default function ChatLayout({
           onSelect={onSelect}
         />
 
-        {/* Main Chat Section */}
+        {/* Main Chat Window */}
         <div className="w-full md:w-2/3 flex flex-col">
           <ChatHeader
             orderId={
@@ -78,8 +76,8 @@ export default function ChatLayout({
           />
 
           <div className="flex-1 flex flex-col border border-[#E6E6E6] mt-5 rounded-xl overflow-hidden">
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide">
+            {/* Chat Messages */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide bg-white">
               <ChatMessages messages={formattedMessages} />
             </div>
 

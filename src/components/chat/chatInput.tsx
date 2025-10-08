@@ -50,6 +50,7 @@ export default function ChatInput({ onSend }: Props) {
 
         {/* Send Button */}
         <Button
+          type="button"
           onClick={handleSend}
           size="icon"
           className="rounded-full bg-black hover:bg-gray-800 p-4"

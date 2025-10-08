@@ -1,24 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useSession } from 'next-auth/react'
+import { useMutation } from '@tanstack/react-query'
+import { useUserStore } from '@/zustand/useUserStore'
 
 interface MessagePayload {
   text?: string
   chatRoom: string
-  sender: string
   file?: File
 }
 
-export const useSendMessage = (roomId: string) => {
-  const queryClient = useQueryClient()
-  const { data: session } = useSession()
-  const accessToken = session?.user?.accessToken || ''
+export const useSendMessage = () => {
+  // const queryClient = useQueryClient()
+  const { user } = useUserStore()
+  const accessToken = user?.accessToken || ''
+  const senderId = user?.id || ''
 
   return useMutation({
     mutationFn: async (payload: MessagePayload) => {
       const formData = new FormData()
       formData.append('roomId', payload.chatRoom)
-      formData.append('sender', payload.sender)
+      formData.append('sender', senderId)
       if (payload.text) formData.append('message', payload.text)
       if (payload.file) formData.append('file', payload.file)
 
@@ -36,10 +36,8 @@ export const useSendMessage = (roomId: string) => {
       return result.data
     },
 
-    onSuccess: () => {
-      // ⚠️ socket নিজে থেকেই নতুন মেসেজ পাঠাবে, তাই এখানে append করার দরকার নেই
-      // শুধু conversation sidebar রিফ্রেশ করার জন্য invalidate করো
-      queryClient.invalidateQueries({ queryKey: ['conversations'] })
-    },
+    // onSuccess: () => {
+    //   queryClient.invalidateQueries({ queryKey: ['conversations'] })
+    // },
   })
 }
