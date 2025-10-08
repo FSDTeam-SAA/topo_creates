@@ -1,6 +1,6 @@
 'use client'
+
 import AccountInfo from '@/components/account/account_info'
-import ChatSystem from '@/components/account/chat'
 import Dispute from '@/components/account/dispute_components'
 import MuseClub from '@/components/account/muse_club'
 import OrderHistory from '@/components/account/order_history'
@@ -9,13 +9,14 @@ import { Session } from 'next-auth'
 import { useState } from 'react'
 import DocumentVerification from './document-verification'
 import Headers from './headers'
+import ChatPage from './chatpage'
 
 interface Props {
   session: Session
 }
 
 const AllAccountInfo = ({ session }: Props) => {
-  const [tab, setTab] = useState<string>('Account Info')
+  const [tab, setTab] = useState('Account Info')
 
   return (
     <div className="">
@@ -24,6 +25,7 @@ const AllAccountInfo = ({ session }: Props) => {
         <div className="mb-10">
           <DocumentVerification session={session} />
         </div>
+
         {tab === 'Account Info' && (
           <div className="flex flex-col gap-[100px]">
             <AccountInfo />
@@ -32,16 +34,14 @@ const AllAccountInfo = ({ session }: Props) => {
             <YourWishlist />
           </div>
         )}
+
         {tab === 'Dispute' && (
           <div>
             <Dispute />
           </div>
         )}
-        {tab === 'Chats' && (
-          <div>
-            <ChatSystem />
-          </div>
-        )}
+
+        {tab === 'Chats' && <ChatPage />}
       </div>
     </div>
   )

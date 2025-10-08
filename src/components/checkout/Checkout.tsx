@@ -1,25 +1,28 @@
-"use client";
-import ShopDetails from "@/app/(website)/shop/_component/product-details/shop-details";
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
-import React from "react";
-import CheckoutForm from "../checkout-form/CheckoutForm";
+'use client'
+import ShopDetails from '@/app/(website)/shop/_component/product-details/shop-details'
+import { useQuery } from '@tanstack/react-query'
+import { useParams } from 'next/navigation'
+import React from 'react'
+import CheckoutForm from '../checkout-form/CheckoutForm'
+import { useSession } from 'next-auth/react'
 
 const Checkout = () => {
-  const params = useParams();
+  const params = useParams()
+  const session = useSession()
+  console.log('session user', session?.data?.user)
 
   const { data: singleProduct = {}, isLoading } = useQuery({
-    queryKey: ["single-product"],
+    queryKey: ['single-product'],
     queryFn: async () => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin/dress/${params.id}`
-      );
-      const data = await res.json();
-      return data;
+      )
+      const data = await res.json()
+      return data
     },
-  });
+  })
 
-  console.log("single product : ", singleProduct);
+  console.log('single product : ', singleProduct)
 
   return (
     <div className="container mb-8">
@@ -33,7 +36,7 @@ const Checkout = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Checkout;
+export default Checkout

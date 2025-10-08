@@ -1,13 +1,15 @@
-"use client"
+'use client'
 
-import Link from "next/link"
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { ArrowLeft } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 export default function NotFound() {
   const [isLoaded, setIsLoaded] = useState(false)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const router = useRouter()
 
   // Track mouse movement for subtle parallax effect
   useEffect(() => {
@@ -18,13 +20,13 @@ export default function NotFound() {
       })
     }
 
-    window.addEventListener("mousemove", handleMouseMove)
+    window.addEventListener('mousemove', handleMouseMove)
 
     // Set loaded state after a small delay for entrance animation
     const timer = setTimeout(() => setIsLoaded(true), 100)
 
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove)
+      window.removeEventListener('mousemove', handleMouseMove)
       clearTimeout(timer)
     }
   }, [])
@@ -55,7 +57,7 @@ export default function NotFound() {
                   ${mousePosition.y * (i + 1) * 10}px
                 )
               `,
-              transition: "transform 0.3s ease-out",
+              transition: 'transform 0.3s ease-out',
             }}
           />
         ))}
@@ -64,7 +66,7 @@ export default function NotFound() {
       {/* Main content */}
       <div
         className={`z-10 flex flex-col items-center text-center transition-all duration-1000 ease-out ${
-          isLoaded ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
+          isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
         }`}
       >
         <div
@@ -73,24 +75,30 @@ export default function NotFound() {
             transform: `
               translate(${mousePosition.x * 20}px, ${mousePosition.y * 20}px)
             `,
-            transition: "transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)",
+            transition: 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)',
           }}
         >
-          <h1 className="text-[10rem] font-black leading-none tracking-tighter text-slate-900 sm:text-[14rem]">404</h1>
+          <h1 className="text-[10rem] font-black leading-none tracking-tighter text-slate-900 sm:text-[14rem]">
+            404
+          </h1>
 
           {/* Animated underline */}
           <div
             className="absolute -bottom-4 left-0 h-1 w-0 bg-slate-900 transition-all duration-1000 ease-in-out group-hover:w-full"
             style={{
-              width: isLoaded ? "100%" : "0%",
-              animation: "width-pulse 3s infinite alternate ease-in-out",
+              width: isLoaded ? '100%' : '0%',
+              animation: 'width-pulse 3s infinite alternate ease-in-out',
             }}
           />
         </div>
 
-        <h2 className="mb-4 text-2xl font-bold text-slate-800 sm:text-3xl">Page not found</h2>
+        <h2 className="mb-4 text-2xl font-bold text-slate-800 sm:text-3xl">
+          Page not found
+        </h2>
 
-        <p className="mb-8 max-w-md text-slate-600">The page you&#39;re looking for doesn&#39;t exist or has been moved.</p>
+        <p className="mb-8 max-w-md text-slate-600">
+          The page you&#39;re looking for doesn&#39;t exist or has been moved.
+        </p>
 
         <div className="flex flex-col gap-4 sm:flex-row">
           <Button
@@ -100,7 +108,7 @@ export default function NotFound() {
               transform: `
                 translate(${mousePosition.x * -5}px, ${mousePosition.y * -5}px)
               `,
-              transition: "transform 0.3s ease-out, background-color 0.3s ease",
+              transition: 'transform 0.3s ease-out, background-color 0.3s ease',
             }}
           >
             <Link href="/">
@@ -112,18 +120,18 @@ export default function NotFound() {
           <Button
             asChild
             variant="outline"
+            onClick={() => router.back()}
             className="group relative overflow-hidden border-slate-300 px-6 py-2 text-slate-700 transition-all hover:border-slate-400 hover:text-slate-900"
             style={{
               transform: `
                 translate(${mousePosition.x * -5}px, ${mousePosition.y * -5}px)
               `,
-              transition: "transform 0.3s ease-out, border-color 0.3s ease, color 0.3s ease",
+              transition:
+                'transform 0.3s ease-out, border-color 0.3s ease, color 0.3s ease',
             }}
           >
-            <Link href="javascript:history.back()">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              <span>Go back</span>
-            </Link>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            <span>Go back</span>
           </Button>
         </div>
       </div>
@@ -131,13 +139,22 @@ export default function NotFound() {
       {/* Animation keyframes */}
       <style jsx global>{`
         @keyframes pulse {
-          0%, 100% { transform: scale(1) rotate(0deg); }
-          50% { transform: scale(1.05) rotate(5deg); }
+          0%,
+          100% {
+            transform: scale(1) rotate(0deg);
+          }
+          50% {
+            transform: scale(1.05) rotate(5deg);
+          }
         }
-        
+
         @keyframes width-pulse {
-          0% { width: 0%; }
-          100% { width: 100%; }
+          0% {
+            width: 0%;
+          }
+          100% {
+            width: 100%;
+          }
         }
       `}</style>
     </div>
