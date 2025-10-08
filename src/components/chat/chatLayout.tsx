@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import ChatList from './chatList'
 import ChatHeader from './chatHeader'
 import ChatMessages from './chatMessages'
@@ -24,6 +24,8 @@ interface ChatLayoutProps {
     }
     createdAt: string
   }[]
+  isLoading?: boolean
+  isConnected?: boolean
 }
 
 export default function ChatLayout({
@@ -31,91 +33,100 @@ export default function ChatLayout({
   activeConversation,
   onSelect,
   messages,
+  isLoading = false,
+  isConnected = false,
 }: ChatLayoutProps) {
-  const { mutate: sendMessage } = useSendMessage()
+  const { mutate: sendMessage, isPending: isSending } = useSendMessage()
   const { data: session } = useSession()
   const { user } = useUserStore()
+  const [localLoading, setLocalLoading] = useState(false)
 
-  // ✅ Get current user ID - try Zustand first, fallback to session
+  // ✅ Get current user ID
   const currentUserId = user?.id || session?.user?.id
 
-  // 🔍 Debug user information
-  console.log('🔍 USER DEBUG:', {
-    zustandUser: user,
-    sessionUser: session?.user,
-    currentUserId,
-    messagesCount: messages.length,
-  })
+  // 🔄 Handle conversation switch with loading state
+  const handleSelectConversation = async (id: string) => {
+    setLocalLoading(true)
+    await onSelect(id)
+    // Small delay for smooth UX
+    setTimeout(() => setLocalLoading(false), 300)
+  }
 
-  // 🧠 Format messages properly
+  // 🧠 Optimized message formatting with memoization
   const formattedMessages = useMemo(() => {
     if (!currentUserId || !messages.length) {
-      console.log('❌ No currentUserId or messages')
       return []
     }
 
-    console.log('🔄 Formatting messages with userId:', currentUserId)
+    console.log('🔄 Formatting messages:', {
+      userId: currentUserId,
+      messageCount: messages.length,
+    })
 
-    const formatted = messages.map((m) => {
+    return messages.map((m) => {
       const isMine = m.sender._id === currentUserId
-
-      // Debug each message
-      console.log('💬 Message Analysis:', {
-        messageId: m._id.substring(0, 8),
-        senderId: m.sender._id,
-        currentUserId,
-        isMine: isMine ? '✅ MY MESSAGE' : '❌ OTHER USER',
-        content: m.message.substring(0, 50),
-      })
 
       return {
         id: m._id,
         content: m.message,
-        sender: isMine, // true = my message, false = other user
-        timestamp: new Date(m.createdAt).toLocaleTimeString([], {
+        sender: isMine,
+        timestamp: new Date(m.createdAt).toLocaleTimeString('en-US', {
           hour: '2-digit',
           minute: '2-digit',
+          hour12: true,
         }),
-        rawSenderId: m.sender._id, // For additional debugging
+        rawSenderId: m.sender._id,
       }
     })
-
-    console.log('🎯 Final formatted messages:', formatted)
-    return formatted
   }, [messages, currentUserId])
 
-  // 📨 Handle sending new message
-  const handleSendMessage = (text: string, file?: File) => {
-    if (!activeConversation) {
-      console.log('❌ No active conversation')
+  // 📨 Optimized message sending
+  const handleSendMessage = async (text: string, file?: File) => {
+    if (!activeConversation || !text.trim()) {
+      console.log('❌ Cannot send: no active conversation or empty message')
       return
     }
 
-    console.log('📤 Sending message:', { text, file, activeConversation })
+    console.log('📤 Sending message:', {
+      text: text.substring(0, 50),
+      hasFile: !!file,
+      room: activeConversation,
+    })
+
     sendMessage({
-      text,
+      text: text.trim(),
       chatRoom: activeConversation,
       file,
     })
   }
 
-  // ✅ Don't render if no user ID
+  // Show loading states
   if (!currentUserId) {
     return (
       <div className="flex items-center justify-center h-[600px]">
-        <p className="text-gray-500">Loading user data...</p>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-2"></div>
+          <p className="text-gray-500">Loading user data...</p>
+        </div>
       </div>
     )
   }
 
   return (
     <div className="font-sans px-4 sm:px-6 md:px-8 pb-5">
+      {/* Connection Status */}
+      {!isConnected && (
+        <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+          <p className="text-sm">Connecting to chat...</p>
+        </div>
+      )}
+
       <div className="flex flex-col md:flex-row md:h-[600px] gap-6 rounded-lg overflow-hidden mb-[100px]">
         {/* Sidebar Chat List */}
         <ChatList
           conversations={conversations}
           activeConversation={activeConversation}
-          onSelect={onSelect}
+          onSelect={handleSelectConversation}
         />
 
         {/* Main Chat Window */}
@@ -126,15 +137,29 @@ export default function ChatLayout({
             }
           />
 
-          <div className="flex-1 flex flex-col border border-[#E6E6E6] mt-5 rounded-xl overflow-hidden">
+          <div className="flex-1 flex flex-col border border-[#E6E6E6] mt-5 rounded-xl overflow-hidden bg-white">
+            {/* Loading State */}
+            {(isLoading || localLoading) && (
+              <div className="flex justify-center items-center py-4">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+                <span className="ml-2 text-sm text-gray-500">
+                  Loading messages...
+                </span>
+              </div>
+            )}
+
             {/* ✅ Chat Messages */}
             <ChatMessages
               messages={formattedMessages}
               currentUserId={currentUserId}
+              isLoading={isLoading || localLoading}
             />
 
-            {/* ✅ Input */}
-            <ChatInput onSend={handleSendMessage} />
+            {/* ✅ Input - Disable when sending */}
+            <ChatInput
+              onSend={handleSendMessage}
+              disabled={isSending || !isConnected}
+            />
           </div>
         </div>
       </div>
