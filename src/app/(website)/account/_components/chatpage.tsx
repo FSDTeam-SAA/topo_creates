@@ -1,66 +1,162 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { useState, useMemo } from 'react'
-import { Loader2 } from 'lucide-react'
-import ChatLayout from '@/components/chat/chatLayout'
+import { useState, useEffect } from 'react'
 import { useChat } from '@/hooks/useChat'
 import { useConversations } from '@/hooks/useConversations'
+import ChatLayout from '@/components/chat/chatLayout'
+
+interface Conversation {
+  id: string
+  orderId: string
+  preview: string
+  timestamp: string
+  participants: Array<{
+    _id: string
+    firstName: string
+    lastName: string
+    email: string
+    role: 'USER' | 'LENDER'
+  }>
+}
+
+interface FormattedMessage {
+  _id: string
+  message: string
+  sender: {
+    _id: string
+    firstName: string
+    role?: 'USER' | 'LENDER'
+  }
+  createdAt: string
+}
 
 export default function ChatPage() {
-  const { data, isError, error, isFetching } = useConversations()
-  const [activeConversation, setActiveConversation] = useState<string | null>(
-    null
-  )
+  const [activeConversation, setActiveConversation] = useState<string>('')
 
-  // 🗂️ Memoize conversation list to prevent re-creation
-  const conversations = useMemo(() => {
+  // Fetch conversations
+  const {
+    data: conversationsResponse,
+    isLoading: conversationsLoading,
+    error: conversationsError,
+    refetch: refetchConversations,
+  } = useConversations()
+
+  // Fetch messages for active conversation
+  const {
+    messages,
+    isLoading: messagesLoading,
+    isConnected,
+    refetch: refetchMessages,
+  } = useChat(activeConversation)
+
+  // Format conversations data according to your API response
+  // eslint-disable-next-line react-hooks/exhaustive-deps, @typescript-eslint/no-explicit-any
+  const conversations: Conversation[] =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    conversationsResponse?.data?.data?.map((conv: any) => ({
+      id: conv._id,
+      orderId: conv.bookingId,
+      preview: conv.lastMessage || 'No messages yet',
+      timestamp: new Date(
+        conv.lastMessageAt || conv.updatedAt
+      ).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+      participants: conv.participants,
+    })) || []
+
+  // Set first conversation as active by default
+  useEffect(() => {
+    if (conversations.length > 0 && !activeConversation) {
+      console.log(
+        '🎯 Setting default active conversation:',
+        conversations[0].id
+      )
+      setActiveConversation(conversations[0].id)
+    }
+  }, [conversations, activeConversation])
+
+  // Handle conversation selection
+  const handleSelectConversation = async (id: string) => {
+    console.log('🔄 Switching to conversation:', id)
+    setActiveConversation(id)
+
+    // Refetch messages for the new conversation
+    if (id) {
+      try {
+        await refetchMessages()
+      } catch (error) {
+        console.error('❌ Error refetching messages:', error)
+      }
+    }
+  }
+
+  // Format messages for ChatLayout according to your messages API response
+  const formattedMessages: FormattedMessage[] = messages.map((msg) => ({
+    _id: msg._id,
+    message: msg.message,
+    sender: {
+      _id: msg.sender._id,
+      firstName: msg.sender.firstName,
+      role: (msg.sender as { role?: 'USER' | 'LENDER' }).role,
+    },
+    createdAt: msg.createdAt,
+  }))
+
+  // Show loading state
+  if (conversationsLoading) {
     return (
-      data?.data?.data?.map((item: any) => {
-        const user = item.participants.find((p: any) => p.role === 'USER')
-        const firstName = user?.firstName || 'Unknown'
-        return {
-          id: item._id,
-          orderId: firstName,
-          preview: item.lastMessage || 'No messages yet',
-          timestamp: new Date(
-            item.lastMessageAt || item.createdAt
-          ).toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          }),
-        }
-      }) || []
-    )
-  }, [data])
-
-  // 🧠 Determine active chat room
-  const activeRoomId = activeConversation || conversations?.[0]?.id
-
-  // ✅ Only fetch messages for active room
-  const { messages } = useChat(activeRoomId)
-
-  if (isFetching)
-    return (
-      <div className="flex justify-center flex-col py-10 items-center gap-2">
-        <Loader2 className="animate-spin size-8" />
-        <p>Loading chats...</p>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-500">Loading conversations...</p>
+        </div>
       </div>
     )
+  }
 
-  if (isError)
+  // Show error state
+  if (conversationsError) {
     return (
-      <p className="text-center text-red-500 py-10">
-        {(error as Error)?.message}
-      </p>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">Error loading conversations</p>
+          <button
+            onClick={() => refetchConversations()}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
     )
+  }
+
+  // Show empty state
+  if (!conversations.length) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <p className="text-gray-500 mb-4">No conversations found</p>
+          <p className="text-gray-400 text-sm">
+            Start a new conversation to get started
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <ChatLayout
       conversations={conversations}
-      activeConversation={activeRoomId}
-      onSelect={setActiveConversation}
-      messages={messages || []}
+      activeConversation={activeConversation}
+      onSelect={handleSelectConversation}
+      messages={formattedMessages}
+      isLoading={messagesLoading}
+      isConnected={isConnected}
     />
   )
 }
