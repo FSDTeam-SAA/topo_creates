@@ -56,9 +56,14 @@ export const useSendMessage = () => {
 
       const result = await res.json()
       console.log('✅ Message sent successfully:', result)
+
+      // ✅ invalidate both current chat messages + full conversation list
       queryClient.invalidateQueries({
-        queryKey: ['conversations', payload.chatRoom],
+        queryKey: ['conversations'],
       })
+      // queryClient.invalidateQueries({
+      //   queryKey: ['messages', payload.chatRoom],
+      // })
 
       return result.data
     },

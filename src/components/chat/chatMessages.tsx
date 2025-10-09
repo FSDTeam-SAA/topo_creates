@@ -13,33 +13,45 @@ interface Message {
 interface MessageProps {
   messages: Message[]
   currentUserId: string
+  chatRoomId?: string // ✅ optional: for scroll reset when switching
   isLoading?: boolean
 }
 
-export default function ChatMessages({ messages, isLoading }: MessageProps) {
+export default function ChatMessages({
+  messages,
+
+  chatRoomId,
+  isLoading,
+}: MessageProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [isAutoScroll, setIsAutoScroll] = useState(true)
 
-  // ✅ Create a non-mutating reversed copy
-  const orderedMessages = [...messages]
-    .sort(
-      (a, b) =>
-        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
-    )
-    .reverse()
+  // ✅ Order messages correctly (oldest → newest)
+  const orderedMessages = [...messages].sort(
+    (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+  )
 
-  // ✅ Smart auto-scroll to bottom when new messages come
+  // ✅ Scroll to bottom on new message (real-time)
   useEffect(() => {
     if (!containerRef.current || !isAutoScroll) return
-
     containerRef.current.scrollTo({
       top: containerRef.current.scrollHeight,
       behavior: 'smooth',
     })
-  }, [orderedMessages, isAutoScroll])
+  }, [orderedMessages.length, isAutoScroll])
 
-  // ✅ Handle manual scroll
+  // ✅ Scroll to bottom when conversation changes
+  useEffect(() => {
+    if (!containerRef.current) return
+    containerRef.current.scrollTo({
+      top: containerRef.current.scrollHeight,
+      behavior: 'auto',
+    })
+    setIsAutoScroll(true) // Reset auto-scroll when switching chats
+  }, [chatRoomId]) // ✅ triggers when user switches chat
+
+  // ✅ Disable auto-scroll when user scrolls up
   const handleScroll = () => {
     if (!containerRef.current) return
     const { scrollTop, scrollHeight, clientHeight } = containerRef.current
@@ -47,6 +59,7 @@ export default function ChatMessages({ messages, isLoading }: MessageProps) {
     setIsAutoScroll(isAtBottom)
   }
 
+  // ✅ Loading State
   if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -58,6 +71,7 @@ export default function ChatMessages({ messages, isLoading }: MessageProps) {
     )
   }
 
+  // ✅ Empty State
   if (!orderedMessages?.length) {
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -78,15 +92,20 @@ export default function ChatMessages({ messages, isLoading }: MessageProps) {
       <div className="flex flex-col gap-3">
         {orderedMessages.map((message, index) => {
           const isMyMessage = message.sender
-          const showTimestamp =
-            index === 0 ||
-            orderedMessages[index - 1]?.timestamp !== message.timestamp
+
+          // Extract time portion for grouping (e.g., "11:06 AM")
+          const currentTime = message.timestamp
+          const previousTime =
+            index > 0 ? orderedMessages[index - 1]?.timestamp : null
+
+          // Show timestamp separator only when time changes (not for every message)
+          const showTimestamp = index === 0 || currentTime !== previousTime
 
           return (
             <div key={message.id}>
-              {/* Date separator */}
+              {/* Timestamp separator */}
               {showTimestamp && (
-                <div className="text-center my-4">
+                <div className="text-center my-2">
                   <span className="text-xs text-gray-400 bg-white px-3 py-1 rounded-full border">
                     {message.timestamp}
                   </span>
@@ -109,13 +128,6 @@ export default function ChatMessages({ messages, isLoading }: MessageProps) {
                   <p className="break-words whitespace-pre-wrap">
                     {message.content}
                   </p>
-                  <span
-                    className={`block text-xs mt-1 ${
-                      isMyMessage ? 'text-blue-100' : 'text-gray-500'
-                    }`}
-                  >
-                    {message.timestamp}
-                  </span>
                 </div>
               </div>
             </div>
