@@ -32,6 +32,13 @@ interface Message {
     firstName: string
     role?: 'USER' | 'LENDER'
   }
+  attachments: Array<{
+    url: string
+    type: string
+    fileName: string
+    size: number
+    mimeType: string
+  }>
   createdAt: string
 }
 
@@ -48,10 +55,14 @@ export default function ChatPage() {
     refetch: refetchConversations,
   } = useConversations()
 
+  // ✅ Use the updated useChat hook with infinite scroll
   const {
     messages,
     isLoading: messagesLoading,
     isConnected,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
     refetch: refetchMessages,
   } = useChat(activeConversation)
 
@@ -97,7 +108,7 @@ export default function ChatPage() {
     if (id) await refetchMessages()
   }
 
-  // ✅ Format messages
+  // ✅ Format messages with attachments
   const formattedMessages: Message[] = messages.map((msg) => ({
     _id: msg._id,
     message: msg.message,
@@ -106,6 +117,7 @@ export default function ChatPage() {
       firstName: msg.sender.firstName,
       role: (msg.sender as { role?: 'USER' | 'LENDER' }).role,
     },
+    attachments: msg.attachments || [],
     createdAt: msg.createdAt,
   }))
 
@@ -113,7 +125,10 @@ export default function ChatPage() {
   if (conversationsLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-gray-500">Loading conversations...</p>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+          <p className="text-gray-500">Loading conversations...</p>
+        </div>
       </div>
     )
   }
@@ -137,7 +152,12 @@ export default function ChatPage() {
   if (!conversations.length) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-gray-500">No conversations found</p>
+        <div className="text-center">
+          <p className="text-gray-500 mb-2">No conversations found</p>
+          <p className="text-gray-400 text-sm">
+            Start a conversation to see it here!
+          </p>
+        </div>
       </div>
     )
   }
@@ -151,6 +171,9 @@ export default function ChatPage() {
         messages={formattedMessages}
         isLoading={messagesLoading}
         isConnected={isConnected}
+        hasNextPage={hasNextPage}
+        isFetchingNextPage={isFetchingNextPage}
+        fetchNextPage={fetchNextPage}
       />
     </div>
   )

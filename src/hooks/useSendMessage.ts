@@ -13,12 +13,6 @@ export const useSendMessage = () => {
   const senderId = user?.id || ''
   const queryClient = useQueryClient()
 
-  console.log('🔧 useSendMessage hook initialized:', {
-    hasUser: !!user,
-    senderId,
-    accessToken: accessToken ? 'YES' : 'NO',
-  })
-
   return useMutation({
     mutationFn: async (payload: MessagePayload) => {
       console.log('📤 Sending message payload:', payload)
@@ -26,13 +20,21 @@ export const useSendMessage = () => {
       const formData = new FormData()
       formData.append('roomId', payload.chatRoom)
       formData.append('sender', senderId)
-      if (payload.text) formData.append('message', payload.text)
-      if (payload.file) formData.append('file', payload.file)
+
+      // Only append message if it exists and is not empty
+      if (payload.text?.trim()) {
+        formData.append('message', payload.text.trim())
+      }
+
+      // Append file if it exists
+      if (payload.file) {
+        formData.append('attachments', payload.file)
+      }
 
       console.log('📤 FormData contents:', {
         roomId: payload.chatRoom,
         sender: senderId,
-        hasText: !!payload.text,
+        hasText: !!payload.text?.trim(),
         hasFile: !!payload.file,
       })
 
@@ -57,15 +59,18 @@ export const useSendMessage = () => {
       const result = await res.json()
       console.log('✅ Message sent successfully:', result)
 
-      // ✅ invalidate both current chat messages + full conversation list
+      // ✅ Invalidate both current chat messages + conversations
       queryClient.invalidateQueries({
         queryKey: ['conversations'],
       })
-      // queryClient.invalidateQueries({
-      //   queryKey: ['messages', payload.chatRoom],
-      // })
+      queryClient.invalidateQueries({
+        queryKey: ['messages', payload.chatRoom],
+      })
 
       return result.data
+    },
+    onError: (error) => {
+      console.error('❌ Error sending message:', error)
     },
   })
 }
