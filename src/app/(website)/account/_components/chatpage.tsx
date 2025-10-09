@@ -1,25 +1,30 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
 import { useState, useEffect } from 'react'
 import { useChat } from '@/hooks/useChat'
 import { useConversations } from '@/hooks/useConversations'
 import ChatLayout from '@/components/chat/chatLayout'
+import { useUserStore } from '@/zustand/useUserStore'
+
+interface Participant {
+  _id: string
+  firstName: string
+  lastName: string
+  email: string
+  role: 'USER' | 'LENDER'
+}
 
 interface Conversation {
   id: string
   orderId: string
   preview: string
   timestamp: string
-  participants: Array<{
-    _id: string
-    firstName: string
-    lastName: string
-    email: string
-    role: 'USER' | 'LENDER'
-  }>
+  participants: Participant[]
+  name: string // 🆕 person you're chatting with
 }
 
-interface FormattedMessage {
+interface Message {
   _id: string
   message: string
   sender: {
@@ -33,7 +38,9 @@ interface FormattedMessage {
 export default function ChatPage() {
   const [activeConversation, setActiveConversation] = useState<string>('')
 
-  // Fetch conversations
+  // ✅ Get current logged-in user
+  const { user } = useUserStore()
+
   const {
     data: conversationsResponse,
     isLoading: conversationsLoading,
@@ -41,7 +48,6 @@ export default function ChatPage() {
     refetch: refetchConversations,
   } = useConversations()
 
-  // Fetch messages for active conversation
   const {
     messages,
     isLoading: messagesLoading,
@@ -49,53 +55,50 @@ export default function ChatPage() {
     refetch: refetchMessages,
   } = useChat(activeConversation)
 
-  // Format conversations data according to your API response
-  // eslint-disable-next-line react-hooks/exhaustive-deps, @typescript-eslint/no-explicit-any
+  // ✅ Format conversations properly
   const conversations: Conversation[] =
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    conversationsResponse?.data?.data?.map((conv: any) => ({
-      id: conv._id,
-      orderId: conv.bookingId,
-      preview: conv.lastMessage || 'No messages yet',
-      timestamp: new Date(
-        conv.lastMessageAt || conv.updatedAt
-      ).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-      participants: conv.participants,
-    })) || []
+    conversationsResponse?.data?.data?.map((conv: any) => {
+      // Identify the participant who is NOT the logged-in user
+      const chatPartner = conv.participants.find(
+        (p: Participant) => p._id !== user?.id
+      )
 
-  // Set first conversation as active by default
+      const name = chatPartner
+        ? `${chatPartner.firstName || ''} ${chatPartner.lastName || ''}`.trim()
+        : 'Unknown'
+
+      return {
+        id: conv._id,
+        orderId: conv.bookingId,
+        preview: conv.lastMessage || 'No messages yet',
+        timestamp: new Date(
+          conv.lastMessageAt || conv.updatedAt
+        ).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+        participants: conv.participants,
+        name, // 🆕 Add chat partner name
+      }
+    }) || []
+
+  // ✅ Set first conversation active by default
   useEffect(() => {
     if (conversations.length > 0 && !activeConversation) {
-      console.log(
-        '🎯 Setting default active conversation:',
-        conversations[0].id
-      )
       setActiveConversation(conversations[0].id)
     }
   }, [conversations, activeConversation])
 
-  // Handle conversation selection
   const handleSelectConversation = async (id: string) => {
-    console.log('🔄 Switching to conversation:', id)
     setActiveConversation(id)
-
-    // Refetch messages for the new conversation
-    if (id) {
-      try {
-        await refetchMessages()
-      } catch (error) {
-        console.error('❌ Error refetching messages:', error)
-      }
-    }
+    if (id) await refetchMessages()
   }
 
-  // Format messages for ChatLayout according to your messages API response
-  const formattedMessages: FormattedMessage[] = messages.map((msg) => ({
+  // ✅ Format messages
+  const formattedMessages: Message[] = messages.map((msg) => ({
     _id: msg._id,
     message: msg.message,
     sender: {
@@ -106,19 +109,15 @@ export default function ChatPage() {
     createdAt: msg.createdAt,
   }))
 
-  // Show loading state
+  // ✅ Handle loading & error UI
   if (conversationsLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-500">Loading conversations...</p>
-        </div>
+        <p className="text-gray-500">Loading conversations...</p>
       </div>
     )
   }
 
-  // Show error state
   if (conversationsError) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -135,22 +134,16 @@ export default function ChatPage() {
     )
   }
 
-  // Show empty state
   if (!conversations.length) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <p className="text-gray-500 mb-4">No conversations found</p>
-          <p className="text-gray-400 text-sm">
-            Start a new conversation to get started
-          </p>
-        </div>
+        <p className="text-gray-500">No conversations found</p>
       </div>
     )
   }
 
   return (
-    <div className="">
+    <div>
       <ChatLayout
         conversations={conversations}
         activeConversation={activeConversation}

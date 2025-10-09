@@ -58,10 +58,12 @@ export default function ChatLayout({
       return []
     }
 
-    console.log('🔄 Formatting messages:', {
-      userId: currentUserId,
-      messageCount: messages.length,
-    })
+    // console.log('🔄 Formatting messages:', {
+    //   userId: currentUserId,
+    //   messageCount: messages.length,
+    // })
+
+    console.log('my conversations', conversations)
 
     return messages.map((m) => {
       const isMine = m.sender._id === currentUserId
@@ -132,6 +134,7 @@ export default function ChatLayout({
         {/* Main Chat Window */}
         <div className="w-full md:w-2/3 flex flex-col">
           <ChatHeader
+            name={conversations.find((c) => c.id === activeConversation)?.name}
             orderId={
               conversations.find((c) => c.id === activeConversation)?.orderId
             }
