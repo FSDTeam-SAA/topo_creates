@@ -9,6 +9,14 @@ import { useSendMessage } from '@/hooks/useSendMessage'
 import { useUserStore } from '@/zustand/useUserStore'
 import { useSession } from 'next-auth/react'
 
+interface Attachment {
+  url: string
+  type: string
+  fileName: string
+  size: number
+  mimeType: string
+}
+
 interface ChatLayoutProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   conversations: any[]
@@ -22,10 +30,14 @@ interface ChatLayoutProps {
       firstName: string
       role?: 'USER' | 'LENDER'
     }
+    attachments: Attachment[]
     createdAt: string
   }[]
   isLoading?: boolean
   isConnected?: boolean
+  hasNextPage?: boolean
+  isFetchingNextPage?: boolean
+  fetchNextPage?: () => void
 }
 
 export default function ChatLayout({
@@ -35,6 +47,9 @@ export default function ChatLayout({
   messages,
   isLoading = false,
   isConnected = false,
+  hasNextPage = false,
+  isFetchingNextPage = false,
+  fetchNextPage,
 }: ChatLayoutProps) {
   const { mutate: sendMessage, isPending: isSending } = useSendMessage()
   const { data: session } = useSession()
@@ -48,7 +63,6 @@ export default function ChatLayout({
   const handleSelectConversation = async (id: string) => {
     setLocalLoading(true)
     await onSelect(id)
-    // Small delay for smooth UX
     setTimeout(() => setLocalLoading(false), 300)
   }
 
@@ -58,11 +72,6 @@ export default function ChatLayout({
       return []
     }
 
-    console.log('🔄 Formatting messages:', {
-      userId: currentUserId,
-      messageCount: messages.length,
-    })
-
     return messages.map((m) => {
       const isMine = m.sender._id === currentUserId
 
@@ -70,31 +79,30 @@ export default function ChatLayout({
         id: m._id,
         content: m.message,
         sender: isMine,
-        timestamp: new Date(m.createdAt).toLocaleTimeString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: true,
-        }),
+        timestamp: m.createdAt, // Keep as ISO string for proper sorting
         rawSenderId: m.sender._id,
+        attachments: m.attachments, // Pass attachments to ChatMessages
       }
     })
   }, [messages, currentUserId])
 
   // 📨 Optimized message sending
   const handleSendMessage = async (text: string, file?: File) => {
-    if (!activeConversation || !text.trim()) {
-      console.log('❌ Cannot send: no active conversation or empty message')
+    if (!activeConversation || (!text.trim() && !file)) {
+      console.log(
+        '❌ Cannot send: no active conversation or empty message and no file'
+      )
       return
     }
 
     console.log('📤 Sending message:', {
-      text: text.substring(0, 50),
+      text: text?.substring(0, 50),
       hasFile: !!file,
       room: activeConversation,
     })
 
     sendMessage({
-      text: text.trim(),
+      text: text?.trim(),
       chatRoom: activeConversation,
       file,
     })
@@ -121,7 +129,7 @@ export default function ChatLayout({
         </div>
       )}
 
-      <div className="flex flex-col md:flex-row md:h-[600px] gap-6 rounded-lg overflow-hidden mb-[100px]">
+      <div className="flex flex-col md:flex-row md:h-[600px] lg:h-[700px] gap-6 rounded-lg overflow-hidden mb-16 md:mb-[100px]">
         {/* Sidebar Chat List */}
         <ChatList
           conversations={conversations}
@@ -130,8 +138,9 @@ export default function ChatLayout({
         />
 
         {/* Main Chat Window */}
-        <div className="w-full md:w-2/3 flex flex-col">
+        <div className="w-full  md:w-2/3 flex flex-col">
           <ChatHeader
+            name={conversations.find((c) => c.id === activeConversation)?.name}
             orderId={
               conversations.find((c) => c.id === activeConversation)?.orderId
             }
@@ -148,11 +157,15 @@ export default function ChatLayout({
               </div>
             )}
 
-            {/* ✅ Chat Messages */}
+            {/* ✅ Chat Messages with Infinite Scroll */}
             <ChatMessages
               messages={formattedMessages}
               currentUserId={currentUserId}
+              chatRoomId={activeConversation}
               isLoading={isLoading || localLoading}
+              hasNextPage={hasNextPage}
+              isFetchingNextPage={isFetchingNextPage}
+              fetchNextPage={fetchNextPage}
             />
 
             {/* ✅ Input - Disable when sending */}

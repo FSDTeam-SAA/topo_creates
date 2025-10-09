@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef, useCallback } from 'react'
 import { useSocketStore } from '@/zustand/socketStore'
 import { useUserStore } from '@/zustand/useUserStore'
@@ -16,6 +16,7 @@ interface Sender {
   firstName: string
   lastName: string
   profileImage?: string
+  role?: 'USER' | 'LENDER'
 }
 
 interface Message {
@@ -34,6 +35,12 @@ interface MessageResponse {
   message: string
   data: {
     messages: Message[]
+    pagination: {
+      total: number
+      page: number
+      limit: number
+      pages: number
+    }
   }
 }
 
@@ -43,26 +50,28 @@ export const useChat = (roomId?: string) => {
   const { user } = useUserStore()
   const accessToken = user?.accessToken
   const currentRoomRef = useRef<string | null>(null)
-  // const listenersAttachedRef = useRef(false)
 
-  // ✅ Optimized message fetching with proper caching
+  // ✅ Infinite query for paginated messages
   const {
-    data: messages = [],
-    refetch,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     isLoading,
     isFetching,
-  } = useQuery<Message[]>({
+    refetch,
+  } = useInfiniteQuery({
     queryKey: ['messages', roomId],
-    queryFn: async () => {
+    queryFn: async ({ pageParam = 1 }) => {
       if (!roomId || !accessToken) {
         console.log('❌ Missing roomId or accessToken')
-        return []
+        return { messages: [], hasMore: false, nextPage: 1 }
       }
 
-      console.log('🔥 Fetching messages for room:', roomId)
+      console.log('🔥 Fetching messages for room:', roomId, 'page:', pageParam)
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/message/${roomId}`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/message/${roomId}/?page=${pageParam}&limit=200`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -80,27 +89,36 @@ export const useChat = (roomId?: string) => {
 
         console.log('✅ Messages fetched successfully:', {
           roomId,
+          page: pageParam,
           count: json?.data?.messages?.length || 0,
-          messages: json?.data?.messages?.map((m) => ({
-            id: m._id.substring(0, 8),
-            senderId: m.sender._id,
-            content: m.message.substring(0, 20),
-          })),
+          totalPages: json?.data?.pagination?.pages,
+          currentPage: json?.data?.pagination?.page,
         })
 
-        return json?.data?.messages || []
+        return {
+          messages: json?.data?.messages || [],
+          hasMore: json?.data?.pagination?.page < json?.data?.pagination?.pages,
+          nextPage: json?.data?.pagination?.page + 1,
+        }
       } catch (error) {
         console.error('❌ Error fetching messages:', error)
-        return []
+        return { messages: [], hasMore: false, nextPage: 1 }
       }
+    },
+    getNextPageParam: (lastPage) => {
+      return lastPage.hasMore ? lastPage.nextPage : undefined
     },
     enabled: !!roomId && !!accessToken,
     refetchOnWindowFocus: false,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 10, // 10 minutes
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
     retry: 2,
     retryDelay: 1000,
+    initialPageParam: 1,
   })
+
+  // ✅ Flatten all messages from all pages (oldest first for display)
+  const allMessages = data?.pages.flatMap((page) => page.messages) || []
 
   // 🔌 Optimized room joining/leaving
   useEffect(() => {
@@ -113,7 +131,7 @@ export const useChat = (roomId?: string) => {
           socket.emit('leaveRoom', currentRoomRef.current)
           console.log('🚪 Left room:', currentRoomRef.current)
 
-          // Clear previous room messages from cache to avoid flickering
+          // Clear previous room messages from cache
           queryClient.removeQueries({
             queryKey: ['messages', currentRoomRef.current],
           })
@@ -123,19 +141,6 @@ export const useChat = (roomId?: string) => {
         socket.emit('joinRoom', roomId)
         console.log('🚀 Joined room:', roomId)
         currentRoomRef.current = roomId
-
-        // Prefetch messages for smooth experience
-        await queryClient.prefetchQuery({
-          queryKey: ['messages', roomId],
-          queryFn: async () => {
-            const res = await fetch(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/message/${roomId}`,
-              { headers: { Authorization: `Bearer ${accessToken}` } }
-            )
-            const json = await res.json()
-            return json?.data?.messages || []
-          },
-        })
       }
     }
 
@@ -154,40 +159,107 @@ export const useChat = (roomId?: string) => {
 
       const targetRoom = msg.chatRoom
 
-      queryClient.setQueryData<Message[]>(
+      // Only update if this message is for the current room
+      if (targetRoom !== currentRoomRef.current) {
+        console.log('⚠️ Message for different room, skipping update')
+        return
+      }
+
+      queryClient.setQueryData(
         ['messages', targetRoom],
-        (old = []) => {
-          // Prevent duplicates
-          if (old.some((m) => m._id === msg._id)) {
-            console.log('⚠️ Duplicate message, skipping')
-            return old
+        (
+          old:
+            | { pages: Array<{ messages: Message[] }>; pageParams: number[] }
+            | undefined
+        ) => {
+          if (!old || !old.pages.length) {
+            return {
+              pages: [{ messages: [msg], hasMore: false, nextPage: 1 }],
+              pageParams: [1],
+            }
           }
-          console.log('✅ Adding new message to cache')
-          return [...old, msg]
+
+          // Add new message to the LAST page (newest messages)
+          const updatedPages = [...old.pages]
+          const lastPageIndex = updatedPages.length - 1
+          updatedPages[lastPageIndex] = {
+            ...updatedPages[lastPageIndex],
+            messages: [...updatedPages[lastPageIndex].messages, msg],
+          }
+
+          return {
+            ...old,
+            pages: updatedPages,
+          }
         }
       )
     },
     [queryClient]
   )
 
+  // ✅ Fixed message edit handler
   const handleMessageEdited = useCallback(
-    (msg: Message) => {
-      console.log('✏️ Message edited:', msg._id)
-      const targetRoom = msg.chatRoom
+    (editedMessage: Message) => {
+      console.log('✏️ Message edited:', editedMessage._id)
+      const targetRoom = editedMessage.chatRoom
 
-      queryClient.setQueryData<Message[]>(
+      // Only update if this message is for the current room
+      if (targetRoom !== currentRoomRef.current) {
+        console.log('⚠️ Edited message for different room, skipping update')
+        return
+      }
+
+      queryClient.setQueryData(
         ['messages', targetRoom],
-        (old = []) => old.map((m) => (m._id === msg._id ? msg : m))
+        (old: { pages: Array<{ messages: Message[] }> } | undefined) => {
+          if (!old) return old
+
+          const updatedPages = old.pages.map((page) => ({
+            ...page,
+            messages: page.messages.map((m) =>
+              m._id === editedMessage._id ? editedMessage : m
+            ),
+          }))
+
+          console.log('✅ Message updated in cache')
+          return {
+            ...old,
+            pages: updatedPages,
+          }
+        }
       )
     },
     [queryClient]
   )
 
+  // ✅ Fixed message delete handler
   const handleMessageDeleted = useCallback(
-    ({ messageId, chatRoom }: { messageId: string; chatRoom: string }) => {
-      console.log('🗑️ Message deleted:', messageId)
-      queryClient.setQueryData<Message[]>(['messages', chatRoom], (old = []) =>
-        old.filter((m) => m._id !== messageId)
+    (data: { messageId: string; chatRoom: string }) => {
+      console.log('🗑️ Message deleted:', data.messageId)
+      const targetRoom = data.chatRoom
+
+      // Only update if this message is for the current room
+      if (targetRoom !== currentRoomRef.current) {
+        console.log('⚠️ Deleted message for different room, skipping update')
+        return
+      }
+
+      queryClient.setQueryData(
+        ['messages', targetRoom],
+        (old: { pages: Array<{ messages: Message[] }> } | undefined) => {
+          if (!old) return old
+
+          const updatedPages = old.pages.map((page) => ({
+            ...page,
+            messages: page.messages.filter((m) => m._id !== data.messageId),
+          }))
+
+          console.log('✅ Message removed from cache')
+          return {
+            ...old,
+            pages: updatedPages,
+          }
+        }
       )
     },
     [queryClient]
@@ -217,16 +289,12 @@ export const useChat = (roomId?: string) => {
     handleMessageDeleted,
   ])
 
-  // 🔄 Manual refetch with loading state
-  const manualRefetch = useCallback(async () => {
-    if (!roomId) return
-    console.log('🔄 Manually refetching messages...')
-    await refetch()
-  }, [refetch, roomId])
-
   return {
-    messages,
-    refetch: manualRefetch,
+    messages: allMessages,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
     isLoading: isLoading || isFetching,
     isConnected,
   }

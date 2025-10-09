@@ -5,44 +5,59 @@ import Dispute from '@/components/account/dispute_components'
 import MuseClub from '@/components/account/muse_club'
 import OrderHistory from '@/components/account/order_history'
 import YourWishlist from '@/components/account/your_wishlist'
-import { Session } from 'next-auth'
-import { useState } from 'react'
-import DocumentVerification from './document-verification'
+import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
 import Headers from './headers'
-import ChatPage from './chatpage'
+import DocumentVerification from './document-verification'
+import { useUserStore } from '@/zustand/useUserStore'
 
-interface Props {
-  session: Session
-}
-
-const AllAccountInfo = ({ session }: Props) => {
+const AllAccountInfo = () => {
   const [tab, setTab] = useState('Account Info')
+  const router = useRouter()
+  const { user } = useUserStore() // ✅ zustand থেকে user আনছি
+
+  // ✅ "Chats" ট্যাব সিলেক্ট হলে redirect করবে
+  useEffect(() => {
+    if (tab === 'Chats') {
+      router.push('/account/chats')
+    }
+  }, [tab, router])
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <p className="text-gray-600 text-lg">
+          Please log in to view your account.
+        </p>
+      </div>
+    )
+  }
 
   return (
-    <div className="">
-      <div>
-        <Headers setTab={setTab} tab={tab} session={session} />
-        <div className="mb-10">
-          <DocumentVerification session={session} />
-        </div>
+    <div className="container mx-auto">
+      {/* ✅ Header সব ট্যাবে শেয়ার্ড থাকবে */}
+      <Headers setTab={setTab} tab={tab} user={user} />
 
-        {tab === 'Account Info' && (
-          <div className="flex flex-col gap-[100px]">
-            <AccountInfo />
-            <MuseClub />
-            <OrderHistory />
-            <YourWishlist />
-          </div>
-        )}
-
-        {tab === 'Dispute' && (
-          <div>
-            <Dispute />
-          </div>
-        )}
-
-        {tab === 'Chats' && <ChatPage />}
+      {/* ✅ Document verification alert */}
+      <div className="mb-10">
+        <DocumentVerification user={user} />
       </div>
+
+      {/* ✅ ট্যাব অনুযায়ী কনটেন্ট */}
+      {tab === 'Account Info' && (
+        <div className="flex flex-col gap-[100px]">
+          <AccountInfo user={user} />
+          <MuseClub />
+          <OrderHistory />
+          <YourWishlist />
+        </div>
+      )}
+
+      {tab === 'Dispute' && (
+        <div>
+          <Dispute />
+        </div>
+      )}
     </div>
   )
 }

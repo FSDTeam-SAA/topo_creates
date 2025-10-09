@@ -41,7 +41,7 @@ export default function ChatList({
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex justify-between items-center">
-                <p className="font-medium text-sm">{conversation.orderId}</p>
+                <p className="font-medium text-sm">{conversation.name}</p>
                 <span className="text-xs text-gray-500">
                   {conversation.timestamp}
                 </span>
