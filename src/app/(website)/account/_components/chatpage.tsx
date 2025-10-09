@@ -150,13 +150,15 @@ export default function ChatPage() {
   }
 
   return (
-    <ChatLayout
-      conversations={conversations}
-      activeConversation={activeConversation}
-      onSelect={handleSelectConversation}
-      messages={formattedMessages}
-      isLoading={messagesLoading}
-      isConnected={isConnected}
-    />
+    <div className="">
+      <ChatLayout
+        conversations={conversations}
+        activeConversation={activeConversation}
+        onSelect={handleSelectConversation}
+        messages={formattedMessages}
+        isLoading={messagesLoading}
+        isConnected={isConnected}
+      />
+    </div>
   )
 }

@@ -5,7 +5,6 @@ import { ProfileFormSchemaValues, profileSchema } from '@/schemas/account'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
-import { useSession } from 'next-auth/react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import {
@@ -19,35 +18,50 @@ import {
 import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
 
-const AccountInfo = () => {
-  const [isEditing, setIsEditing] = useState(false)
+// ✅ তোমার User টাইপ
+interface User {
+  id: string
+  firstName?: string
+  lastName?: string
+  role?: string
+  email?: string
+  profileImage?: string
+  accessToken?: string
+}
 
-  const data = useSession({ required: true })
+// ✅ props টাইপ নির্ধারণ
+interface AccountInfoProps {
+  user: User | null
+}
+
+const AccountInfo = ({ user }: AccountInfoProps) => {
+  const [isEditing, setIsEditing] = useState(false)
 
   const { mutate, isPending } = useMutation({
     mutationKey: ['profileEdit'],
     mutationFn: (body: ProfileFormSchemaValues) =>
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/user/${data.data?.user.id}`,
-        {
-          method: 'PUT',
-          body: JSON.stringify(body),
-        }
-      ).then((res) => res.json()),
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/user/${user?.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user?.accessToken}`,
+        },
+        body: JSON.stringify(body),
+      }).then((res) => res.json()),
     onSuccess: (res) => {
       console.log(res)
       setIsEditing(false)
-      // Optionally, you can show a success message or update the UI
     },
   })
 
   const form = useForm<ProfileFormSchemaValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      firstName: 'Mehedi',
-      lastName: 'Hasan',
-      email: 'email@gmail.com',
-      phoneNumber: '0154754545454',
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
+      email: user?.email || '',
+      phoneNumber: '',
+      bio: '',
     },
   })
 
@@ -57,7 +71,7 @@ const AccountInfo = () => {
 
   return (
     <section>
-      <div className="">
+      <div>
         <h2 className="text-lg tracking-widest font-light mb-6 border-black border-b-[1px] pb-5">
           Account Info
         </h2>
@@ -117,7 +131,7 @@ const AccountInfo = () => {
                 )}
               />
 
-              {/* Address */}
+              {/* Bio */}
               <FormField
                 control={form.control}
                 name="bio"
@@ -192,10 +206,10 @@ const AccountInfo = () => {
                   </FormItem>
                 )}
               />
-
-              {/* Action Button */}
             </div>
           </div>
+
+          {/* Action Button */}
           <div className="flex justify-end pt-4">
             {isEditing ? (
               <div className="flex gap-x-3">

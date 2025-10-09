@@ -1,17 +1,26 @@
-import { auth } from '@/auth'
-import { redirect } from 'next/navigation'
-import AllAccountInfo from './_components/all_account_info'
+'use client'
 
-const page = async () => {
-  const session = await auth()
+import AccountInfo from '@/components/account/account_info'
+import MuseClub from '@/components/account/muse_club'
+import OrderHistory from '@/components/account/order_history'
+import YourWishlist from '@/components/account/your_wishlist'
+import DocumentVerification from './_components/document-verification'
+import { useUserStore } from '@/zustand/useUserStore'
 
-  if (!session) redirect('/login')
+const AllAccountInfo = () => {
+  const { user } = useUserStore()
 
   return (
     <div className="container mx-auto">
-      <AllAccountInfo session={session} />
+      <DocumentVerification user={user} />
+      <div className="flex flex-col gap-[100px]">
+        <AccountInfo user={user} />
+        <MuseClub />
+        <OrderHistory />
+        <YourWishlist />
+      </div>
     </div>
   )
 }
 
-export default page
+export default AllAccountInfo
