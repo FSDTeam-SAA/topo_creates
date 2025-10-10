@@ -333,12 +333,12 @@ export default function ChatMessages({
                           <Button
                             onClick={handleEditSave}
                             size="sm"
-                            disabled={isEditing || !editText.trim()}
-                            className="bg-white h-8 text-[#891D33] hover:bg-white/80"
+                            disabled={isEditing || !editText?.trim()}
+                            className="bg-white h-8 text-gray-700 hover:bg-white/80"
                           >
                             {isEditing ? (
                               <>
-                                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-[#891D33] mr-1"></div>
+                                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-gray-700 mr-1"></div>
                                 Saving...
                               </>
                             ) : (
@@ -353,7 +353,7 @@ export default function ChatMessages({
                             variant="default"
                             size="sm"
                             disabled={isEditing}
-                            className="h-8 bg-[#891D33] hover:bg-[#891D33]/90"
+                            className="h-8 bg-gray-500 hover:bg-gray-600/90"
                           >
                             <CloseIcon className="h-3 w-3 mr-1" />
                             Cancel
@@ -432,7 +432,7 @@ export default function ChatMessages({
                 <Button
                   onClick={handleDeleteConfirm}
                   disabled={isDeleting}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                  className="flex-1 bg-gray-600 hover:bg-gray-700 text-white"
                 >
                   {isDeleting ? (
                     <>
