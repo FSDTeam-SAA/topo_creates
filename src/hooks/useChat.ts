@@ -71,7 +71,7 @@ export const useChat = (roomId?: string) => {
       console.log('🔥 Fetching messages for room:', roomId, 'page:', pageParam)
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/message/${roomId}/?page=${pageParam}&limit=200`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/message/${roomId}/?page=${pageParam}&limit=20`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,

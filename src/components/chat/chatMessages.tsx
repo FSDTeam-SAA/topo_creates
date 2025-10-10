@@ -218,7 +218,7 @@ export default function ChatMessages({
     return (
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto mb-2"></div>
           <p className="text-gray-400 text-sm">Loading messages...</p>
         </div>
       </div>
@@ -250,15 +250,15 @@ export default function ChatMessages({
               disabled={isFetchingNextPage}
               variant="outline"
               size="sm"
-              className="bg-white border-gray-300 hover:bg-gray-50 shadow-sm"
+              className="bg-slate-50 border-gray-200 rounded-full font-light text-[12px] hover:bg-slate-100/80 text text shadow-sm"
             >
               {isFetchingNextPage ? (
                 <>
-                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-500 mr-2"></div>
+                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-[#891D33] mr-2"></div>
                   Loading...
                 </>
               ) : (
-                'Load More Messages'
+                'Load More Messages....'
               )}
             </Button>
           </div>
@@ -292,7 +292,7 @@ export default function ChatMessages({
                   <div
                     className={`max-w-[85%] sm:max-w-[70%] rounded-2xl px-4 py-2.5 text-sm shadow-sm relative ${
                       isMyMessage
-                        ? 'bg-[#000000] text-white rounded-br-none'
+                        ? 'bg-gray-800 text-white rounded-br-none'
                         : 'bg-gray-100 text-gray-800 rounded-bl-none'
                     }`}
                   >
@@ -300,7 +300,7 @@ export default function ChatMessages({
                     {isMyMessage &&
                       hoveredMessageId === message.id &&
                       !editingMessageId && (
-                        <div className="absolute -top-9 right-0 flex gap-1 bg-white rounded-lg p-1 shadow-md border border-gray-200">
+                        <div className="absolute top-[50%] translate-y-[-50%] -left-[85px] flex gap-1 bg-white rounded-lg p-1 shadow-md border border-gray-200">
                           <button
                             onClick={() => handleEditClick(message)}
                             className="p-1.5 hover:bg-gray-50 rounded transition-colors"
@@ -324,7 +324,7 @@ export default function ChatMessages({
                         <textarea
                           value={editText}
                           onChange={(e) => setEditText(e.target.value)}
-                          className="w-full p-2 border border-gray-300 rounded-lg text-gray-800 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full p-2 border border-[#891D33] rounded-lg text-gray-800 resize-none focus:outline-none focus:ring-2 focus:ring-[#891D33]"
                           rows={3}
                           autoFocus
                           disabled={isEditing}
@@ -334,11 +334,11 @@ export default function ChatMessages({
                             onClick={handleEditSave}
                             size="sm"
                             disabled={isEditing || !editText.trim()}
-                            className="bg-white h-8 text-black hover:bg-white/80"
+                            className="bg-white h-8 text-[#891D33] hover:bg-white/80"
                           >
                             {isEditing ? (
                               <>
-                                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-1"></div>
+                                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-[#891D33] mr-1"></div>
                                 Saving...
                               </>
                             ) : (
@@ -353,7 +353,7 @@ export default function ChatMessages({
                             variant="default"
                             size="sm"
                             disabled={isEditing}
-                            className="h-8"
+                            className="h-8 bg-[#891D33] hover:bg-[#891D33]/90"
                           >
                             <CloseIcon className="h-3 w-3 mr-1" />
                             Cancel
