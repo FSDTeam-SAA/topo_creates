@@ -14,15 +14,15 @@ export default function ChatList({
   activeConversation,
   onSelect,
 }: Props) {
-  // console.log('conversations ', conversations)
+  console.log('conversations ', conversations)
   return (
     <div className="w-full md:w-1/3">
       <div className="p-3 mb-4">
         <div className="relative">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-[#595959]" />
+          <Search className="absolute left-3 top-3 h-5 w-5 text-[#595959]" />
           <Input
             placeholder="SEARCH MESSAGE....."
-            className="pl-11 py-4 border-[#E6E6E6] focus-visible:ring-0 text-sm"
+            className="pl-11 py-5 border-[#E6E6E6] focus-visible:ring-0 text-sm"
           />
         </div>
       </div>
@@ -41,7 +41,9 @@ export default function ChatList({
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex justify-between items-center">
-                <p className="font-medium text-sm">{conversation.name}</p>
+                <p className="font-normal tracking-wider text-sm">
+                  {conversation.name}
+                </p>
                 <span className="text-xs text-gray-500">
                   {conversation.timestamp}
                 </span>
