@@ -1,12 +1,11 @@
 'use client'
 
+import { useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { DBUser } from '@/types/user'
-import { useQuery } from '@tanstack/react-query'
 import { AlertCircleIcon, Loader2 } from 'lucide-react'
-import { useEffect } from 'react'
-import type { User } from '@/zustand/useUserStore'
+import { User } from '@/zustand/useUserStore'
 
 interface GetApiRes {
   status: boolean
@@ -16,10 +15,12 @@ interface GetApiRes {
   }
 }
 
-export interface UserResponse {
+interface UserResponse {
   status: boolean
   message: string
-  data: DBUser
+  data: {
+    kycVerified?: boolean
+  }
 }
 
 interface DocumentVerificationProps {
@@ -27,7 +28,8 @@ interface DocumentVerificationProps {
 }
 
 const DocumentVerification = ({ user }: DocumentVerificationProps) => {
-  // ✅ user null হলে কোনো call করবে না
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL
+
   const {
     data: kycRes,
     refetch: fetchKyc,
@@ -35,14 +37,12 @@ const DocumentVerification = ({ user }: DocumentVerificationProps) => {
   } = useQuery<GetApiRes>({
     queryKey: ['kyc-check'],
     queryFn: async () => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/user/kyc/verify`,
-        {
-          headers: {
-            Authorization: `Bearer ${user?.accessToken}`,
-          },
-        }
-      )
+      const res = await fetch(`${baseUrl}/api/v1/user/kyc/verify`, {
+        headers: {
+          Authorization: `Bearer ${user?.accessToken}`,
+        },
+      })
+      if (!res.ok) throw new Error('KYC verification failed')
       return res.json()
     },
     enabled: false,
@@ -56,43 +56,35 @@ const DocumentVerification = ({ user }: DocumentVerificationProps) => {
   } = useQuery<UserResponse>({
     queryKey: ['user', user?.id],
     queryFn: async () => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/user/${user?.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${user?.accessToken}`,
-          },
-        }
-      )
+      const res = await fetch(`${baseUrl}/api/v1/user/${user?.id}`, {
+        headers: {
+          Authorization: `Bearer ${user?.accessToken}`,
+        },
+      })
+      if (!res.ok) throw new Error('Failed to fetch user data')
       return res.json()
     },
-    enabled: !!user, // ✅ শুধুমাত্র user থাকলে call হবে
+    enabled: !!user,
   })
 
   useEffect(() => {
-    if (kycRes?.status) {
+    if (kycRes?.status && kycRes.message?.url) {
       window.location.href = kycRes.message.url
     }
   }, [kycRes])
 
   if (!user) return null
+  if (isLoading) return null
+  if (isError) return <p className="text-red-500">{(error as Error).message}</p>
 
-  if (isLoading) {
-    return null
-  }
-
-  if (isError) {
-    return <p>{(error as Error).message}</p>
-  }
-
-  if (userRes && !userRes.data.kycVerified) {
+  if (userRes && !userRes.data?.kycVerified) {
     return (
       <Alert
         variant="destructive"
         className="flex items-center justify-between"
       >
         <div className="flex items-start gap-x-2">
-          <AlertCircleIcon />
+          <AlertCircleIcon className="w-5 h-5 mt-0.5" />
           <div>
             <AlertTitle>Document verification required</AlertTitle>
             <AlertDescription>
@@ -108,7 +100,7 @@ const DocumentVerification = ({ user }: DocumentVerificationProps) => {
         >
           {isFetching ? (
             <>
-              <Loader2 className="animate-spin mr-2" /> Verifying...
+              <Loader2 className="animate-spin mr-2 h-4 w-4" /> Verifying...
             </>
           ) : (
             'Verify Now'

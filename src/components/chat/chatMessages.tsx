@@ -196,7 +196,7 @@ export default function ChatMessages({
 
     // Other files (PDF, Docs, etc.)
     return (
-      <div className="mt-2 flex items-center gap-2 p-2 bg-gray-100 rounded-lg">
+      <div className="mt-2 flex items-center gap-2 p-2 text-gray-700 bg-gray-100 rounded-lg">
         <File className="h-5 w-5 text-gray-600" />
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium truncate">{fileName}</p>
@@ -300,20 +300,20 @@ export default function ChatMessages({
                     {isMyMessage &&
                       hoveredMessageId === message.id &&
                       !editingMessageId && (
-                        <div className="absolute top-[50%] translate-y-[-50%] -left-[85px] flex gap-1 bg-white rounded-lg p-1 shadow-md border border-gray-200">
+                        <div className="absolute top-[50%] translate-y-[-50%] -left-[70px] flex gap-1 bg-white rounded-lg p-1 shadow-md border border-gray-200">
                           <button
                             onClick={() => handleEditClick(message)}
-                            className="p-1.5 hover:bg-gray-50 rounded transition-colors"
+                            className="p-1.5 hover:bg-gray-100 rounded transition-colors"
                             title="Edit message"
                           >
-                            <Edit3 className="h-3.5 w-3.5 text-gray-700" />
+                            <Edit3 className="h-3 w-3 text-gray-700" />
                           </button>
                           <button
                             onClick={() => handleDeleteClick(message.id)}
                             className="p-1.5 hover:bg-red-50 rounded transition-colors"
                             title="Delete message"
                           >
-                            <Trash2 className="h-3.5 w-3.5 text-gray-600" />
+                            <Trash2 className="h-3 w-3 text-gray-600" />
                           </button>
                         </div>
                       )}
@@ -324,7 +324,7 @@ export default function ChatMessages({
                         <textarea
                           value={editText}
                           onChange={(e) => setEditText(e.target.value)}
-                          className="w-full p-2 border border-[#891D33] rounded-lg text-gray-800 resize-none focus:outline-none focus:ring-2 focus:ring-[#891D33]"
+                          className="w-full p-2 border border-gray-800 rounded-lg text-gray-800 resize-none focus:outline-none focus:ring-2 focus:ring-gray-700"
                           rows={3}
                           autoFocus
                           disabled={isEditing}

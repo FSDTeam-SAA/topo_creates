@@ -1,4 +1,3 @@
-// /zustand/userStore.ts
 import { create } from 'zustand'
 
 export interface User {
@@ -9,6 +8,9 @@ export interface User {
   email?: string
   profileImage?: string
   accessToken?: string
+  phoneNumber?: string
+  bio?: string
+  kycVerified?: boolean
 }
 
 interface UserState {
