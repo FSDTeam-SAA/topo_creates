@@ -14,7 +14,7 @@ import { useUserStore } from '@/zustand/useUserStore'
 const AllAccountInfo = () => {
   const [tab, setTab] = useState('Account Info')
   const router = useRouter()
-  const { user } = useUserStore() // ✅ zustand থেকে user আনছি
+  const { user } = useUserStore()
 
   // ✅ "Chats" ট্যাব সিলেক্ট হলে redirect করবে
   useEffect(() => {
@@ -35,18 +35,16 @@ const AllAccountInfo = () => {
 
   return (
     <div className="container mx-auto">
-      {/* ✅ Header সব ট্যাবে শেয়ার্ড থাকবে */}
       <Headers setTab={setTab} tab={tab} user={user} />
 
-      {/* ✅ Document verification alert */}
+      {/* Document verification alert */}
       <div className="mb-10">
         <DocumentVerification user={user} />
       </div>
 
-      {/* ✅ ট্যাব অনুযায়ী কনটেন্ট */}
       {tab === 'Account Info' && (
         <div className="flex flex-col gap-[100px]">
-          <AccountInfo user={user} />
+          <AccountInfo />
           <MuseClub />
           <OrderHistory />
           <YourWishlist />

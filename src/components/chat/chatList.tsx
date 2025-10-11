@@ -31,8 +31,8 @@ export default function ChatList({
         {conversations.map((conversation) => (
           <div
             key={conversation.id}
-            className={`p-4 flex items-start gap-3 cursor-pointer hover:bg-gray-50 border-b ${
-              activeConversation === conversation.id ? 'bg-gray-100' : ''
+            className={`p-4 flex items-start gap-3 cursor-pointer rounded-lg hover:bg-gray-50/80 border-b ${
+              activeConversation === conversation.id ? 'bg-slate-100' : ''
             }`}
             onClick={() => onSelect(conversation.id)}
           >
