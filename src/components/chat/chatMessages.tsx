@@ -168,7 +168,7 @@ export default function ChatMessages({
             alt={fileName}
             width={200}
             height={200}
-            className="rounded-xl w-full h-auto object-cover cursor-pointer transition-transform group-hover:scale-[1.02]"
+            className="rounded-xl w-full h-[200px] md:h-[320px] object-cover cursor-pointer transition-transform group-hover:scale-[1.02]"
             onClick={() => setPreviewImage(url)}
             unoptimized={url.startsWith('blob:') || url.startsWith('data:')}
           />
