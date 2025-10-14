@@ -32,8 +32,6 @@ const AllDisputes = ({ token }: { token: string }) => {
     },
   });
 
-  console.log("disputes : ", disputes);
-
   return (
     <div className="mt-8 space-y-8">
       {isLoading ? (
@@ -43,7 +41,7 @@ const AllDisputes = ({ token }: { token: string }) => {
           ))}
         </div>
       ) : (
-        disputes.map((dispute: Dispute) => (
+        disputes?.map((dispute: Dispute) => (
           <DisputeCard key={dispute?._id} dispute={dispute} />
         ))
       )}
