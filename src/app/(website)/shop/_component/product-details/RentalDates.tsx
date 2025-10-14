@@ -72,13 +72,13 @@ const RentalDates: React.FC<RentalDatesProps> = ({ bookedDates = [] }) => {
   return (
     <div className="font-avenir uppercase mt-3">
       <Form {...form}>
-        <form className="flex flex-col lg:flex-row items-center gap-5">
+        <form className="flex flex-col justify-start lg:flex-row items-center gap-5">
           {/* Start Date */}
           <FormField
             control={form.control}
             name="startDate"
             render={({ field }) => (
-              <FormItem className="flex flex-col lg:w-1/2">
+              <FormItem className="flex flex-col lg:w-1/2 ">
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>

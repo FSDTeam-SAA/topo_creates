@@ -13,8 +13,8 @@ const AllAccountInfo = () => {
   return (
     <div className="container mx-auto">
       <DocumentVerification user={user} />
-      <div className="flex flex-col gap-[100px]">
-        <AccountInfo user={user} />
+      <div className="flex flex-col gap-[50px] md:gap-[80px] lg:gap-[100px]">
+        <AccountInfo />
         <MuseClub />
         <OrderHistory />
         <YourWishlist />

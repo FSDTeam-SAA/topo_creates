@@ -11,7 +11,7 @@ export default function NotFound() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const router = useRouter()
 
-  // Track mouse movement for subtle parallax effect
+  // 🧠 Track mouse movement for subtle parallax effect
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({
@@ -22,7 +22,7 @@ export default function NotFound() {
 
     window.addEventListener('mousemove', handleMouseMove)
 
-    // Set loaded state after a small delay for entrance animation
+    // Entrance animation delay
     const timer = setTimeout(() => setIsLoaded(true), 100)
 
     return () => {
@@ -33,12 +33,9 @@ export default function NotFound() {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-white px-4 text-slate-900">
-      {/* Animated background elements */}
+      {/* 🔵 Animated background */}
       <div className="absolute inset-0 z-0">
-        {/* Subtle gradient background */}
         <div className="absolute inset-0 bg-gradient-to-b from-slate-50 to-white" />
-
-        {/* Animated circles */}
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
@@ -63,12 +60,13 @@ export default function NotFound() {
         ))}
       </div>
 
-      {/* Main content */}
+      {/* 🌟 Main Content */}
       <div
         className={`z-10 flex flex-col items-center text-center transition-all duration-1000 ease-out ${
           isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'
         }`}
       >
+        {/* 404 Title */}
         <div
           className="relative mb-8"
           style={{
@@ -78,13 +76,12 @@ export default function NotFound() {
             transition: 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)',
           }}
         >
-          <h1 className="text-[10rem] font-black leading-none tracking-tighter text-slate-900 sm:text-[14rem]">
+          <h1 className="text-[8rem] sm:text-[10rem] md:text-[14rem] font-black leading-none tracking-tighter text-slate-900">
             404
           </h1>
 
-          {/* Animated underline */}
           <div
-            className="absolute -bottom-4 left-0 h-1 w-0 bg-slate-900 transition-all duration-1000 ease-in-out group-hover:w-full"
+            className="absolute -bottom-4 left-0 h-1 w-0 bg-slate-900 transition-all duration-1000 ease-in-out"
             style={{
               width: isLoaded ? '100%' : '0%',
               animation: 'width-pulse 3s infinite alternate ease-in-out',
@@ -92,6 +89,7 @@ export default function NotFound() {
           />
         </div>
 
+        {/* Subtitle */}
         <h2 className="mb-4 text-2xl font-bold text-slate-800 sm:text-3xl">
           Page not found
         </h2>
@@ -100,7 +98,9 @@ export default function NotFound() {
           The page you&#39;re looking for doesn&#39;t exist or has been moved.
         </p>
 
+        {/* 🧭 Buttons */}
         <div className="flex flex-col gap-4 sm:flex-row">
+          {/* ✅ Fixed Back to Home Button (no React.Children.only error) */}
           <Button
             asChild
             className="group relative overflow-hidden bg-slate-900 px-6 py-2 text-white transition-all hover:bg-slate-800"
@@ -112,16 +112,18 @@ export default function NotFound() {
             }}
           >
             <Link href="/">
-              <span className="relative z-10">Back to home</span>
-              <span className="absolute bottom-0 left-0 h-0 w-full bg-slate-700 transition-all duration-300 group-hover:h-full" />
+              <div className="relative">
+                <span className="relative z-10">Back to home</span>
+                <span className="absolute bottom-0 left-0 h-0 w-full bg-slate-700 transition-all duration-300 group-hover:h-full" />
+              </div>
             </Link>
           </Button>
 
+          {/* Go Back Button */}
           <Button
-            asChild
             variant="outline"
             onClick={() => router.back()}
-            className="group relative overflow-hidden border-slate-300 px-6 py-2 text-slate-700 transition-all hover:border-slate-400 hover:text-slate-900"
+            className="group relative overflow-hidden border-slate-300 px-6 py-2 text-slate-700 transition-all hover:border-slate-400 hover:text-slate-900 flex items-center justify-center"
             style={{
               transform: `
                 translate(${mousePosition.x * -5}px, ${mousePosition.y * -5}px)
@@ -136,7 +138,7 @@ export default function NotFound() {
         </div>
       </div>
 
-      {/* Animation keyframes */}
+      {/* 🎬 Animation keyframes */}
       <style jsx global>{`
         @keyframes pulse {
           0%,

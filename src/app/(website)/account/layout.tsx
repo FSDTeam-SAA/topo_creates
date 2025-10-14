@@ -32,7 +32,7 @@ export default function AccountLayout({ children }: LayoutProps) {
   return (
     <div className="w-full pt-12 md:pt-16 lg:pt-20">
       <Headers setTab={setTab} tab={tab} user={user} />
-      <div className="mt-10">{children}</div>
+      <div className="">{children}</div>
     </div>
   )
 }
