@@ -23,7 +23,6 @@ const AllDisputes = ({ token }: { token: string }) => {
             "content-type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          cache: "no-cache",
         }
       );
       const data = await res.json();

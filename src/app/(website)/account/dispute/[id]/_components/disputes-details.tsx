@@ -3,8 +3,11 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import { useParams } from "next/navigation";
 
-const DisputesDetails = ({ id }: { id: string }) => {
+const DisputesDetails = () => {
+  const { id } = useParams();
+
   const session = useSession();
   const token = session.data?.user.accessToken;
 
@@ -19,7 +22,6 @@ const DisputesDetails = ({ id }: { id: string }) => {
             "content-type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          cache: "no-cache",
         }
       );
       const data = await res.json();
