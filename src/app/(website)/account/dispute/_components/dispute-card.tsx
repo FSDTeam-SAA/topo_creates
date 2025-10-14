@@ -35,7 +35,7 @@ const DisputeCard = ({ dispute }: DisputeCardProps) => {
       <div className="flex items-center justify-between">
         <p>&quot;{dispute?.description}&quot;</p>
 
-        <Link href={`/dispute/${dispute?._id}`}>
+        <Link href={`/account/dispute/${dispute?._id}`}>
           <button className="border-b border-gray-400 text-sm">VIEW</button>
         </Link>
       </div>

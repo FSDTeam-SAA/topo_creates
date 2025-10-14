@@ -23,7 +23,6 @@ const AllDisputes = ({ token }: { token: string }) => {
             "content-type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          cache: "no-cache",
         }
       );
       const data = await res.json();
@@ -31,8 +30,6 @@ const AllDisputes = ({ token }: { token: string }) => {
       return data?.data?.disputes || [];
     },
   });
-
-  console.log("disputes : ", disputes);
 
   return (
     <div className="mt-8 space-y-8">
@@ -43,7 +40,7 @@ const AllDisputes = ({ token }: { token: string }) => {
           ))}
         </div>
       ) : (
-        disputes.map((dispute: Dispute) => (
+        disputes?.map((dispute: Dispute) => (
           <DisputeCard key={dispute?._id} dispute={dispute} />
         ))
       )}
