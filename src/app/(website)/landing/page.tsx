@@ -23,7 +23,7 @@ export default function Home() {
 
           <Button
             variant="link"
-            className="sub-header text-slate-200 mt-[200px] text-[24px] md:text-[36px] font-light leading-[64px] tracking-[.5em]"
+            className="sub-header text-slate-200 mt-[200px] md:text-[24px] lg:text-[36px] font-light leading-[64px] tracking-[.5em]"
           >
             <Link href="/login">EFFORTLESS FASHION HIRE</Link>
           </Button>
