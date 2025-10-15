@@ -6,6 +6,7 @@ import { Camera } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface ReportIssueModalProps {
   isOpen: boolean;
@@ -17,31 +18,15 @@ export function ReportIssueModal({ isOpen, onClose }: ReportIssueModalProps) {
   const [issueType, setIssueType] = useState("");
   const [description, setDescription] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const session = useSession();
   const token = session?.data?.user?.accessToken;
+  const queryClient = useQueryClient();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
+  // Mutation for reporting issue
+  const reportIssueMutation = useMutation({
+    mutationFn: async (formData: FormData) => {
       if (!token) {
-        toast.error("Authentication required", {
-          description: "Please log in to report an issue",
-        });
-        return;
-      }
-
-      // Create FormData object to send multipart/form-data
-      const formData = new FormData();
-      formData.append("bookingId", orderId);
-      formData.append("issueType", issueType);
-      formData.append("description", description);
-
-      // Append photo if exists
-      if (photo) {
-        formData.append("filename", photo);
+        throw new Error("Authentication required");
       }
 
       const response = await fetch(
@@ -58,7 +43,6 @@ export function ReportIssueModal({ isOpen, onClose }: ReportIssueModalProps) {
       let result;
       const contentType = response.headers.get("content-type");
 
-      // Handle different response types
       if (contentType && contentType.includes("application/json")) {
         result = await response.json();
       } else {
@@ -71,7 +55,6 @@ export function ReportIssueModal({ isOpen, onClose }: ReportIssueModalProps) {
       }
 
       if (!response.ok) {
-        // Handle API error response
         const errorMessage =
           result?.error ||
           result?.message ||
@@ -79,33 +62,47 @@ export function ReportIssueModal({ isOpen, onClose }: ReportIssueModalProps) {
         throw new Error(errorMessage);
       }
 
-      console.log("Issue reported successfully:", result);
-
-      // Show success toast
+      return result;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-disputes"] });
+      
       toast.success("Issue reported successfully!", {
-        description:
-          "Your issue has been submitted and will be reviewed shortly.",
+        description: "Your issue has been submitted and will be reviewed shortly.",
       });
 
       // Reset form and close modal on success
       resetForm();
       onClose();
-    } catch (error) {
+    },
+    onError: (error: Error) => {
       console.error("Error reporting issue:", error);
+      toast.error("Failed to report issue", {
+        description: error.message,
+      });
+    },
+  });
 
-      // Show error toast with detailed message
-      if (error instanceof Error) {
-        toast.error("Failed to report issue", {
-          description: error.message,
-        });
-      } else {
-        toast.error("Failed to report issue", {
-          description: "Please try again later.",
-        });
-      }
-    } finally {
-      setIsSubmitting(false);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!token) {
+      toast.error("Authentication required", {
+        description: "Please log in to report an issue",
+      });
+      return;
     }
+
+    const formData = new FormData();
+    formData.append("bookingId", orderId);
+    formData.append("issueType", issueType);
+    formData.append("description", description);
+
+    if (photo) {
+      formData.append("filename", photo);
+    }
+
+    reportIssueMutation.mutate(formData);
   };
 
   const resetForm = () => {
@@ -151,6 +148,8 @@ export function ReportIssueModal({ isOpen, onClose }: ReportIssueModalProps) {
     setPhoto(null);
     toast.info("Photo removed");
   };
+
+  const isSubmitting = reportIssueMutation.isPending;
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>

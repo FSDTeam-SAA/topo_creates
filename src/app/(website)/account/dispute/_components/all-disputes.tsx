@@ -2,7 +2,6 @@
 import { useQuery } from "@tanstack/react-query";
 import DisputeCard from "./dispute-card";
 import DisputeCardSkeleton from "./dispute-card-skeleton";
-import { useEffect } from "react";
 
 type Dispute = {
   _id?: string;
@@ -13,11 +12,7 @@ type Dispute = {
 };
 
 const AllDisputes = ({ token }: { token: string }) => {
-  const {
-    data: disputes = [],
-    isLoading,
-    refetch,
-  } = useQuery({
+  const { data: disputes = [], isLoading } = useQuery({
     queryKey: ["all-disputes"],
     queryFn: async () => {
       const res = await fetch(
@@ -34,10 +29,6 @@ const AllDisputes = ({ token }: { token: string }) => {
 
       return data?.data?.disputes || [];
     },
-  });
-
-  useEffect(() => {
-    refetch();
   });
 
   return (
