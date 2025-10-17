@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, ChangeEvent } from 'react'
+import { useState, ChangeEvent, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Send, Paperclip, Loader2 } from 'lucide-react'
 
@@ -12,6 +12,7 @@ interface Props {
 export default function ChatInput({ onSend, disabled = false }: Props) {
   const [message, setMessage] = useState('')
   const [file, setFile] = useState<File | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const handleSend = () => {
     if (disabled || (!message.trim() && !file)) return
@@ -19,6 +20,12 @@ export default function ChatInput({ onSend, disabled = false }: Props) {
     setMessage('')
     setFile(null)
   }
+
+  useEffect(() => {
+    if (!disabled) {
+      inputRef?.current?.focus()
+    }
+  }, [disabled, message])
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.length) {
@@ -47,6 +54,7 @@ export default function ChatInput({ onSend, disabled = false }: Props) {
 
         {/* Message Input */}
         <input
+          ref={inputRef}
           placeholder={file ? `Attached: ${file.name}` : 'Type your message...'}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
