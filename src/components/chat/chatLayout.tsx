@@ -104,7 +104,7 @@ export default function ChatLayout({
 
   const activeChat = conversations.find((c) => c.id === activeConversation)
   const isClosed = activeChat?.status === 'closed'
-  const isFlagged = activeChat?.flagged?.status
+  // const isFlagged = activeChat?.flagged?.status
 
   return (
     <div className="font-sans pb-5 relative">
@@ -154,15 +154,6 @@ export default function ChatLayout({
                 <div className="flex items-center justify-center py-4 text-gray-500 text-sm">
                   This conversation has been closed and cannot receive new
                   messages.
-                </div>
-              ) : isFlagged ? (
-                <div className="flex flex-col items-center justify-center py-4 text-center text-sm text-red-500">
-                  <p className="font-medium">⚠️ This chat has been flagged.</p>
-                  {activeChat?.flagged?.reason && (
-                    <p className="text-gray-600 mt-1">
-                      Reason: {activeChat.flagged.reason}
-                    </p>
-                  )}
                 </div>
               ) : (
                 <ChatInput
