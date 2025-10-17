@@ -21,7 +21,12 @@ interface Conversation {
   preview: string
   timestamp: string
   participants: Participant[]
-  name: string // 🆕 person you're chatting with
+  name: string
+  status: string
+  flagged: {
+    status: boolean
+    reason?: string
+  }
 }
 
 interface Message {
@@ -45,7 +50,6 @@ interface Message {
 export default function ChatPage() {
   const [activeConversation, setActiveConversation] = useState<string>('')
 
-  // ✅ Get current logged-in user
   const { user } = useUserStore()
 
   const {
@@ -55,7 +59,6 @@ export default function ChatPage() {
     refetch: refetchConversations,
   } = useConversations()
 
-  // ✅ Use the updated useChat hook with infinite scroll
   const {
     messages,
     isLoading: messagesLoading,
@@ -70,7 +73,6 @@ export default function ChatPage() {
   const conversations: Conversation[] =
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     conversationsResponse?.data?.data?.map((conv: any) => {
-      // Identify the participant who is NOT the logged-in user
       const chatPartner = conv.participants.find(
         (p: Participant) => p._id !== user?.id
       )
@@ -92,11 +94,12 @@ export default function ChatPage() {
           minute: '2-digit',
         }),
         participants: conv.participants,
-        name, // 🆕 Add chat partner name
+        name,
+        status: conv.status, // ✅ add this
+        flagged: conv.flagged || { status: false }, // ✅ add this
       }
     }) || []
 
-  // ✅ Set first conversation active by default
   useEffect(() => {
     if (conversations.length > 0 && !activeConversation) {
       setActiveConversation(conversations[0].id)
@@ -108,7 +111,6 @@ export default function ChatPage() {
     if (id) await refetchMessages()
   }
 
-  // ✅ Format messages with attachments
   const formattedMessages: Message[] = messages.map((msg) => ({
     _id: msg._id,
     message: msg.message,
@@ -121,7 +123,6 @@ export default function ChatPage() {
     createdAt: msg.createdAt,
   }))
 
-  // ✅ Handle loading & error UI
   if (conversationsLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -163,18 +164,16 @@ export default function ChatPage() {
   }
 
   return (
-    <div>
-      <ChatLayout
-        conversations={conversations}
-        activeConversation={activeConversation}
-        onSelect={handleSelectConversation}
-        messages={formattedMessages}
-        isLoading={messagesLoading}
-        isConnected={isConnected}
-        hasNextPage={hasNextPage}
-        isFetchingNextPage={isFetchingNextPage}
-        fetchNextPage={fetchNextPage}
-      />
-    </div>
+    <ChatLayout
+      conversations={conversations}
+      activeConversation={activeConversation}
+      onSelect={handleSelectConversation}
+      messages={formattedMessages}
+      isLoading={messagesLoading}
+      isConnected={isConnected}
+      hasNextPage={hasNextPage}
+      isFetchingNextPage={isFetchingNextPage}
+      fetchNextPage={fetchNextPage}
+    />
   )
 }
