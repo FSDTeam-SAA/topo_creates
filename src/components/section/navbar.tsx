@@ -268,14 +268,14 @@ const Navbar = ({ isLoggedin, session }: Props) => {
                       {session?.user?.firstName?.slice(0, 1) || 'U'}
                     </div>
                     {isAccountOpen && (
-                      <div className="absolute top-8 right-0 mt-1 z-50 bg-white p-6 shadow-md min-w-[180px]">
-                        <div className="flex flex-col items-center space-y-6">
+                      <div className="absolute top-8 -left-8 mt-1 z-50 bg-white p-4 md:p-6 shadow-md min-w-[180px]">
+                        <div className="flex flex-col items-center space-y-3 md:space-y-6">
                           <Link
                             href="/account"
                             className="block text-center w-full"
                             onClick={() => setIsAccountOpen(!isAccountOpen)}
                           >
-                            <span className="text-black text-sm tracking-[0.2em] uppercase">
+                            <span className="text-black text-xs md:text-sm tracking-[0.2em] uppercase">
                               MY ACCOUNT
                             </span>
                             <div className="h-[1px] bg-black w-full mt-1"></div>
@@ -284,7 +284,7 @@ const Navbar = ({ isLoggedin, session }: Props) => {
                             onClick={handleSignOut}
                             className="block text-center w-full"
                           >
-                            <span className="text-black text-sm tracking-[0.2em] uppercase">
+                            <span className="text-black text-xs md:text-sm tracking-[0.2em] uppercase">
                               SIGN OUT
                             </span>
                             <div className="h-[1px] bg-black w-full mt-1"></div>
