@@ -50,7 +50,7 @@ const AllProduct = () => {
     ],
     queryFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin?search=${search}&size=${size}&min=${minPrice}&max=${maxPrice}&fourDaysSelected=${fourDayRental}&page=${page}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin/master-dresses?search=${search}&size=${size}&min=${minPrice}&max=${maxPrice}&fourDaysSelected=${fourDayRental}&page=${page}`
       )
       const data = await res.json()
       return data
@@ -63,7 +63,11 @@ const AllProduct = () => {
   // Sync fetched data into local state safely
   useEffect(() => {
     if (data?.data) {
-      setPagination(data.pagination)
+      setPagination({
+        itemsPerPage: data.pagination.itemsPerPage,
+        totalItems: data.pagination.totalItems,
+        totalPages: data.pagination.totalPages,
+      })
 
       setProducts((prev) => {
         if (page === 1) return data.data // reset for first page
@@ -94,7 +98,7 @@ const AllProduct = () => {
           const res = await fetch(
             `${
               process.env.NEXT_PUBLIC_BACKEND_URL
-            }/api/v1/admin?search=${search}&size=${size}&min=${minPrice}&max=${maxPrice}&fourDaysSelected=${fourDayRental}&page=${
+            }/api/v1/admin/master-dresses?search=${search}&size=${size}&min=${minPrice}&max=${maxPrice}&fourDaysSelected=${fourDayRental}&page=${
               page + 1
             }`
           )

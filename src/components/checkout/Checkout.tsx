@@ -15,7 +15,7 @@ const Checkout = () => {
     queryKey: ['single-product'],
     queryFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin/dress/${params.id}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin/master-dress/${params.id}`
       )
       const data = await res.json()
       return data

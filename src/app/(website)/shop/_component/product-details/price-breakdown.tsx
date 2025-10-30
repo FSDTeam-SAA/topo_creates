@@ -1,21 +1,34 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
+
 import { useShoppingStore } from '@/zustand/shopingStore'
 import { useMutation } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { useState } from 'react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
-interface RentalPrice {
-  fourDays?: string | number
-  eightDays?: string | number
+interface ShippingDetails {
+  isLocalPickup?: boolean
+  isShippingAvailable?: boolean
 }
 
 interface ProductData {
   _id?: string
+  masterDressId?: string
   dressName?: string
-  rentalPrice?: RentalPrice
-  size?: string
+  basePrice?: number
+  insuranceFee?: number
+  shippingDetails?: ShippingDetails
+  sizes?: string[]
 }
 
 interface ShopDetailsProps {
@@ -25,29 +38,33 @@ interface ShopDetailsProps {
 }
 
 const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
-  const rent = useShoppingStore((state) => state.rent)
-  const session = useSession()
-  const token = session?.data?.user?.accessToken
-  const router = useRouter()
-
-  const pathName = usePathname()
-
-  // console.log('access token', token)
-
-  const { isConfirm, setIsConfirm, idPreview, startDate, endDate } =
+  const { rent, isConfirm, setIsConfirm, idPreview, startDate, endDate } =
     useShoppingStore()
 
+  const { data: session } = useSession()
+  const token = session?.user?.accessToken
+  const router = useRouter()
+  const pathName = usePathname()
+
   const data = singleProduct?.data
+  const [selectedSize, setSelectedSize] = useState<string>(
+    data?.sizes?.[0] || ''
+  )
 
-  const rentalFee =
-    rent === '4'
-      ? Number(data?.rentalPrice?.fourDays ?? 0)
-      : Number(data?.rentalPrice?.eightDays ?? 0)
+  // ---------------- PRICE CALCULATION ----------------
+  const basePrice = Number(data?.basePrice ?? 0)
 
-  const insurance = 15
-  const shipping = 30
-  const total = rentalFee + insurance + shipping
+  // For display only: add $15 to 8-day rent
+  const displayPrice = rent === '8' ? basePrice + 15 : basePrice
 
+  const insurance = Number(data?.insuranceFee ?? 0)
+  const shippingAvailable = data?.shippingDetails?.isShippingAvailable
+  const localPickup = data?.shippingDetails?.isLocalPickup
+
+  const shippingCost = shippingAvailable ? 30 : 0
+  const total = displayPrice + insurance + shippingCost
+
+  // ---------------- CREATE BOOKING ----------------
   const createBooking = useMutation({
     mutationFn: async () => {
       const res = await fetch(
@@ -59,41 +76,35 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            listingId: data?._id,
+            masterdressId: data?._id,
             rentalStartDate: startDate,
             rentalEndDate: endDate,
             rentalDurationDays: rent === '4' ? 4 : 8,
-            size: data?.size,
-            deliveryMethod: 'Shipping',
+            size: selectedSize,
+            deliveryMethod: shippingAvailable ? 'Shipping' : 'Pickup',
           }),
         }
       )
 
-      const responseData = await res.json().catch(() => ({}))
-
-      if (!res.ok) {
+      const responseData = await res.json()
+      if (!res.ok)
         throw new Error(responseData?.message || 'Failed to create booking')
-      }
-
       return responseData
     },
-    onSuccess: (bookingResponse) => {
-      const bookingId = bookingResponse?.data?.id
-
-      if (bookingId) {
-        createCheckout.mutate(bookingId)
-      } else {
-        toast.error('Booking failed: no bookingId returned')
-        console.error('No bookingId returned', bookingResponse)
+    onSuccess: (res) => {
+      const bookingId = res?.data?.id
+      if (!bookingId) {
+        toast.error('No booking ID returned')
+        return
       }
+      createCheckout.mutate(bookingId)
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onError: (error: any) => {
-      toast.error(error.message || 'Something went wrong with booking', {
-        position: 'bottom-right',
-      })
+    onError: (err: any) => {
+      toast.error(err.message || 'Booking failed', { position: 'bottom-right' })
     },
   })
+
+  // ---------------- CREATE CHECKOUT SESSION ----------------
   const createCheckout = useMutation({
     mutationFn: async (bookingId: string) => {
       const res = await fetch(
@@ -107,68 +118,51 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
           body: JSON.stringify({ bookingId }),
         }
       )
-
-      const responseData = await res.json().catch(() => ({}))
-
-      if (!res.ok) {
+      const responseData = await res.json()
+      if (!res.ok)
         throw new Error(
           responseData?.message || 'Failed to create checkout session'
         )
-      }
-
       return responseData
     },
-    onSuccess: (paymentResponse) => {
-      if (paymentResponse.status && paymentResponse.data?.checkoutUrl) {
-        window.location.href = paymentResponse.data.checkoutUrl
-      } else {
-        toast.error(paymentResponse?.data?.message || 'Payment failed', {
-          position: 'bottom-right',
-        })
-      }
+    onSuccess: (res) => {
+      const url = res?.data?.checkoutUrl
+      if (url) window.location.href = url
+      else toast.error('Payment failed, try again later')
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onError: (error: any) => {
-      toast.error(error.message || 'Something went wrong with checkout', {
+    onError: (err: any) => {
+      toast.error(err.message || 'Checkout failed', {
         position: 'bottom-right',
       })
     },
   })
 
+  // ---------------- HANDLERS ----------------
   const handleCheckout = () => {
     if (!token) {
-      toast.error('You must be signed in to continue!', {
-        position: 'bottom-right',
-      })
-      setTimeout(() => {
-        router.push('/signin')
-      }, 2000)
+      toast.error('You must be signed in to continue!')
+      setTimeout(() => router.push('/signin'), 2000)
       return
     }
-
     createBooking.mutate()
   }
 
   const handleCheckoutForm = () => {
     if (!token) {
-      toast.error('You must be signed in to continue!', {
-        position: 'bottom-right',
-      })
-      setTimeout(() => {
-        router.push('/login')
-      }, 2000)
+      toast.error('You must be signed in to continue!')
+      setTimeout(() => router.push('/login'), 2000)
       return
     }
 
-    if (idPreview === null) {
-      toast.error('Please complete all required fields!', {
-        position: 'bottom-right',
-      })
+    if (!idPreview) {
+      toast.error('Please complete all required fields!')
       return
     }
+
     setIsConfirm(true)
   }
 
+  // ---------------- UI ----------------
   return (
     <div className="font-avenir uppercase mt-10">
       <h1 className="opacity-75 tracking-widest border-b border-black pb-1">
@@ -177,35 +171,72 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
 
       <div className="mt-4">
         <div className="space-y-3 text-sm border-b border-black pb-2">
-          <div className="opacity-75 tracking-widest flex items-center justify-between">
-            <span>Rental Fee</span>
-            <span>${rentalFee}</span>
+          <div className="flex items-center justify-between opacity-75 tracking-widest">
+            <span>
+              Rental Fee{' '}
+              {rent === '8' && <span className="text-xs">(8 days +$15)</span>}
+            </span>
+            <span>${displayPrice}</span>
           </div>
 
-          <div className="opacity-75 tracking-widest flex items-center justify-between">
+          <div className="flex items-center justify-between opacity-75 tracking-widest">
             <span>Insurance</span>
             <span>${insurance}</span>
           </div>
 
-          <div className="opacity-75 tracking-widest flex items-center justify-between">
-            <span>Shipping</span>
-            <span>${shipping}</span>
-          </div>
+          {shippingAvailable && (
+            <div className="flex items-center justify-between opacity-75 tracking-widest">
+              <span>Shipping</span>
+              <span>${shippingCost}</span>
+            </div>
+          )}
+
+          {localPickup && !shippingAvailable && (
+            <div className="flex items-center justify-between opacity-75 tracking-widest">
+              <span>Pickup</span>
+              <span>Free</span>
+            </div>
+          )}
         </div>
 
-        <div className="mt-2">
-          <div className="opacity-75 tracking-widest flex items-center justify-between">
+        <div className="mt-3">
+          <div className="flex items-center justify-between opacity-75 tracking-widest">
             <span>Total</span>
             <span>${total}</span>
           </div>
         </div>
+
+        {/* -------- SIZE DROPDOWN (SHADCN) -------- */}
+        {data?.sizes && data.sizes.length > 0 && (
+          <div className="mt-8 lg:mt-10">
+            <label className="block text-sm tracking-widest  opacity-75 mb-1">
+              Select Size
+            </label>
+            <Select value={selectedSize} onValueChange={setSelectedSize}>
+              <SelectTrigger className="w-full bg-transparent uppercase tracking-widest text-sm focus:ring-1 focus:ring-black h-10">
+                <SelectValue placeholder="Choose a size" />
+              </SelectTrigger>
+              <SelectContent>
+                {data.sizes.map((size) => (
+                  <SelectItem
+                    key={size}
+                    value={size}
+                    className="uppercase tracking-widest cursor-pointer "
+                  >
+                    {size}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
       </div>
 
       <div className="text-center border-b-2 border-gray-500 pb-1 mt-10">
         {pathName?.startsWith('/shop/checkout') &&
         !pathName.includes('/confirmation') ? (
           <div>
-            {isConfirm === true ? (
+            {isConfirm ? (
               <button
                 onClick={handleCheckout}
                 disabled={createBooking.isPending || createCheckout.isPending}
@@ -218,7 +249,7 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
             ) : (
               <button
                 onClick={handleCheckoutForm}
-                className="opacity-75 tracking-widest uppercase disabled:opacity-50"
+                className="opacity-75 tracking-widest uppercase"
               >
                 Confirm & Pay
               </button>
@@ -226,8 +257,8 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
           </div>
         ) : (
           <Link href={`/shop/checkout/${data?._id}`}>
-            <button className="opacity-75 tracking-widest uppercase disabled:opacity-50">
-              Buy Now
+            <button className="opacity-75 tracking-widest uppercase">
+              rent now
             </button>
           </Link>
         )}
