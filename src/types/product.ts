@@ -1,31 +1,23 @@
 export interface Product {
   _id: string
-  lenderId: string
-  dressId: string
   dressName: string
-  brand: string
-  size: string
-  status: string
-  colour: string
-  condition: string
-  category: string
-  media: string[] // array of image URLs
-  description: string
-  rentalPrice: {
-    fourDays: number
-    eightDays: number
+  sizes: string[]
+  colors: string[]
+  occasions: string[]
+  media: string[]
+  thumbnail: string
+  shippingDetails: {
+    isLocalPickup: boolean
+    isShippingAvailable: boolean
   }
-  material: string
-  careInstructions: string
-  occasion: string[]
-  insurance: boolean
-  pickupOption: string
-  approvalStatus: string
-  reasonsForRejection?: string
+  insuranceFee: number
+  basePrice: number
+  rrpPrice: number
+  slug: string
+  masterDressId: string
   isActive: boolean
   createdAt: string
   updatedAt: string
-  lenderName: string
 }
 
 // src/app/(website)/types/product.ts
@@ -42,5 +34,4 @@ export interface ProductCardData {
   rentalPrice?: { fourDays?: string | number }
 }
 
-
-export type DeliveryOption = "shipping" | "local-pickup";
+export type DeliveryOption = 'shipping' | 'local-pickup'

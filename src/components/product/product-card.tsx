@@ -13,10 +13,16 @@ export function ProductCard({ product }: ProductCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
 
-  // Map media strings to objects with src and alt
+  // Ensure thumbnail shows first, followed by media images (if any)
   const images =
-    product?.media && product.media.length > 0
-      ? product.media.map((url) => ({ src: url, alt: product.dressName }))
+    product?.thumbnail || (product?.media && product.media.length > 0)
+      ? [
+          { src: product.thumbnail, alt: product.dressName },
+          ...(product.media || []).map((url) => ({
+            src: url,
+            alt: product.dressName,
+          })),
+        ]
       : [{ src: '/placeholder.svg', alt: 'Product image' }]
 
   useEffect(() => {
@@ -24,20 +30,15 @@ export function ProductCard({ product }: ProductCardProps) {
 
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length)
-    }, 1500) // 1.5s interval
+    }, 1500)
 
     return () => clearInterval(interval)
   }, [isHovered, images.length])
 
-  const handleMouseEnter = () => {
-    setIsHovered(true)
-  }
-
+  const handleMouseEnter = () => setIsHovered(true)
   const handleMouseLeave = () => {
     setIsHovered(false)
-    setTimeout(() => {
-      setCurrentImageIndex(0)
-    }, 150)
+    setTimeout(() => setCurrentImageIndex(0), 150)
   }
 
   return (
@@ -64,13 +65,13 @@ export function ProductCard({ product }: ProductCardProps) {
             </button>
           </div>
         </div>
-        <div className="text-center space-y-2 mt-auto">
+
+        <div className="text-center space-y-3 mt-auto">
           <h3 className="text-[14px] font-light tracking-[0.1rem] transition-colors duration-300 group-hover:text-gray-700">
             {product.dressName}
           </h3>
-          <p className="text-[10px] tracking-[.1rem] font-light transition-colors duration-300 group-hover:text-gray-600">
-            RENT ${product?.rentalPrice?.fourDays} | RRP $
-            {Math.round(product?.rentalPrice?.fourDays * 3.5)}
+          <p className="text-[12px] tracking-[.1rem] font-light transition-colors duration-300 group-hover:text-gray-600">
+            RENT ${product?.basePrice} | RRP ${product?.rrpPrice}
           </p>
         </div>
       </Link>
