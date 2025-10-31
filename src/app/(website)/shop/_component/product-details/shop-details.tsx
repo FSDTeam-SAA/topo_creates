@@ -42,7 +42,7 @@ interface ShopDetailsProps {
   singleProduct: {
     data?: ProductData
   }
-  isLoading: boolean
+  isLoading?: boolean
 }
 
 // ------------------
@@ -140,7 +140,7 @@ const ShopDetails: React.FC<ShopDetailsProps> = ({
 
       {/* Other Components */}
       <ShoppingRent />
-      <DeliveryOption />
+      <DeliveryOption masterDressId={singleProduct?.data?._id || ''} />
       <PriceBreakDown singleProduct={singleProduct} />
     </div>
   )
