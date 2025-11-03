@@ -5,9 +5,7 @@ import Link from 'next/link'
 export interface ProductCardProps {
   id: string | number
   name: string
-  price: string
-  days: number
-  size: string
+  size: string | string[] | null
   image: string
   description?: string
   shipping?: boolean
@@ -18,18 +16,19 @@ export interface ProductCardProps {
 export default function ProductCard({
   id,
   name,
-  price,
-  days,
   size,
   image,
   description = '',
   shipping,
   pickup,
 }: ProductCardProps) {
+  // ✅ Size handling (array or string or null)
+  const displaySize = Array.isArray(size) ? size.join(', ') : size || 'N/A'
+
   return (
     <div key={id}>
       <div className="flex items-center justify-between gap-[15px] md:gap-[25px] lg:gap-[30px]">
-        {/* Product Image */}
+        {/* ✅ Product Image */}
         <div>
           <Image
             src={image || '/images/dress.png'}
@@ -40,21 +39,21 @@ export default function ProductCard({
           />
         </div>
 
-        {/* Product Info */}
+        {/* ✅ Product Info */}
         <div className="w-full relative">
           <div className="w-full flex flex-col md:flex-row lg:flex-col items-center lg:items-start">
             <div className="flex-1">
+              {/* Title */}
               <h3 className="text-[14px] md:text-base font-light text-black leading-[35px] md:leading-[40px] uppercase tracking-[0.1em]">
                 {name}
               </h3>
-              <p className="text-[14px] font-light text-black leading-[24px] tracking-[0.10rem] py-[10px]">
-                {price} / {days} Days
-              </p>
+
+              {/* ✅ Size */}
               <p className="text-[14px] font-light text-black leading-[24px] md:leading-[32px] lg:leading-[40px]">
-                Size: {size}
+                Size: {displaySize}
               </p>
 
-              {/* Shipping & Pickup Info */}
+              {/* ✅ Shipping & Pickup Info */}
               {(shipping || pickup) && (
                 <div className="flex flex-wrap items-center gap-[10px] py-3">
                   {shipping && (
@@ -69,7 +68,7 @@ export default function ProductCard({
                   {pickup && (
                     <div className="flex items-center gap-[8px]">
                       <MapPin className="size-5" />
-                      <span className="text-[16px] font-normal text-black leading-[24px]  tracking-[0.20rem]">
+                      <span className="text-[16px] font-normal text-black leading-[24px] tracking-[0.20rem]">
                         PICKUP
                       </span>
                     </div>
@@ -77,13 +76,13 @@ export default function ProductCard({
                 </div>
               )}
 
-              {/* Description */}
-              <p className="text-[12px] md:text-sm text-gray-700 font-light ">
+              {/* ✅ Description */}
+              <p className="text-[12px] md:text-sm text-gray-700 font-light">
                 {description.slice(0, 60)}...
               </p>
             </div>
 
-            {/* BOOK NOW Button */}
+            {/* ✅ BOOK NOW (Desktop) */}
             <Link href={`/shop/${id}`}>
               <div className="hidden md:block mt-3">
                 <button className="inline-block border-b border-black font-light px-6 py-2 text-[14px] uppercase tracking-widest text-base hover:bg-black hover:text-white">
@@ -93,21 +92,17 @@ export default function ProductCard({
             </Link>
           </div>
 
-          {/* Borders (hidden on large devices) */}
+          {/* ✅ Borders */}
           <div className="hidden md:block lg:hidden w-full absolute -bottom-8 border-b border-black" />
-          <div
-            className={`block md:hidden w-full absolute border-b border-black ${
-              shipping || pickup ? '-bottom-3' : '-bottom-3'
-            }`}
-          />
+          <div className="block md:hidden w-full absolute border-b border-black -bottom-3" />
         </div>
       </div>
 
-      {/* Mobile BOOK NOW */}
+      {/* ✅ Mobile BOOK NOW */}
       <div className="block md:hidden mt-1">
         <Link href={`/shop/${id}`}>
           <div className="w-full flex items-center justify-center">
-            <button className="inline-block border-b my-4 border-black font-light px-6 py-2 text-[14px] uppercase tracking-widest text-lg md:text-xl  hover:bg-black hover:text-white">
+            <button className="inline-block border-b my-4 border-black font-light px-6 py-2 text-[14px] uppercase tracking-widest text-lg md:text-xl hover:bg-black hover:text-white">
               BOOK NOW
             </button>
           </div>

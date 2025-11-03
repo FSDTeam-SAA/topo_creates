@@ -7,8 +7,8 @@ import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer'
 import { Filter } from 'lucide-react'
 import SearchProduct from './filter/SearchProduct'
 import Rental from './filter/Rental'
-// import { LocalPickup } from "./filter/LocalPickup";
-import EventDate from './filter/EventDate'
+import { LocalPickup } from './filter/LocalPickup'
+// import EventDate from './filter/EventDate'
 import Price from './filter/Price'
 import Size from './filter/Size'
 
@@ -27,8 +27,8 @@ export function FilterDrawer() {
         <div className=" space-y-3 mt-3">
           <SearchProduct />
           <Rental />
-          {/* <LocalPickup /> */}
-          <EventDate />
+          <LocalPickup />
+          {/* <EventDate /> */}
           <Price />
           <Size />
         </div>

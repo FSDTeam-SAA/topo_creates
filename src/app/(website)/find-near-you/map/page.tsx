@@ -14,38 +14,7 @@ import { normalizeProducts } from '../utility/normalizeProducts'
 
 export default function MapPage() {
   const { allProducts } = useFindNearYouStore()
-  // const trendingProductsRaw = getTrendingProducts()
-  // Map trending products to Product type (adjust mapping as needed)
-  // const trendingProducts = trendingProductsRaw.map((p: any, idx: number) => ({
-  //   _id: p.id ?? `trending-${idx}`,
-  //   lenderId: '', // Provide actual lenderId if available
-  //   dressId: p.id ?? `trending-${idx}`,
-  //   dressName: p.name,
-  //   size: p.sizes?.[0] ?? 'N/A',
-  //   media: p.images?.map((img: any) => img.src) ?? ['/placeholder.svg'],
-  //   rentalPrice: {
-  //     fourDays: p.rentalFee ?? 0,
-  //     eightDays: p.rentalFee ? p.rentalFee * 2 : 0,
-  //   },
-  //   pickupOption: 'shipping', // or set as needed
-  //   slug: p.slug,
-  //   description: p.description,
-  //   // Required Product fields with defaults or mapped values
-  //   brand: p.brand ?? 'Unknown',
-  //   status: p.status ?? 'available',
-  //   colour: p.colour ?? 'Unknown',
-  //   condition: p.condition ?? 'Unknown',
-  //   location: p.location ?? { lat: 0, lng: 0, address: 'Unknown' },
-  //   createdAt: p.createdAt ?? new Date().toISOString(),
-  //   updatedAt: p.updatedAt ?? new Date().toISOString(),
-  //   owner: p.owner ?? '',
-  //   isActive: p.isActive ?? true,
-  //   isDeleted: p.isDeleted ?? false,
-  //   category: p.category ?? 'Unknown',
-  //   tags: p.tags ?? [],
-  //   views: p.views ?? 0,
-  //   // Add any other required Product fields with defaults or mapped values
-  // }))
+
   console.log('All Products:', allProducts)
 
   const hasProducts = allProducts && allProducts.length > 0
@@ -73,19 +42,29 @@ export default function MapPage() {
               {allProducts.map((p, idx) => {
                 const id = (p as any)?._id ?? (p as any)?.dressId ?? idx
                 const name = (p as any)?.dressName ?? 'No Name'
-                const size = (p as any)?.size ?? 'N/A'
+
+                // ✅ size array handling
+                const sizeRaw = (p as any)?.size
+                const size = Array.isArray(sizeRaw)
+                  ? sizeRaw.join(', ')
+                  : sizeRaw ?? 'N/A'
+
+                // ✅ image fallback
                 const image =
                   Array.isArray((p as any)?.media) &&
                   (p as any).media.length > 0
                     ? (p as any).media[0]
                     : '/placeholder.svg'
 
-                const four = (p as any)?.rentalPrice?.fourDays
-                const eight = (p as any)?.rentalPrice?.eightDays
-                const price = String(four ?? eight ?? '')
-                const days = four != null ? 4 : eight != null ? 8 : 0
+                // ✅ price removed ✅
 
-                // pickupOption normalizer
+                // ✅ brand
+                const brand = (p as any)?.brand ?? 'Unknown'
+
+                // ✅ category
+                const category = (p as any)?.category ?? 'N/A'
+
+                // ✅ pickupOption normalizer
                 const pickupOption = (
                   (p as any)?.pickupOption || ''
                 ).toLowerCase()
@@ -103,10 +82,10 @@ export default function MapPage() {
                     key={id}
                     id={id}
                     name={name}
-                    price={price}
-                    days={days}
                     size={size}
                     image={image}
+                    brand={brand}
+                    category={category}
                     shipping={shipping}
                     pickup={pickup}
                   />
