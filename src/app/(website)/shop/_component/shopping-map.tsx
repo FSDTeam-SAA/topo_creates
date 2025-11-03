@@ -137,6 +137,7 @@ const ShoppinghMap = () => {
         map.current!.resize()
       }, 10)
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // ✅ ADD MARKERS
