@@ -1,13 +1,13 @@
-"use client";
+'use client'
 
-import { useFilterStore } from "@/zustand/filterStore";
+import { useFilterStore } from '@/zustand/filterStore'
 
 const Rental = () => {
-  const { setFourDayRental } = useFilterStore();
+  const { setFourDayRental } = useFilterStore()
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-3">
+      {/* <div className="flex items-center gap-3">
         <input className="h-4 w-4" type="checkbox" id="XXS" />
         <label
           htmlFor="XXS"
@@ -15,7 +15,7 @@ const Rental = () => {
         >
           Available Near Me
         </label>
-      </div>
+      </div> */}
 
       <div className="flex items-center gap-3">
         <input
@@ -42,7 +42,7 @@ const Rental = () => {
         </label>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Rental;
+export default Rental

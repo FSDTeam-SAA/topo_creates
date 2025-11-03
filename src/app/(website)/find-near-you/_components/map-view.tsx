@@ -2,7 +2,11 @@
 
 import { useEffect, useRef } from 'react'
 import mapboxgl from 'mapbox-gl'
-import { ApiProduct, ProductCardData, normalizeProducts } from '../utility/normalizeProducts'
+import {
+  ApiProduct,
+  ProductCardData,
+  normalizeProducts,
+} from '../utility/normalizeProducts'
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN || ''
 
@@ -46,7 +50,9 @@ export default function MapView({ products }: MapViewProps) {
               style="width:100%;border-radius:8px;object-fit:cover;margin-bottom:8px"/>
           </div>
         `
-        const popup = new mapboxgl.Popup({ offset: 25 }).setDOMContent(popupNode)
+        const popup = new mapboxgl.Popup({ offset: 25 }).setDOMContent(
+          popupNode
+        )
         new mapboxgl.Marker({ color: '#d33' })
           .setLngLat([p.longitude, p.latitude])
           .setPopup(popup)

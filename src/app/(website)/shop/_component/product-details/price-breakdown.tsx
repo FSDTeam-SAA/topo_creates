@@ -4,7 +4,7 @@
 import { useShoppingStore } from '@/zustand/shopingStore'
 import { useMutation } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
-import Link from 'next/link'
+// import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { useState } from 'react'
@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useUserStore } from '@/zustand/useUserStore'
 
 interface ShippingDetails {
   isLocalPickup?: boolean
@@ -51,10 +52,12 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
     data?.sizes?.[0] || ''
   )
 
+  // ✅ User Data (KYC Status)
+  const { user } = useUserStore()
+  const isKycVerified = user?.kycVerified
+
   // ---------------- PRICE CALCULATION ----------------
   const basePrice = Number(data?.basePrice ?? 0)
-
-  // For display only: add $15 to 8-day rent
   const displayPrice = rent === '8' ? basePrice + 15 : basePrice
 
   const insurance = Number(data?.insuranceFee ?? 0)
@@ -104,7 +107,7 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
     },
   })
 
-  // ---------------- CREATE CHECKOUT SESSION ----------------
+  // ---------------- CREATE CHECKOUT ----------------
   const createCheckout = useMutation({
     mutationFn: async (bookingId: string) => {
       const res = await fetch(
@@ -118,6 +121,7 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
           body: JSON.stringify({ bookingId }),
         }
       )
+
       const responseData = await res.json()
       if (!res.ok)
         throw new Error(
@@ -138,12 +142,22 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
   })
 
   // ---------------- HANDLERS ----------------
+
   const handleCheckout = () => {
     if (!token) {
       toast.error('You must be signed in to continue!')
       setTimeout(() => router.push('/signin'), 2000)
       return
     }
+
+    // ✅ BLOCK IF KYC NOT VERIFIED
+    if (!isKycVerified) {
+      toast.error('KYC verification is required before renting.', {
+        position: 'bottom-right',
+      })
+      return
+    }
+
     createBooking.mutate()
   }
 
@@ -154,12 +168,32 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
       return
     }
 
+    // ✅ BLOCK IF KYC NOT VERIFIED
+    if (!isKycVerified) {
+      toast.error('KYC verification is required before continuing.', {
+        position: 'bottom-right',
+      })
+      return
+    }
+
     if (!idPreview) {
       toast.error('Please complete all required fields!')
       return
     }
 
     setIsConfirm(true)
+  }
+
+  const handleRentNow = () => {
+    // ✅ Block non-verified users
+    if (!isKycVerified) {
+      toast.error('KYC verification is required before renting.', {
+        position: 'bottom-right',
+      })
+      return
+    }
+
+    router.push(`/shop/checkout/${data?._id}`)
   }
 
   // ---------------- UI ----------------
@@ -206,10 +240,10 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
           </div>
         </div>
 
-        {/* -------- SIZE DROPDOWN (SHADCN) -------- */}
+        {/* -------- SIZE DROPDOWN -------- */}
         {data?.sizes && data.sizes.length > 0 && (
           <div className="mt-8 lg:mt-10">
-            <label className="block text-sm tracking-widest  opacity-75 mb-1">
+            <label className="block text-sm tracking-widest opacity-75 mb-1">
               Select Size
             </label>
             <Select value={selectedSize} onValueChange={setSelectedSize}>
@@ -221,7 +255,7 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
                   <SelectItem
                     key={size}
                     value={size}
-                    className="uppercase tracking-widest cursor-pointer "
+                    className="uppercase tracking-widest cursor-pointer"
                   >
                     {size}
                   </SelectItem>
@@ -256,11 +290,12 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
             )}
           </div>
         ) : (
-          <Link href={`/shop/checkout/${data?._id}`}>
-            <button className="opacity-75 tracking-widest uppercase">
-              rent now
-            </button>
-          </Link>
+          <button
+            onClick={handleRentNow}
+            className="opacity-75 tracking-widest uppercase"
+          >
+            rent now
+          </button>
         )}
       </div>
     </div>

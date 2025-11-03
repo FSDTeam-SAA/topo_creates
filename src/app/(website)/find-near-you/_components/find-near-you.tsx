@@ -125,7 +125,7 @@ export default function FindNearYou() {
   }
 
   // console's for test
-  console.log('map route all products: ', allProducts)
+  // console.log('map route all products: ', allProducts)
 
   return (
     <section className="container mx-auto py-12">

@@ -4,38 +4,46 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
-import { useFilterStore } from "@/zustand/filterStore";
+} from '@/components/ui/accordion'
+import { useFilterStore } from '@/zustand/filterStore'
 
 const Size = () => {
-  const { setSize } = useFilterStore();
+  const { setSize } = useFilterStore()
 
   const labels = [
     {
       id: 1,
-      label: "XXS",
+      label: 'XXS',
     },
     {
       id: 2,
-      label: "XS",
+      label: 'XS',
     },
     {
       id: 3,
-      label: "S",
+      label: 'S',
     },
     {
       id: 4,
-      label: "M",
+      label: 'M',
     },
     {
       id: 5,
-      label: "L",
+      label: 'L',
     },
     {
       id: 6,
-      label: "XL",
+      label: 'XL',
     },
-  ];
+    {
+      id: 7,
+      label: 'XXL',
+    },
+    // {
+    //   id: 8,
+    //   label: 'XXXL',
+    // },
+  ]
 
   return (
     <Accordion
@@ -71,7 +79,7 @@ const Size = () => {
         </AccordionContent>
       </AccordionItem>
     </Accordion>
-  );
-};
+  )
+}
 
-export default Size;
+export default Size

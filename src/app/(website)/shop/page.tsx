@@ -4,6 +4,7 @@ import React from 'react'
 import FilterProduct from './_component/FilterProduct'
 import AllProduct from './_component/AllProduct'
 import { FilterDrawer } from './_component/FilterDrawer'
+// import DocumentVerification from '../account/_components/document-verification'
 
 const page = () => {
   return (

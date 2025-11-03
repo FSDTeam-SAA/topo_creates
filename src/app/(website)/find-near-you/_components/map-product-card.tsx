@@ -12,18 +12,20 @@ interface ProductCardProps {
   description?: string
   shipping?: boolean
   pickup?: boolean
+  brand?: string
+  category?: string
 }
 
 export default function MapProductCard({
   id,
   name,
-  price,
-  days,
+  // brand,
   size,
   image,
   description,
   shipping,
   pickup,
+  category,
 }: ProductCardProps) {
   return (
     <div>
@@ -44,13 +46,15 @@ export default function MapProductCard({
               <h3 className="text-sm md:text-base lg:text-lg font-light text-black leading-[25px] md:leading-[30px] lg:leading-[36px] uppercase tracking-[0.10rem]">
                 {name}
               </h3>
+              {/* <p className="text-sm md:text-base lg:text-lg font-light text-black leading-[20px] md:leading-[24px] lg:leading-[28px] tracking-[0.15rem] py-[12px] md:py-[14px] lg:py-[16px]">
+                {brand}
+              </p> */}
               <p className="text-sm md:text-base lg:text-lg font-light text-black leading-[20px] md:leading-[24px] lg:leading-[28px] tracking-[0.15rem] py-[12px] md:py-[14px] lg:py-[16px]">
-                ${price} / {days} Days
+                {category}
               </p>
               <p className="text-sm md:text-base lg:text-lg font-light text-black leading-[20px] md:leading-[22px] lg:leading-[24px] tracking-[0rem]">
                 Size: {size}
               </p>
-
               <div className="flex flex-col md:flex-row items-start md:items-center gap-[10px] md:gap-[13px] lg:gap-[15px] py-[12px] md:py-[14px] lg:py-[16px]">
                 {shipping && (
                   <div className="flex items-center gap-[10px] md:gap-[13px] lg:gap-[15px]">
@@ -70,7 +74,6 @@ export default function MapProductCard({
                   </div>
                 )}
               </div>
-
               <p className="text-lg md:text-xl lg:text-[24px] text-black font-normal leading-[120%]">
                 {description}
               </p>

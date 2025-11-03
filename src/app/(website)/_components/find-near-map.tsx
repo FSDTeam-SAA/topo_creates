@@ -104,7 +104,7 @@ const ProductPopover = ({
           <Link key={product.id} href={`/shop/${product.id}`}>
             <div
               key={product.id}
-              className="flex gap-5 p-3 hover:bg-gray-50 transition"
+              className="flex items-center gap-5 p-3 hover:bg-gray-50 transition"
             >
               {/* Image */}
               <div className="w-28 h-28 relative flex-shrink-0">
@@ -132,12 +132,19 @@ const ProductPopover = ({
                     {product?.name ?? (product as any)?.dressName ?? 'Untitled'}
                   </div>
 
+                  <div className="text-xs text-gray-500">
+                    Size:{' '}
+                    {Array.isArray(product?.size)
+                      ? product.size.join(', ')
+                      : product?.size || 'N/A'}
+                  </div>
+
                   {/* Shipping & Pickup */}
                   <div className="flex flex-col md:flex-row items-start md:items-center gap-[10px] md:gap-[13px] lg:gap-[15px] text-xs text-gray-900">
                     {product?.shipping && (
                       <div className="flex items-center gap-[5px] md:gap-[8px] capitalize">
                         <Truck width={20} height={16} />
-                        <span>SHIPPING</span>
+                        <span className="text-sm">SHIPPING</span>
                       </div>
                     )}
 
@@ -151,24 +158,20 @@ const ProductPopover = ({
                     {!product?.shipping && !product?.pickup && (
                       <div className="flex items-center gap-3">
                         <Truck className="size-5" />
-                        <span className="text-base tracking-[.1em] font-light text-gray-700">
+                        <span className="text-sm tracking-[.1em] font-light text-gray-700">
                           SHIPPING
                         </span>
                       </div>
                     )}
                   </div>
-
-                  <div className="text-xs text-gray-500">
-                    Size: {product?.size ?? 'N/A'}
-                  </div>
                 </div>
 
-                <div className="text-sm font-light text-gray-800">
+                {/* <div className="text-sm font-light text-gray-800">
                   {(product as any)?.rentalPrice?.fourDays ??
                     product?.price ??
                     '—'}{' '}
                   / 4 Days
-                </div>
+                </div> */}
               </div>
             </div>
           </Link>
