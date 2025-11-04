@@ -35,16 +35,16 @@ export default function ProductCard({
             alt={name}
             width={300}
             height={300}
-            className="w-[323px] h-[300px] object-cover flex-shrink-0"
+            className="w-[323px] h-[280px] object-cover flex-shrink-0"
           />
         </div>
 
         {/* ✅ Product Info */}
-        <div className="w-full relative">
-          <div className="w-full flex flex-col md:flex-row lg:flex-col items-center lg:items-start">
+        <div className="w-full relative ">
+          <div className="w-full flex flex-col md:flex-row lg:flex-col items-center lg:items-start space-y-5">
             <div className="flex-1">
               {/* Title */}
-              <h3 className="text-[14px] md:text-base font-light text-black leading-[35px] md:leading-[40px] uppercase tracking-[0.1em]">
+              <h3 className="text-[14px] md:text-lg font-light text-black leading-[35px] md:leading-[40px] uppercase tracking-[0.1em]">
                 {name}
               </h3>
 
@@ -83,7 +83,7 @@ export default function ProductCard({
             </div>
 
             {/* ✅ BOOK NOW (Desktop) */}
-            <Link href={`/shop/${id}`}>
+            <Link href={`/shop/${encodeURIComponent(name)}`}>
               <div className="hidden md:block mt-3">
                 <button className="inline-block border-b border-black font-light px-6 py-2 text-[14px] uppercase tracking-widest text-base hover:bg-black hover:text-white">
                   BOOK NOW

@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 interface ProductCardProps {
   id?: string
-  name?: string
+  name?: string | ''
   price?: string
   days?: number
   size?: string
@@ -79,9 +79,9 @@ export default function MapProductCard({
               </p>
             </div>
 
-            <Link href={`/shop/${id}`}>
+            <Link href={`/shop/${encodeURIComponent(name ?? '')}`}>
               <div className="hidden md:block">
-                <button className="bg-white border-b text-sm border-black text-black font-light py-2 md:py-3 lg:py-4 md:text-base uppercase tracking-[0.2043m]">
+                <button className="inline-block border-b border-black font-light px-6 py-2 text-[14px] uppercase tracking-widest text-base hover:bg-black hover:text-white">
                   BOOK NOW
                 </button>
               </div>
