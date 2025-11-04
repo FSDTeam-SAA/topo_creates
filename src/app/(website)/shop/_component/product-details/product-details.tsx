@@ -38,27 +38,47 @@ export interface Product {
 }
 
 export interface SingleProductResponse {
-  status: boolean
+  success: boolean
   message: string
-  data: Product
+  data: Product | Product[]
 }
 
 // ------------------- COMPONENT -------------------
 const ProductDetails = () => {
   const params = useParams()
+  const idOrName = decodeURIComponent(params.id as string)
+
+  // ✅ smart API selector
+  const apiUrl = (() => {
+    // MongoDB ObjectId usually 24 chars hex string
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(idOrName)
+
+    if (isObjectId) {
+      // If it's an ID -> direct param route
+      return `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin/master-dress/${idOrName}`
+    } else {
+      // If it's a name -> query search
+      return `${
+        process.env.NEXT_PUBLIC_BACKEND_URL
+      }/api/v1/customer/bookings/search?dressName=${encodeURIComponent(
+        idOrName
+      )}`
+    }
+  })()
 
   const { data, isLoading } = useQuery<SingleProductResponse>({
-    queryKey: ['single-product', params.id],
+    queryKey: ['single-product', idOrName],
     queryFn: async () => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin/master-dress/${params.id}`
-      )
+      const res = await fetch(apiUrl)
       if (!res.ok) throw new Error('Failed to fetch product')
       return res.json()
     },
+    enabled: !!idOrName,
   })
 
-  const singleProduct = data?.data
+  // ✅ Handle both response shapes
+  const singleProduct = Array.isArray(data?.data) ? data?.data[0] : data?.data
+
   const thumbnailImage = singleProduct?.thumbnail ?? ''
   const allImages = singleProduct?.media ?? []
 

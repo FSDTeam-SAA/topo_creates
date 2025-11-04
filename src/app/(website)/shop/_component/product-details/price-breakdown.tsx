@@ -185,7 +185,20 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
   }
 
   const handleRentNow = () => {
-    // ✅ Block non-verified users
+    // Block unlogged user
+    if (!token) {
+      toast.error('Please login to continue.', {
+        position: 'bottom-right',
+      })
+
+      setTimeout(() => {
+        router.push('/login')
+      }, 1000) // 1s delay
+
+      return
+    }
+
+    // Block non-verified users
     if (!isKycVerified) {
       toast.error('KYC verification is required before renting.', {
         position: 'bottom-right',
@@ -193,6 +206,7 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
       return
     }
 
+    // All good → proceed
     router.push(`/shop/checkout/${data?._id}`)
   }
 

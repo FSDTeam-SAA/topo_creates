@@ -94,6 +94,8 @@ export default function FindNearYou() {
     staleTime: 1000 * 60 * 5,
   })
 
+  console.log('my required data: ', data)
+
   // Merge fetched products into Zustand
   useEffect(() => {
     if (!data) return

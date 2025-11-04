@@ -101,7 +101,7 @@ const ProductPopover = ({
       {/* Scrollable content */}
       <div className="divide-y divide-gray-200 font-inter ">
         {products.map((product) => (
-          <Link key={product.id} href={`/shop/${product.id}`}>
+          <Link key={product.id} href={`/shop/${product.name}`}>
             <div
               key={product.id}
               className="flex items-center gap-5 p-3 hover:bg-gray-50 transition"
