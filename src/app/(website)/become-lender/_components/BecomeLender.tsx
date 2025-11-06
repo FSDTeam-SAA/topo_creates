@@ -1,8 +1,30 @@
+'use client'
 import Image from 'next/image'
 import Link from 'next/link'
 import PricingPlan from './pricing-plan'
+import { useSession } from 'next-auth/react'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 const BecomeLender = () => {
+  const router = useRouter()
+  const session = useSession()
+  const token = session?.data?.user?.accessToken || ''
+
+  const handleClick = () => {
+    if (!token) {
+      toast.error('You must login first to become a lender!')
+
+      setTimeout(() => {
+        router.push('/login')
+      }, 500)
+
+      return
+    }
+
+    router.push('/become-lender/form')
+  }
+
   return (
     <div>
       <main className="flex-1">
@@ -333,12 +355,13 @@ const BecomeLender = () => {
               No listing fees. No hidden costs. Just more exposure, more
               rentals, and a seamless dashboard.
             </p>
-            <Link
-              href="/become-lender/form"
-              className="inline-block border-b border-black px-6 py-2 text-[14px] uppercase tracking-widest hover:bg-black hover:text-white"
+            <button
+              // href="/become-lender/form"
+              onClick={handleClick}
+              className="inline-block border-b border-black font-light px-6 py-2 text-[14px] uppercase tracking-widest text-base hover:bg-black hover:text-white"
             >
               Become A Lender
-            </Link>
+            </button>
           </div>
         </section>
       </main>

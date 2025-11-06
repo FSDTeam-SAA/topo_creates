@@ -166,12 +166,13 @@ export default function ChatMessages({
           <Image
             src={url}
             alt={fileName}
-            width={200}
-            height={200}
-            className="rounded-xl w-full h-[200px] md:h-[320px] object-cover cursor-pointer transition-transform group-hover:scale-[1.02]"
+            width={800} // big resolution for sharpness
+            height={800}
+            quality={100}
+            className="rounded-xl w-full max-h-[320px] object-contain cursor-pointer transition-transform group-hover:scale-[1.02]"
             onClick={() => setPreviewImage(url)}
-            unoptimized={url.startsWith('blob:') || url.startsWith('data:')}
           />
+
           <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition">
             <ImageIcon className="h-5 w-5 text-white bg-black/40 rounded-full p-1" />
           </div>
@@ -463,25 +464,26 @@ export default function ChatMessages({
             exit={{ opacity: 0 }}
             onClick={() => setPreviewImage(null)}
           >
-            <div className="relative max-w-4xl max-h-[90vh]">
+            {/* ✅ Parent MUST have relative + fixed height for `fill` to work */}
+            <div className="relative w-full max-w-5xl h-[80vh]">
               <Image
-                src={previewImage || ''}
+                src={previewImage}
                 alt="Preview"
-                width={200}
-                height={200}
                 quality={100}
-                className="max-h-[90vh] rounded-lg object-contain"
-                style={{ width: 'auto', height: '80vh' }}
+                fill
+                className="object-contain rounded-lg"
                 unoptimized={
-                  previewImage?.startsWith('blob:') ||
-                  previewImage?.startsWith('data:')
+                  previewImage.startsWith('blob:') ||
+                  previewImage.startsWith('data:')
                 }
               />
+
+              {/* Close Button */}
               <button
                 onClick={() => setPreviewImage(null)}
                 className="absolute top-4 right-4 bg-black/70 hover:bg-black text-white rounded-full p-2 transition-colors"
               >
-                <X className="h-5 w-5" />
+                <X className="h-6 w-6" />
               </button>
             </div>
           </motion.div>

@@ -7,19 +7,18 @@ import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import FindNearDressSection from '../_components/find-near-dress-section'
+import DynamicBanner from '@/components/DynamicBanner'
 
 export default function Home() {
   // const trendingProducts = getTrendingProducts()
   return (
     <div className="space-y-16">
+      {/* 
       <div
         className=" h-screen bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(/images/Hero_banner.png)` }}
       >
         <div className="flex justify-center items-center h-full flex-col gap-y-5">
-          {/* <h1 className="text-white text-[35px] md:text-[45px] lg:text-[56px] leading-[64px] tracking-[10px] md:tracking-[20px] text-center font-avenir">
-            EFFORTLESS FASHION HIRE
-          </h1> */}
 
           <Button
             variant="link"
@@ -29,6 +28,10 @@ export default function Home() {
           </Button>
         </div>
       </div>
+          */}
+
+      <DynamicBanner />
+
       <div className=" bg-white space-y-16">
         {/* <ProductGrid
           title="TRENDING NOW"
