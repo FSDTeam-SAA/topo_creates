@@ -1,16 +1,16 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import ShoppinghMap from '../shopping-map'
 import { useLocationStore } from '@/zustand/useLocationStore'
+import { useShoppingStore } from '@/zustand/shopingStore'
 
 interface DeliveryOptionProps {
   masterDressId: string
 }
 
 const DeliveryOption = ({ masterDressId }: DeliveryOptionProps) => {
-  const [option, setOption] = useState<'shipping' | 'local'>('shipping')
-
+  const { deliveryOption, setDeliveryOption } = useShoppingStore()
   const { setLocation, setLenders, setLoading } = useLocationStore()
 
   const handleLocalPickup = () => {
@@ -43,6 +43,7 @@ const DeliveryOption = ({ masterDressId }: DeliveryOptionProps) => {
       },
       () => {
         alert('Please allow location access for Local Pickup.')
+        setDeliveryOption('shipping')
       }
     )
   }
@@ -53,13 +54,13 @@ const DeliveryOption = ({ masterDressId }: DeliveryOptionProps) => {
         Delivery Option
       </h1>
 
-      {/* ✅ Option Buttons */}
+      {/* Option Buttons */}
       <div className="mt-8 opacity-75 flex items-center gap-5">
         {/* SHIPPING BTN */}
         <button
-          onClick={() => setOption('shipping')}
+          onClick={() => setDeliveryOption('shipping')}
           className={`w-1/2 pb-2 uppercase tracking-widest ${
-            option === 'shipping'
+            deliveryOption === 'shipping'
               ? 'border-b-2 border-black'
               : 'border-b-2 border-white'
           }`}
@@ -70,11 +71,11 @@ const DeliveryOption = ({ masterDressId }: DeliveryOptionProps) => {
         {/* LOCAL PICKUP BTN */}
         <button
           onClick={() => {
-            setOption('local')
+            setDeliveryOption('pickup')
             handleLocalPickup()
           }}
           className={`w-1/2 pb-2 uppercase tracking-widest ${
-            option === 'local'
+            deliveryOption === 'pickup'
               ? 'border-b-2 border-black'
               : 'border-b-2 border-white'
           }`}
@@ -83,11 +84,11 @@ const DeliveryOption = ({ masterDressId }: DeliveryOptionProps) => {
         </button>
       </div>
 
-      {/* ✅ Description / Map */}
+      {/* Description / Map */}
       <div>
-        {option === 'shipping' ? (
+        {deliveryOption === 'shipping' ? (
           <p className="pt-5 md:pt-10 font-light text-sm font-sans tracking-[0.1rem]">
-            $10 shipping fee (includes prepaid return label). Estimated
+            $30 shipping fee (includes prepaid return label). Estimated
             delivery: 1–2 business days.
           </p>
         ) : (

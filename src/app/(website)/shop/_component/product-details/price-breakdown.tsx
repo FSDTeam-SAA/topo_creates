@@ -4,10 +4,9 @@
 import { useShoppingStore } from '@/zustand/shopingStore'
 import { useMutation } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
-// import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { useState } from 'react'
+import { useEffect } from 'react'
 import {
   Select,
   SelectContent,
@@ -16,6 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useUserStore } from '@/zustand/useUserStore'
+import { useLocationStore } from '@/zustand/useLocationStore'
 
 interface ShippingDetails {
   isLocalPickup?: boolean
@@ -39,8 +39,17 @@ interface ShopDetailsProps {
 }
 
 const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
-  const { rent, isConfirm, setIsConfirm, idPreview, startDate, endDate } =
-    useShoppingStore()
+  const {
+    rent,
+    isConfirm,
+    setIsConfirm,
+    idPreview,
+    startDate,
+    endDate,
+    deliveryOption,
+    selectedSize,
+    setSelectedSize,
+  } = useShoppingStore()
 
   const { data: session } = useSession()
   const token = session?.user?.accessToken
@@ -48,15 +57,25 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
   const pathName = usePathname()
 
   const data = singleProduct?.data
-  const [selectedSize, setSelectedSize] = useState<string>(
-    data?.sizes?.[0] || ''
-  )
 
-  // ✅ User Data (KYC Status)
   const { user } = useUserStore()
   const isKycVerified = user?.kycVerified
 
-  // ---------------- PRICE CALCULATION ----------------
+  const { lenders } = useLocationStore()
+
+  // Auto-select first size if not selected and on shop page
+  useEffect(() => {
+    if (
+      !selectedSize &&
+      data?.sizes &&
+      data.sizes.length > 0 &&
+      !pathName?.startsWith('/shop/checkout')
+    ) {
+      setSelectedSize(data.sizes[0])
+    }
+  }, [data?.sizes, selectedSize, setSelectedSize, pathName])
+
+  // PRICE CALCULATION
   const basePrice = Number(data?.basePrice ?? 0)
   const displayPrice = rent === '8' ? basePrice + 15 : basePrice
 
@@ -64,12 +83,47 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
   const shippingAvailable = data?.shippingDetails?.isShippingAvailable
   const localPickup = data?.shippingDetails?.isLocalPickup
 
-  const shippingCost = shippingAvailable ? 30 : 0
+  const shippingCost =
+    deliveryOption === 'shipping' && shippingAvailable ? 30 : 0
   const total = displayPrice + insurance + shippingCost
 
-  // ---------------- CREATE BOOKING ----------------
-  const createBooking = useMutation({
+  // FORMAT DATES FOR API
+  const formatDate = (date: Date | null) => {
+    if (!date) return ''
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
+  // CREATE BOOKING (for Rent Now button - shop page)
+  const createBookingForRentNow = useMutation({
     mutationFn: async () => {
+      const bookingData: any = {
+        masterdressId: data?._id,
+        rentalStartDate: formatDate(startDate),
+        rentalEndDate: formatDate(endDate),
+        rentalDurationDays: rent === '4' ? 4 : 8,
+        size: selectedSize,
+        deliveryMethod: deliveryOption === 'shipping' ? 'Shipping' : 'Pickup',
+      }
+
+      // Add pickup-specific fields
+      if (deliveryOption === 'pickup' && lenders.length > 0) {
+        bookingData.tryOnRequested = true
+        bookingData.selectedLender = [
+          {
+            _id: lenders[0]._id,
+            email: lenders[0].email,
+            location: {
+              type: lenders[0].location.type,
+              coordinates: lenders[0].location.coordinates,
+            },
+            distance: lenders[0].distance,
+          },
+        ]
+      }
+
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/customer/bookings/create`,
         {
@@ -78,14 +132,66 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            masterdressId: data?._id,
-            rentalStartDate: startDate,
-            rentalEndDate: endDate,
-            rentalDurationDays: rent === '4' ? 4 : 8,
-            size: selectedSize,
-            deliveryMethod: shippingAvailable ? 'Shipping' : 'Pickup',
-          }),
+          body: JSON.stringify(bookingData),
+        }
+      )
+
+      const responseData = await res.json()
+      if (!res.ok)
+        throw new Error(responseData?.message || 'Failed to create booking')
+      return responseData
+    },
+    onSuccess: (res) => {
+      toast.success(res?.message || 'Booking created successfully!', {
+        position: 'bottom-right',
+      })
+      // Redirect to checkout page
+      setTimeout(() => {
+        router.push(`/shop/checkout/${data?._id}`)
+      }, 1000)
+    },
+    onError: (err: any) => {
+      toast.error(err.message || 'Booking failed', { position: 'bottom-right' })
+    },
+  })
+
+  // CREATE BOOKING (for Confirm & Pay button - checkout page)
+  const createBookingForPayment = useMutation({
+    mutationFn: async () => {
+      const bookingData: any = {
+        masterdressId: data?._id,
+        rentalStartDate: formatDate(startDate),
+        rentalEndDate: formatDate(endDate),
+        rentalDurationDays: rent === '4' ? 4 : 8,
+        size: selectedSize,
+        deliveryMethod: deliveryOption === 'shipping' ? 'Shipping' : 'Pickup',
+      }
+
+      // Add pickup-specific fields
+      if (deliveryOption === 'pickup' && lenders.length > 0) {
+        bookingData.tryOnRequested = true
+        bookingData.selectedLender = [
+          {
+            _id: lenders[0]._id,
+            email: lenders[0].email,
+            location: {
+              type: lenders[0].location.type,
+              coordinates: lenders[0].location.coordinates,
+            },
+            distance: lenders[0].distance,
+          },
+        ]
+      }
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/customer/bookings/create`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(bookingData),
         }
       )
 
@@ -107,7 +213,7 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
     },
   })
 
-  // ---------------- CREATE CHECKOUT ----------------
+  // CREATE CHECKOUT
   const createCheckout = useMutation({
     mutationFn: async (bookingId: string) => {
       const res = await fetch(
@@ -141,8 +247,7 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
     },
   })
 
-  // ---------------- HANDLERS ----------------
-
+  // HANDLERS
   const handleCheckout = () => {
     if (!token) {
       toast.error('You must be signed in to continue!')
@@ -150,27 +255,8 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
       return
     }
 
-    // ✅ BLOCK IF KYC NOT VERIFIED
     if (!isKycVerified) {
       toast.error('KYC verification is required before renting.', {
-        position: 'bottom-right',
-      })
-      return
-    }
-
-    createBooking.mutate()
-  }
-
-  const handleCheckoutForm = () => {
-    if (!token) {
-      toast.error('You must be signed in to continue!')
-      setTimeout(() => router.push('/login'), 2000)
-      return
-    }
-
-    // ✅ BLOCK IF KYC NOT VERIFIED
-    if (!isKycVerified) {
-      toast.error('KYC verification is required before continuing.', {
         position: 'bottom-right',
       })
       return
@@ -181,11 +267,29 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
       return
     }
 
+    if (!startDate || !endDate) {
+      toast.error('Please select rental dates!')
+      return
+    }
+
+    if (!selectedSize) {
+      toast.error('Please select a size!')
+      return
+    }
+
+    if (deliveryOption === 'pickup' && lenders.length === 0) {
+      toast.error('No nearby lenders found. Please choose shipping instead.')
+      return
+    }
+
     setIsConfirm(true)
   }
 
+  const handleConfirmPay = () => {
+    createBookingForPayment.mutate()
+  }
+
   const handleRentNow = () => {
-    // Block unlogged user
     if (!token) {
       toast.error('Please login to continue.', {
         position: 'bottom-right',
@@ -193,12 +297,11 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
 
       setTimeout(() => {
         router.push('/login')
-      }, 1000) // 1s delay
+      }, 1000)
 
       return
     }
 
-    // Block non-verified users
     if (!isKycVerified) {
       toast.error('KYC verification is required before renting.', {
         position: 'bottom-right',
@@ -206,11 +309,26 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
       return
     }
 
-    // All good → proceed
-    router.push(`/shop/checkout/${data?._id}`)
+    if (!startDate || !endDate) {
+      toast.error('Please select rental dates!')
+      return
+    }
+
+    if (!selectedSize) {
+      toast.error('Please select a size!')
+      return
+    }
+
+    if (deliveryOption === 'pickup' && lenders.length === 0) {
+      toast.error('No nearby lenders found. Please choose shipping instead.')
+      return
+    }
+
+    // Create booking (NO payment yet)
+    createBookingForRentNow.mutate()
   }
 
-  // ---------------- UI ----------------
+  // UI
   return (
     <div className="font-avenir uppercase mt-10">
       <h1 className="opacity-75 tracking-widest border-b border-black pb-1">
@@ -232,14 +350,14 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
             <span>${insurance}</span>
           </div>
 
-          {shippingAvailable && (
+          {deliveryOption === 'shipping' && shippingAvailable && (
             <div className="flex items-center justify-between opacity-75 tracking-widest">
               <span>Shipping</span>
               <span>${shippingCost}</span>
             </div>
           )}
 
-          {localPickup && !shippingAvailable && (
+          {deliveryOption === 'pickup' && localPickup && (
             <div className="flex items-center justify-between opacity-75 tracking-widest">
               <span>Pickup</span>
               <span>Free</span>
@@ -254,7 +372,7 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
           </div>
         </div>
 
-        {/* -------- SIZE DROPDOWN -------- */}
+        {/* SIZE DROPDOWN */}
         {data?.sizes && data.sizes.length > 0 && (
           <div className="mt-8 lg:mt-10">
             <label className="block text-sm tracking-widest opacity-75 mb-1">
@@ -286,17 +404,19 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
           <div>
             {isConfirm ? (
               <button
-                onClick={handleCheckout}
-                disabled={createBooking.isPending || createCheckout.isPending}
+                onClick={handleConfirmPay}
+                disabled={
+                  createBookingForPayment.isPending || createCheckout.isPending
+                }
                 className="opacity-75 tracking-widest uppercase disabled:opacity-50"
               >
-                {createBooking.isPending || createCheckout.isPending
+                {createBookingForPayment.isPending || createCheckout.isPending
                   ? 'Processing...'
                   : 'Confirm & Pay'}
               </button>
             ) : (
               <button
-                onClick={handleCheckoutForm}
+                onClick={handleCheckout}
                 className="opacity-75 tracking-widest uppercase"
               >
                 Confirm & Pay
@@ -306,9 +426,10 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
         ) : (
           <button
             onClick={handleRentNow}
-            className="opacity-75 tracking-widest uppercase"
+            disabled={createBookingForRentNow.isPending}
+            className="opacity-75 tracking-widest uppercase disabled:opacity-50"
           >
-            rent now
+            {createBookingForRentNow.isPending ? 'Processing...' : 'Rent Now'}
           </button>
         )}
       </div>

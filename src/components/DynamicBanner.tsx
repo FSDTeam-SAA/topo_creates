@@ -58,6 +58,7 @@ export default function DynamicBanner() {
         alt="Homepage Banner"
         fill
         priority
+        quality={100}
         onLoad={() => setLoaded(true)}
         onError={() => setImgError(true)}
         className={`object-cover transition-opacity duration-700 ${
