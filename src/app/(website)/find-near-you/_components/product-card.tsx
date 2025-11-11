@@ -78,7 +78,7 @@ export default function ProductCard({
 
               {/* ✅ Description */}
               <p className="text-[12px] md:text-sm text-gray-700 font-light">
-                {description.slice(0, 60)}...
+                {description}
               </p>
             </div>
 

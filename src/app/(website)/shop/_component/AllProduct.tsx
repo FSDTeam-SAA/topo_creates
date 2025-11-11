@@ -150,7 +150,7 @@ const AllProduct = () => {
 
       {/* ✅ Pagination Info */}
       {pagination && products.length > 0 && (
-        <div className="text-center mt-8">
+        <div className="text-center mt-8 md:mt-12 lg:mt-16">
           <p className="text-gray-600 mb-4">
             Showing {products.length} of {pagination.totalItems} dresses near
             you

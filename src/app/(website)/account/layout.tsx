@@ -15,19 +15,21 @@ export default function AccountLayout({ children }: LayoutProps) {
   const pathname = usePathname()
   const { user } = useUserStore()
 
-  // ✅ Automatically set active tab based on route
+  console.log('user account', user)
+  // Automatically set active tab based on route
   useEffect(() => {
     if (pathname.includes('/chats')) setTab('Chats')
     else if (pathname.includes('/dispute')) setTab('Dispute')
     else setTab('Account Info')
   }, [pathname])
 
-  // ✅ Route navigation based on selected tab
+  // Route navigation based on selected tab
   useEffect(() => {
-    if (tab === 'Chats') router.push('/account/chats')
-    else if (tab === 'Dispute') router.push('/account/dispute')
+    if (tab === 'Chats' && user?.kycVerified) router.push('/account/chats')
+    else if (tab === 'Dispute' && user?.kycVerified)
+      router.push('/account/dispute')
     else if (tab === 'Account Info') router.push('/account')
-  }, [tab, router])
+  }, [tab, router, user?.kycVerified])
 
   return (
     <div className="w-full pt-12 md:pt-16 lg:pt-20">
