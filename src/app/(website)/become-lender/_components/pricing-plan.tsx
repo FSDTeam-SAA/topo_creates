@@ -93,13 +93,16 @@ export default function PricingPlan() {
   })
 
   // --- Create subscription ---
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: createSubscription,
-    onSuccess: () => {
-      toast.success('Subscription created successfully!')
-      // setTimeout(() => {
-      //   router.push('/become-lender/form')
-      // }, 2000)
+    onSuccess: (res) => {
+      if (res?.status && res?.data?.checkoutUrl) {
+        toast.success('Redirecting to payment...', { duration: 1500 })
+        //  open checkout in new tab
+        window.open(res.data.checkoutUrl, '_blank')
+      } else {
+        toast.error('Failed to get checkout URL. Please try again.')
+      }
     },
     onError: () => {
       toast.error('Something went wrong, please try again.')
@@ -188,9 +191,10 @@ export default function PricingPlan() {
                 <div className="mt-auto">
                   <button
                     onClick={() => handleChoosePlan(plan._id)}
+                    disabled={isPending}
                     className="w-full py-3 border-t border-gray-200 text-sm font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
                   >
-                    CHOOSE PLAN
+                    {isPending ? 'Redirecting...' : 'CHOOSE PLAN'}
                   </button>
                 </div>
               </div>

@@ -4,12 +4,12 @@ import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
 import React from 'react'
 import CheckoutForm from '../checkout-form/CheckoutForm'
-import { useSession } from 'next-auth/react'
+// import { useSession } from 'next-auth/react'
+// import { useUserStore } from '@/zustand/useUserStore'
 
 const Checkout = () => {
   const params = useParams()
-  const session = useSession()
-  console.log('session user', session?.data?.user)
+  // const session = useSession()
 
   const { data: singleProduct = {}, isLoading } = useQuery({
     queryKey: ['single-product'],
@@ -22,7 +22,7 @@ const Checkout = () => {
     },
   })
 
-  console.log('single product : ', singleProduct)
+  // console.log('single product : ', singleProduct)
 
   return (
     <div className="container mb-8">

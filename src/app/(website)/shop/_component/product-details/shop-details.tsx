@@ -57,7 +57,7 @@ const ShopDetails: React.FC<ShopDetailsProps> = ({
   const pathName = usePathname()
   const data = singleProduct?.data
 
-  console.log('shopping details page', data)
+  // console.log('shopping details page', data)
 
   if (isLoading) return <ShopDetailsSkeleton />
 
