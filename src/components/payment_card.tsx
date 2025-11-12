@@ -2,7 +2,11 @@ import clsx from 'clsx'
 import React from 'react'
 import { Card } from './ui/card'
 
-const Paymentcard = () => {
+interface PaymentcardProps {
+  membershipTier: 'Muse Member' | 'Muse Star' | 'Muse Gold'
+}
+
+const Paymentcard: React.FC<PaymentcardProps> = ({ membershipTier }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
       <MembershipCard
@@ -13,6 +17,7 @@ const Paymentcard = () => {
           'Early access to new styles',
           'Style and trend updates',
         ]}
+        active={membershipTier === 'Muse Member'}
       />
 
       <MembershipCard
@@ -23,7 +28,7 @@ const Paymentcard = () => {
           '$15 birthday voucher',
           'Surprise perks: bonus credits, small gifts',
         ]}
-        highlighted
+        active={membershipTier === 'Muse Star'}
       />
 
       <MembershipCard
@@ -35,6 +40,7 @@ const Paymentcard = () => {
           'Free insurance on 1 rental per year',
           'Priority customer support',
         ]}
+        active={membershipTier === 'Muse Gold'}
       />
     </div>
   )
@@ -46,24 +52,40 @@ interface MembershipCardProps {
   title: string
   price: string
   benefits: string[]
-  highlighted?: boolean
+  active?: boolean
 }
 
 const MembershipCard: React.FC<MembershipCardProps> = ({
   title,
   price,
   benefits,
-  highlighted = false,
+  active = false,
 }) => {
   return (
     <Card
       className={clsx(
-        'rounded-none p-6 flex flex-col items-center text-center font-light h-full',
-        highlighted ? 'border-2 border-[#891D33]' : 'border border-black'
+        'rounded-sm p-6 flex flex-col items-center text-center font-light h-full transition-all duration-500',
+        active
+          ? 'border-2 border-[#891D33] shadow-[0_0_12px_rgba(137,29,51,0.3)] scale-[1.02]'
+          : 'border border-black hover:border-[#891D33]/60'
       )}
     >
-      <h3 className="text-cl font-light tracking-widest mb-6">{title}</h3>
-      <p className="text-2xl font-light tracking-widest  mb-6">{price}</p>
+      <h3
+        className={clsx(
+          'text-cl font-light tracking-widest mb-6',
+          active && 'text-[#891D33]'
+        )}
+      >
+        {title}
+      </h3>
+      <p
+        className={clsx(
+          'text-2xl font-light tracking-widest mb-6',
+          active && 'text-[#891D33]'
+        )}
+      >
+        {price}
+      </p>
       <ul className="text-[13px] font-light tracking-widest space-y-3">
         {benefits.map((benefit, idx) => (
           <li key={idx}>{benefit}</li>

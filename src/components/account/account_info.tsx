@@ -49,6 +49,7 @@ const AccountInfo = () => {
   })
 
   const currentUser = userRes?.data || user
+  console.log('current user', currentUser)
 
   // ✅ Form setup
   const form = useForm<ProfileFormSchemaValues>({
