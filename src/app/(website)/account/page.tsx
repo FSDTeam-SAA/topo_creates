@@ -15,9 +15,13 @@ const AllAccountInfo = () => {
       <DocumentVerification user={user} />
       <div className="flex flex-col gap-[50px] md:gap-[80px] lg:gap-[100px] mt-6">
         <AccountInfo />
-        <MuseClub />
-        <OrderHistory />
-        <YourWishlist />
+        {user?.role?.toLowerCase() === 'user' && (
+          <>
+            <MuseClub />
+            <OrderHistory />
+            <YourWishlist />
+          </>
+        )}
       </div>
     </div>
   )
