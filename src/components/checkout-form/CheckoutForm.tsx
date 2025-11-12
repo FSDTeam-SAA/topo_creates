@@ -1,12 +1,28 @@
 'use client'
 import { Upload } from 'lucide-react'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Image from 'next/image'
 import { useShoppingStore } from '@/zustand/shopingStore'
+import { useUserStore } from '@/zustand/useUserStore'
 
 const CheckoutForm = () => {
   const { fullName, email, phone, address, idPreview, setField, isConfirm } =
     useShoppingStore()
+  const { user } = useUserStore()
+
+  // fill form fields from user data
+  useEffect(() => {
+    if (user) {
+      const name =
+        user.firstName?.trim() && user.lastName?.trim()
+          ? `${user.firstName.trim()} ${user.lastName.trim()}`
+          : user.firstName || ''
+
+      setField('fullName', name)
+      setField('email', user.email || '')
+      setField('phone', user.phoneNumber?.trim() || '')
+    }
+  }, [user, setField])
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -41,19 +57,6 @@ const CheckoutForm = () => {
               <h1 className="block text-sm text-black mb-2 uppercase opacity-75">
                 Address: {address}
               </h1>
-              <h1 className="block text-sm text-black mb-2 uppercase opacity-75">
-                ID Verification :
-              </h1>
-
-              {/* {idPreview && (
-                <Image
-                  src={idPreview}
-                  alt="ID Preview"
-                  width={1000}
-                  height={1000}
-                  className="h-32 w-32 mb-2"
-                />
-              )} */}
             </div>
           ) : (
             <div>
@@ -111,44 +114,48 @@ const CheckoutForm = () => {
                   />
                 </div>
 
-                {/* ID Verification */}
-                <div>
-                  <label className="block text-sm text-black mb-4 uppercase opacity-75">
-                    ID Verification <span className="text-red-500">*</span>
-                  </label>
-
-                  <div className="border-b border-black p-8 text-center">
-                    <input
-                      type="file"
-                      id="id-upload"
-                      accept="image/*"
-                      onChange={handleFileUpload}
-                      className="hidden"
-                    />
-                    <label htmlFor="id-upload" className="cursor-pointer">
-                      {idPreview ? (
-                        <Image
-                          src={idPreview}
-                          alt="ID Preview"
-                          width={1000}
-                          height={1000}
-                          className="mx-auto h-32 object-contain mb-2"
-                        />
-                      ) : (
-                        <Upload className="w-8 h-8 mx-auto mb-4 opacity-50 font-thin" />
-                      )}
-                      <p className="text-sm text-black opacity-75 uppercase">
-                        {idPreview ? 'Change file' : 'Click to upload'}
-                      </p>
+                {/* ID Verification → show only if user not verified */}
+                {!user?.kycVerified && (
+                  <div>
+                    <label className="block text-sm text-black mb-4 uppercase opacity-75">
+                      ID Verification <span className="text-red-500">*</span>
                     </label>
+
+                    <div className="border-b border-black p-8 text-center">
+                      <input
+                        type="file"
+                        id="id-upload"
+                        accept="image/*"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+                      <label htmlFor="id-upload" className="cursor-pointer">
+                        {idPreview ? (
+                          <Image
+                            src={idPreview}
+                            alt="ID Preview"
+                            width={1000}
+                            height={1000}
+                            className="mx-auto h-32 object-contain mb-2"
+                          />
+                        ) : (
+                          <Upload className="w-8 h-8 mx-auto mb-4 opacity-50 font-thin" />
+                        )}
+                        <p className="text-sm text-black opacity-75 uppercase">
+                          {idPreview ? 'Change file' : 'Click to upload'}
+                        </p>
+                      </label>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
-              <p className="text-sm font-light text-gray-600 mt-6 leading-relaxed font-sans tracking-[.05rem]">
-                Upload a valid photo ID to complete your booking. No 3D field
-                will be placed.
-              </p>
+              {!user?.kycVerified && (
+                <p className="text-sm font-light text-gray-600 mt-6 leading-relaxed font-sans tracking-[.05rem]">
+                  Upload a valid photo ID to complete your booking. No 3D field
+                  will be placed.
+                </p>
+              )}
             </div>
           )}
         </div>

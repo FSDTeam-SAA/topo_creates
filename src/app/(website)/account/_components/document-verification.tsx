@@ -69,7 +69,7 @@ const DocumentVerification = ({ user }: DocumentVerificationProps) => {
 
   useEffect(() => {
     if (kycRes?.status && kycRes.message?.url) {
-      window.location.href = kycRes.message.url
+      window.open(kycRes.message.url, '_blank')
     }
   }, [kycRes])
 
