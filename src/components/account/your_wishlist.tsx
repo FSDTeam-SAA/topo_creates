@@ -1,7 +1,27 @@
-import React from 'react'
-import WishlistCard from './wishlist_card'
+
+
+
+"use client"
+
+import { useEffect, useState } from "react"
+import WishlistCard, { WishlistItem } from "./wishlist_card"
 
 const YourWishlist = () => {
+  const [wishlist, setWishlist] = useState<WishlistItem[]>([])
+
+  useEffect(() => {
+    const stored = localStorage.getItem("wishlist")
+    if (stored) {
+      setWishlist(JSON.parse(stored))
+    }
+  }, [])
+
+  const handleRemove = (id: string) => {
+    const updated = wishlist.filter((item) => item._id !== id)
+    setWishlist(updated)
+    localStorage.setItem("wishlist", JSON.stringify(updated))
+  }
+
   return (
     <div>
       <section>
@@ -10,11 +30,16 @@ const YourWishlist = () => {
             Your Wishlist
           </h2>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-[30px]">
-          {[1, 2, 3, 4, 5].map((_, index) => (
-            <WishlistCard key={index} />
-          ))}
-        </div>
+
+        {wishlist.length === 0 ? (
+          <p className="text-gray-400">Your wishlist is empty.</p>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-[30px]">
+            {wishlist.map((item) => (
+              <WishlistCard key={item._id} item={item} onRemove={handleRemove} />
+            ))}
+          </div>
+        )}
       </section>
     </div>
   )
