@@ -1,7 +1,5 @@
 'use client'
-import { Upload } from 'lucide-react'
 import React, { useEffect } from 'react'
-import Image from 'next/image'
 import { useShoppingStore } from '@/zustand/shopingStore'
 import { useUserStore } from '@/zustand/useUserStore'
 
@@ -24,10 +22,10 @@ const CheckoutForm = () => {
     }
   }, [user, setField])
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) setField('idVerification', file)
-  }
+  // const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = event.target.files?.[0]
+  //   if (file) setField('idVerification', file)
+  // }
 
   return (
     <div className="font-sans">
@@ -103,19 +101,19 @@ const CheckoutForm = () => {
 
                 {/* Address */}
                 <div>
-                  <label className="block text-sm text-black mb-2 uppercase opacity-75">
+                  <label className="block text-sm text-black mb-2 opacity-75 uppercase">
                     Address <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     value={address}
                     onChange={(e) => setField('address', e.target.value)}
-                    className="w-full bg-transparent border-0 border-b border-black pb-2 text-black opacity-75 placeholder-gray-400 focus:outline-none focus:border-black uppercase"
+                    className="w-full bg-transparent border-0 border-b border-black pb-2 text-black opacity-75 placeholder-gray-400 focus:outline-none focus:border-black "
                   />
                 </div>
 
                 {/* ID Verification → show only if user not verified */}
-                {!user?.kycVerified && (
+                {/* {!user?.kycVerified && (
                   <div>
                     <label className="block text-sm text-black mb-4 uppercase opacity-75">
                       ID Verification <span className="text-red-500">*</span>
@@ -147,15 +145,15 @@ const CheckoutForm = () => {
                       </label>
                     </div>
                   </div>
-                )}
+                )} */}
               </div>
 
-              {!user?.kycVerified && (
+              {/* {!user?.kycVerified && (
                 <p className="text-sm font-light text-gray-600 mt-6 leading-relaxed font-sans tracking-[.05rem]">
                   Upload a valid photo ID to complete your booking. No 3D field
                   will be placed.
                 </p>
-              )}
+              )} */}
             </div>
           )}
         </div>
