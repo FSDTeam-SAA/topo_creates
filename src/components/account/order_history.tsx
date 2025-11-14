@@ -102,7 +102,7 @@ const OrderHistory = () => {
               April 10, 2023 - Today
             </p> */}
           </div>
-          <hr className="mt-4 border border-black" />
+          <hr className="mt-4 border h-[1px] border-[#11111133]" />
         </div>
 
         {/* Responsive Table */}
