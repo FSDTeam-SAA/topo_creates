@@ -1,16 +1,13 @@
+'use client'
 
-
-
-"use client"
-
-import { useEffect, useState } from "react"
-import WishlistCard, { WishlistItem } from "./wishlist_card"
+import { useEffect, useState } from 'react'
+import WishlistCard, { WishlistItem } from './wishlist_card'
 
 const YourWishlist = () => {
   const [wishlist, setWishlist] = useState<WishlistItem[]>([])
 
   useEffect(() => {
-    const stored = localStorage.getItem("wishlist")
+    const stored = localStorage.getItem('wishlist')
     if (stored) {
       setWishlist(JSON.parse(stored))
     }
@@ -19,11 +16,11 @@ const YourWishlist = () => {
   const handleRemove = (id: string) => {
     const updated = wishlist.filter((item) => item._id !== id)
     setWishlist(updated)
-    localStorage.setItem("wishlist", JSON.stringify(updated))
+    localStorage.setItem('wishlist', JSON.stringify(updated))
   }
 
   return (
-    <div>
+    <div className="mb-12">
       <section>
         <div className="mb-11">
           <h2 className="text-xl md:text-2xl tracking-widest font-light mb-6 border-black border-b-[1px] pb-5 md:pb-8">
@@ -32,11 +29,17 @@ const YourWishlist = () => {
         </div>
 
         {wishlist.length === 0 ? (
-          <p className="text-gray-400">Your wishlist is empty.</p>
+          <p className="text-gray-400 text-center text-xl">
+            Your wishlist is empty.
+          </p>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-5 gap-[30px]">
             {wishlist.map((item) => (
-              <WishlistCard key={item._id} item={item} onRemove={handleRemove} />
+              <WishlistCard
+                key={item._id}
+                item={item}
+                onRemove={handleRemove}
+              />
             ))}
           </div>
         )}

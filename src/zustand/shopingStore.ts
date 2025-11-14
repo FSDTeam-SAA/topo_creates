@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 
 interface BookingSummary {
   orderId: string
@@ -9,6 +10,7 @@ interface BookingSummary {
   totalPaid: number
   size: string
 }
+
 interface IShoppingStore {
   rent: string
   setRent: (value: string) => void
@@ -50,30 +52,43 @@ const initialState = {
   isConfirm: false,
   deliveryOption: 'shipping' as 'shipping' | 'pickup',
   selectedSize: '',
+  bookingSummary: null,
 }
 
-export const useShoppingStore = create<IShoppingStore>((set) => ({
-  ...initialState,
-  setRent: (value) => set({ rent: value }),
-  bookingSummary: null,
-
-  setBookingSummary: (summary) => set({ bookingSummary: summary }),
-  clearBookingSummary: () => set({ bookingSummary: null }),
-  setStartDate: (date) => set({ startDate: date }),
-  setEndDate: (date) => set({ endDate: date }),
-  setField: (field, value) => {
-    set((state) => {
-      if (field === 'idVerification' && value instanceof File) {
-        return {
-          ...state,
-          idVerification: value,
-          idPreview: URL.createObjectURL(value),
-        }
-      }
-      return { ...state, [field]: value }
-    })
-  },
-  setIsConfirm: (value) => set({ isConfirm: value }),
-  setDeliveryOption: (value) => set({ deliveryOption: value }),
-  setSelectedSize: (value) => set({ selectedSize: value }),
-}))
+export const useShoppingStore = create<IShoppingStore>()(
+  persist(
+    (set) => ({
+      ...initialState,
+      setRent: (value) => set({ rent: value }),
+      setBookingSummary: (summary) => set({ bookingSummary: summary }),
+      clearBookingSummary: () => set({ bookingSummary: null }),
+      setStartDate: (date) => set({ startDate: date }),
+      setEndDate: (date) => set({ endDate: date }),
+      setField: (field, value) => {
+        set((state) => {
+          if (field === 'idVerification' && value instanceof File) {
+            return {
+              ...state,
+              idVerification: value,
+              idPreview: URL.createObjectURL(value),
+            }
+          }
+          return { ...state, [field]: value }
+        })
+      },
+      setIsConfirm: (value) => set({ isConfirm: value }),
+      setDeliveryOption: (value) => set({ deliveryOption: value }),
+      setSelectedSize: (value) => set({ selectedSize: value }),
+    }),
+    {
+      name: 'shopping-store', // localStorage key
+      partialize: (state) => ({
+        // Only persist these fields
+        bookingSummary: state.bookingSummary,
+        rent: state.rent,
+        deliveryOption: state.deliveryOption,
+        selectedSize: state.selectedSize,
+      }),
+    }
+  )
+)
