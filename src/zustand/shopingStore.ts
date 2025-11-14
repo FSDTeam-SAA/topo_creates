@@ -1,5 +1,14 @@
 import { create } from 'zustand'
 
+interface BookingSummary {
+  orderId: string
+  dressName: string
+  rentalStartDate: string
+  rentalEndDate: string
+  deliveryMethod: string
+  totalPaid: number
+  size: string
+}
 interface IShoppingStore {
   rent: string
   setRent: (value: string) => void
@@ -23,6 +32,9 @@ interface IShoppingStore {
 
   selectedSize: string
   setSelectedSize: (value: string) => void
+  bookingSummary: BookingSummary | null
+  setBookingSummary: (summary: BookingSummary) => void
+  clearBookingSummary: () => void
 }
 
 const initialState = {
@@ -43,6 +55,10 @@ const initialState = {
 export const useShoppingStore = create<IShoppingStore>((set) => ({
   ...initialState,
   setRent: (value) => set({ rent: value }),
+  bookingSummary: null,
+
+  setBookingSummary: (summary) => set({ bookingSummary: summary }),
+  clearBookingSummary: () => set({ bookingSummary: null }),
   setStartDate: (date) => set({ startDate: date }),
   setEndDate: (date) => set({ endDate: date }),
   setField: (field, value) => {

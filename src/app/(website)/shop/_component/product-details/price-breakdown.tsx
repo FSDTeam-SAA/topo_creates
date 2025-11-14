@@ -52,6 +52,8 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
     email,
     phone,
     address,
+    bookingSummary,
+    setBookingSummary,
   } = useShoppingStore()
 
   const { data: session } = useSession()
@@ -97,6 +99,16 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
     const month = String(date.getMonth() + 1).padStart(2, '0')
     const day = String(date.getDate()).padStart(2, '0')
     return `${year}-${month}-${day}`
+  }
+
+  // FORMAT DATES FOR DISPLAY
+  const formatDisplayDate = (date: Date | null) => {
+    if (!date) return ''
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    })
   }
 
   // CREATE BOOKING (for Rent Now button - shop page)
@@ -205,12 +217,23 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
     },
     onSuccess: (res) => {
       const bookingId = res?.data?.id
-      console.log('amy data', bookingId, res)
-
       if (!bookingId) {
         toast.error('No booking ID returned')
         return
       }
+
+      // Save booking summary to store BEFORE updating
+      setBookingSummary({
+        orderId: bookingId,
+        dressName: data?.dressName || 'N/A',
+        rentalStartDate: formatDisplayDate(startDate),
+        rentalEndDate: formatDisplayDate(endDate),
+        deliveryMethod:
+          deliveryOption === 'shipping' ? 'Shipping' : 'Local Pickup',
+        totalPaid: total,
+        size: selectedSize || 'N/A',
+      })
+
       // First update booking with customer details, then proceed to payment
       updateBooking.mutate(bookingId)
     },
@@ -218,6 +241,8 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
       toast.error(err.message || 'Booking failed', { position: 'bottom-right' })
     },
   })
+
+  console.log('bookings summary', bookingSummary)
 
   // UPDATE BOOKING (new mutation to update address, phone, etc.)
   const updateBooking = useMutation({
@@ -244,9 +269,9 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
         throw new Error(responseData?.message || 'Failed to update booking')
       return { bookingId, ...responseData }
     },
-    onSuccess: (res) => {
-      // After updating booking, create checkout session
-      createCheckout.mutate(res.bookingId)
+    onSuccess: () => {
+      // After updating booking, redirect to payment info page
+      createCheckout.mutate()
     },
     onError: (err: any) => {
       toast.error(err.message || 'Failed to update booking details', {
@@ -255,35 +280,35 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
     },
   })
 
-  // CREATE CHECKOUT
+  // SAVE PAYMENT INFO (redirect to card info page)
   const createCheckout = useMutation({
-    mutationFn: async (bookingId: string) => {
+    mutationFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/payment/create-checkout-session`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/payment/savePaymentInfo`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ bookingId }),
         }
       )
 
       const responseData = await res.json()
       if (!res.ok)
-        throw new Error(
-          responseData?.message || 'Failed to create checkout session'
-        )
+        throw new Error(responseData?.message || 'Failed to save payment info')
       return responseData
     },
     onSuccess: (res) => {
-      const url = res?.data?.checkoutUrl
-      if (url) window.location.href = url
-      else toast.error('Payment failed, try again later')
+      const url = res?.data?.url
+      if (url) {
+        window.location.href = url
+      } else {
+        toast.error('Payment setup failed, try again later')
+      }
     },
     onError: (err: any) => {
-      toast.error(err.message || 'Checkout failed', {
+      toast.error(err.message || 'Payment setup failed', {
         position: 'bottom-right',
       })
     },
