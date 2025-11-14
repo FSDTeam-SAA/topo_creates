@@ -43,12 +43,15 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
     rent,
     isConfirm,
     setIsConfirm,
-    idPreview,
     startDate,
     endDate,
     deliveryOption,
     selectedSize,
     setSelectedSize,
+    fullName,
+    email,
+    phone,
+    address,
   } = useShoppingStore()
 
   const { data: session } = useSession()
@@ -202,14 +205,53 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
     },
     onSuccess: (res) => {
       const bookingId = res?.data?.id
+      console.log('amy data', bookingId, res)
+
       if (!bookingId) {
         toast.error('No booking ID returned')
         return
       }
-      createCheckout.mutate(bookingId)
+      // First update booking with customer details, then proceed to payment
+      updateBooking.mutate(bookingId)
     },
     onError: (err: any) => {
       toast.error(err.message || 'Booking failed', { position: 'bottom-right' })
+    },
+  })
+
+  // UPDATE BOOKING (new mutation to update address, phone, etc.)
+  const updateBooking = useMutation({
+    mutationFn: async (bookingId: string) => {
+      const updateData = {
+        address: address,
+        phone: phone,
+      }
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/customer/bookings/${bookingId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updateData),
+        }
+      )
+
+      const responseData = await res.json()
+      if (!res.ok)
+        throw new Error(responseData?.message || 'Failed to update booking')
+      return { bookingId, ...responseData }
+    },
+    onSuccess: (res) => {
+      // After updating booking, create checkout session
+      createCheckout.mutate(res.bookingId)
+    },
+    onError: (err: any) => {
+      toast.error(err.message || 'Failed to update booking details', {
+        position: 'bottom-right',
+      })
     },
   })
 
@@ -262,7 +304,7 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
       return
     }
 
-    if (!idPreview) {
+    if (!fullName || !email || !phone || !address) {
       toast.error('Please complete all required fields!')
       return
     }
@@ -406,11 +448,15 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
               <button
                 onClick={handleConfirmPay}
                 disabled={
-                  createBookingForPayment.isPending || createCheckout.isPending
+                  createBookingForPayment.isPending ||
+                  updateBooking.isPending ||
+                  createCheckout.isPending
                 }
                 className="opacity-75 tracking-widest uppercase disabled:opacity-50"
               >
-                {createBookingForPayment.isPending || createCheckout.isPending
+                {createBookingForPayment.isPending ||
+                updateBooking.isPending ||
+                createCheckout.isPending
                   ? 'Processing...'
                   : 'Confirm & Pay'}
               </button>
