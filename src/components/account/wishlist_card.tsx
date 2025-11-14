@@ -1,23 +1,52 @@
+import { X } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
-const WishlistCard = () => {
+export interface WishlistItem {
+  _id: string
+  dressName: string
+  thumbnail: string
+  basePrice: number
+  rrpPrice: number
+}
+
+interface Props {
+  item: WishlistItem
+  onRemove?: (id: string) => void
+}
+
+const WishlistCard = ({ item, onRemove }: Props) => {
   return (
-    <div className="mb-24">
-      <div className="flex flex-col">
-        <div className="relative aspect-[3/4] mb-5">
+    <div className="mb-24 overflow-hidden relative group">
+      <div className="flex flex-col relative">
+        {/* Product Image */}
+        <div className="relative aspect-[3/4] mb-5 w-full">
           <Image
-            src="https://as1.ftcdn.net/v2/jpg/02/63/75/22/1000_F_263752218_3uvpwtuYiq10lNqgXz9xHOltRdgHbKBU.jpg"
-            alt="Olivia Dress"
+            src={item.thumbnail}
+            alt={item.dressName}
             fill
-            className="object-cover"
+            className="object-cover rounded-md"
           />
+
+          {/* X Button (hover only) */}
+          {onRemove && (
+            <button
+              onClick={() => onRemove(item._id)}
+              className="absolute top-2 right-2 bg-white text-black p-1 rounded-full z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
+
+        {/* Product Title */}
         <h3 className="text-lg md:text-xl tracking-widest font-light text-center text-black mb-[10px]">
-          Olivia Dress
+          {item.dressName}
         </h3>
+
+        {/* Price */}
         <p className="text-[12px] md:text-sm font-light text-black text-center tracking-widest">
-          RENT $XX | RRP $XX
+          RENT ${item.basePrice} | RRP ${item.rrpPrice}
         </p>
       </div>
     </div>

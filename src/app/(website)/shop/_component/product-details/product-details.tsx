@@ -78,6 +78,8 @@ const ProductDetails = () => {
 
   // ✅ Handle both response shapes
   const singleProduct = Array.isArray(data?.data) ? data?.data[0] : data?.data
+  const productdata= singleProduct
+ 
 
   const thumbnailImage = singleProduct?.thumbnail ?? ''
   const allImages = singleProduct?.media ?? []
@@ -90,6 +92,7 @@ const ProductDetails = () => {
             thumbnailImage={thumbnailImage}
             allImages={allImages}
             isLoading={isLoading}
+            productdata={productdata}
           />
         </div>
 
