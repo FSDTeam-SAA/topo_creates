@@ -1,4 +1,4 @@
-import type { Product as ImportedProduct } from "@/types/product"
+import type { Product as ImportedProduct } from '@/types/product'
 
 // Ensure Product type includes 'name' and 'description'
 export interface Product extends ImportedProduct {
@@ -6,6 +6,7 @@ export interface Product extends ImportedProduct {
   name: string
   description: string
   price: number
+  size: string[]
   // Add other required fields if necessary
 }
 
@@ -30,20 +31,25 @@ export interface FilterOptions {
   locations?: string[]
 }
 
-export function filterProducts(products: Product[], filters: FilterOptions): Product[] {
+export function filterProducts(
+  products: Product[],
+  filters: FilterOptions
+): Product[] {
   return products.filter((product) => {
     // Search query filter
     if (
       filters.searchQuery &&
       !product.name.toLowerCase().includes(filters.searchQuery.toLowerCase()) &&
-      !product.description.toLowerCase().includes(filters.searchQuery.toLowerCase())
+      !product.description
+        .toLowerCase()
+        .includes(filters.searchQuery.toLowerCase())
     ) {
       return false
     }
 
     // Size filter
     if (filters.sizes && filters.sizes.length > 0) {
-      if (!filters.sizes.some((size) => product.size.includes(size))) {
+      if (!filters.sizes.some((size) => product?.size?.includes(size))) {
         return false
       }
     }
@@ -70,7 +76,11 @@ export function filterProducts(products: Product[], filters: FilterOptions): Pro
     if (filters.designers && filters.designers.length > 0) {
       // For demo purposes, we'll just filter based on product ID
       // In a real app, you'd have a designer field on the product
-      if (!filters.designers.some((designer) => product.id.includes(designer.split("-")[1]))) {
+      if (
+        !filters.designers.some((designer) =>
+          product.id.includes(designer.split('-')[1])
+        )
+      ) {
         return false
       }
     }

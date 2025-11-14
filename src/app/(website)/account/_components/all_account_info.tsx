@@ -1,7 +1,7 @@
 'use client'
 
 import AccountInfo from '@/components/account/account_info'
-import Dispute from '@/components/account/dispute_components'
+// import Dispute from '@/components/account/dispute_components'
 import MuseClub from '@/components/account/muse_club'
 import OrderHistory from '@/components/account/order_history'
 import YourWishlist from '@/components/account/your_wishlist'
@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react'
 import Headers from './headers'
 import DocumentVerification from './document-verification'
 import { useUserStore } from '@/zustand/useUserStore'
+import Disputes from '../dispute/_components/dispute'
 
 const AllAccountInfo = () => {
   const [tab, setTab] = useState('Account Info')
@@ -53,7 +54,7 @@ const AllAccountInfo = () => {
 
       {tab === 'Dispute' && (
         <div>
-          <Dispute />
+          <Disputes token={user?.accessToken || ''} />
         </div>
       )}
     </div>
