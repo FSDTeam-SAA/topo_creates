@@ -74,7 +74,7 @@ export default function ChatPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     conversationsResponse?.data?.data?.map((conv: any) => {
       const chatPartner = conv.participants.find(
-        (p: Participant) => p._id !== user?.id
+        (p: Participant) => p._id !== user?.id,
       )
 
       const name = chatPartner
@@ -83,10 +83,10 @@ export default function ChatPage() {
 
       return {
         id: conv._id,
-        orderId: conv.bookingId,
+        orderId: conv.bookingId?.masterdressId?.masterDressId,
         preview: conv.lastMessage || 'No messages yet',
         timestamp: new Date(
-          conv.lastMessageAt || conv.updatedAt
+          conv.lastMessageAt || conv.updatedAt,
         ).toLocaleDateString('en-US', {
           month: 'short',
           day: 'numeric',
@@ -111,7 +111,7 @@ export default function ChatPage() {
     if (id) await refetchMessages()
   }
 
-  const formattedMessages: Message[] = messages.map((msg) => ({
+  const formattedMessages: Message[] = messages.map(msg => ({
     _id: msg._id,
     message: msg.message,
     sender: {

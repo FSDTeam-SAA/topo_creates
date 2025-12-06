@@ -34,7 +34,7 @@ export default function ChatList({
     const regex = new RegExp(`(${query})`, 'gi')
     return text.replace(
       regex,
-      `<span class="bg-yellow-200 font-medium">$1</span>`
+      `<span class="bg-yellow-200 font-medium">$1</span>`,
     )
   }
 
@@ -44,13 +44,15 @@ export default function ChatList({
 
     const lower = debouncedSearch.toLowerCase()
 
-    return conversations.filter((item) => {
+    return conversations.filter(item => {
       const nameMatch = item.name?.toLowerCase().includes(lower)
       const timestampMatch = item.timestamp?.toLowerCase().includes(lower)
 
       return nameMatch || timestampMatch
     })
   }, [debouncedSearch, conversations])
+
+  console.log('my conversations', conversations)
 
   return (
     <div className="w-full">
@@ -62,7 +64,7 @@ export default function ChatList({
             placeholder="Search messages..."
             className="pl-11 py-5 border-[#E6E6E6] focus-visible:ring-0 text-sm"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={e => setSearch(e.target.value)}
           />
         </div>
       </div>
@@ -77,7 +79,7 @@ export default function ChatList({
           </div>
         )}
 
-        {filteredConversations.map((conversation) => (
+        {filteredConversations.map(conversation => (
           <div
             key={conversation.id}
             className={`p-4 flex items-start gap-3 cursor-pointer rounded-lg hover:bg-gray-50/80 border-b ${
@@ -91,13 +93,16 @@ export default function ChatList({
 
             <div className="flex-1 min-w-0">
               <div className="flex justify-between items-center ">
-                {/* ✅ Highlighted Name */}
-                <p
+                {/*  Highlighted Name */}
+                {/* <p
                   className="font-normal tracking-wider text-[12px] md:text-sm"
                   dangerouslySetInnerHTML={{
                     __html: highlightText(conversation.name, debouncedSearch),
                   }}
-                />
+                /> */}
+                <p className="font-normal tracking-wider text-[12px] md:text-sm">
+                  {conversation.orderId}
+                </p>
 
                 <span className="text-xs text-gray-500">
                   {conversation.timestamp}
