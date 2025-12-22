@@ -1,3 +1,5 @@
+// zustand/shopingStore.ts
+
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
@@ -11,13 +13,23 @@ interface BookingSummary {
   size: string
 }
 
+interface PromoCodeData {
+  id: string
+  code: string
+  discountType: 'FLAT' | 'PERCENTAGE'
+  discountValue: number
+  expiresAt: string
+}
+
 interface IShoppingStore {
   rent: string
   setRent: (value: string) => void
+
   startDate: Date | null
   endDate: Date | null
   setStartDate: (date: Date | null) => void
   setEndDate: (date: Date | null) => void
+
   fullName: string
   email: string
   phone: string
@@ -34,9 +46,20 @@ interface IShoppingStore {
 
   selectedSize: string
   setSelectedSize: (value: string) => void
+
   bookingSummary: BookingSummary | null
   setBookingSummary: (summary: BookingSummary) => void
   clearBookingSummary: () => void
+
+  currentBookingId: string | null
+  setCurrentBookingId: (value: string | null) => void
+
+  // Promo code state
+  promoCode: string
+  setPromoCode: (value: string) => void
+  appliedPromo: PromoCodeData | null
+  setAppliedPromo: (promo: PromoCodeData | null) => void
+  clearPromoCode: () => void
 }
 
 const initialState = {
@@ -53,19 +76,23 @@ const initialState = {
   deliveryOption: 'shipping' as 'shipping' | 'pickup',
   selectedSize: '',
   bookingSummary: null,
+  currentBookingId: null,
+  promoCode: '',
+  appliedPromo: null,
 }
 
 export const useShoppingStore = create<IShoppingStore>()(
   persist(
-    (set) => ({
+    set => ({
       ...initialState,
-      setRent: (value) => set({ rent: value }),
-      setBookingSummary: (summary) => set({ bookingSummary: summary }),
-      clearBookingSummary: () => set({ bookingSummary: null }),
-      setStartDate: (date) => set({ startDate: date }),
-      setEndDate: (date) => set({ endDate: date }),
-      setField: (field, value) => {
-        set((state) => {
+
+      setRent: value => set({ rent: value }),
+
+      setStartDate: date => set({ startDate: date }),
+      setEndDate: date => set({ endDate: date }),
+
+      setField: (field, value) =>
+        set(state => {
           if (field === 'idVerification' && value instanceof File) {
             return {
               ...state,
@@ -74,21 +101,33 @@ export const useShoppingStore = create<IShoppingStore>()(
             }
           }
           return { ...state, [field]: value }
-        })
-      },
-      setIsConfirm: (value) => set({ isConfirm: value }),
-      setDeliveryOption: (value) => set({ deliveryOption: value }),
-      setSelectedSize: (value) => set({ selectedSize: value }),
+        }),
+
+      setIsConfirm: value => set({ isConfirm: value }),
+      setDeliveryOption: value => set({ deliveryOption: value }),
+      setSelectedSize: value => set({ selectedSize: value }),
+
+      setBookingSummary: summary => set({ bookingSummary: summary }),
+      clearBookingSummary: () => set({ bookingSummary: null }),
+
+      setCurrentBookingId: value => set({ currentBookingId: value }),
+
+      // Promo code actions
+      setPromoCode: value => set({ promoCode: value }),
+      setAppliedPromo: promo => set({ appliedPromo: promo }),
+      clearPromoCode: () => set({ promoCode: '', appliedPromo: null }),
     }),
     {
-      name: 'shopping-store', // localStorage key
-      partialize: (state) => ({
-        // Only persist these fields
-        bookingSummary: state.bookingSummary,
+      name: 'shopping-store',
+      partialize: state => ({
         rent: state.rent,
         deliveryOption: state.deliveryOption,
         selectedSize: state.selectedSize,
+        bookingSummary: state.bookingSummary,
+        currentBookingId: state.currentBookingId,
+        promoCode: state.promoCode,
+        appliedPromo: state.appliedPromo,
       }),
-    }
-  )
+    },
+  ),
 )

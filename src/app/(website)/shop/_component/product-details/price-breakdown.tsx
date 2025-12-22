@@ -6,7 +6,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
 import { usePathname, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Select,
   SelectContent,
@@ -14,8 +14,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
 import { useUserStore } from '@/zustand/useUserStore'
 import { useLocationStore } from '@/zustand/useLocationStore'
+import { bookingApi } from '@/lib/bookingApiService'
+import { paymentApi } from '@/lib/paymentApi'
 
 interface ShippingDetails {
   isLocalPickup?: boolean
@@ -52,8 +55,14 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
     email,
     phone,
     address,
-    bookingSummary,
     setBookingSummary,
+    currentBookingId,
+    setCurrentBookingId,
+    promoCode,
+    setPromoCode,
+    appliedPromo,
+    setAppliedPromo,
+    clearPromoCode,
   } = useShoppingStore()
 
   const { data: session } = useSession()
@@ -67,6 +76,8 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
   const isKycVerified = user?.kycVerified
 
   const { lenders } = useLocationStore()
+
+  const [isApplyingPromo, setIsApplyingPromo] = useState(false)
 
   // Auto-select first size if not selected and on shop page
   useEffect(() => {
@@ -90,7 +101,26 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
 
   const shippingCost =
     deliveryOption === 'shipping' && shippingAvailable ? 30 : 0
-  const total = displayPrice + insurance + shippingCost
+
+  // Calculate subtotal first
+  const subtotal = displayPrice + insurance + shippingCost
+
+  // Calculate discount based on type
+  let discount = 0
+  if (appliedPromo) {
+    if (appliedPromo.discountType.toUpperCase() === 'FLAT') {
+      // Flat discount - direct amount
+      discount = Number(appliedPromo.discountValue)
+    } else if (appliedPromo.discountType === 'PERCENTAGE') {
+      // Percentage discount - calculate from subtotal
+      discount = (subtotal * Number(appliedPromo.discountValue)) / 100
+    }
+  }
+
+  console.log('discount and promocode', appliedPromo, discount)
+
+  // Final total - ensure it doesn't go below 0
+  const total = Math.max(0, subtotal - discount)
 
   // FORMAT DATES FOR API
   const formatDate = (date: Date | null) => {
@@ -111,6 +141,42 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
     })
   }
 
+  // VALIDATE PROMO CODE
+  const handleApplyPromo = async () => {
+    if (!token) {
+      toast.error('Please login to apply promo code')
+      return
+    }
+
+    if (!promoCode.trim()) {
+      toast.error('Please enter a promo code')
+      return
+    }
+
+    setIsApplyingPromo(true)
+
+    try {
+      const response = await bookingApi.validatePromoCode(
+        { promoCode: promoCode.trim() },
+        token,
+      )
+
+      if (response.status && response.data) {
+        setAppliedPromo(response.data)
+        toast.success(response.message || 'Promo code applied successfully!', {
+          position: 'bottom-right',
+        })
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Invalid promo code', {
+        position: 'bottom-right',
+      })
+      clearPromoCode()
+    } finally {
+      setIsApplyingPromo(false)
+    }
+  }
+
   // CREATE BOOKING (for Rent Now button - shop page)
   const createBookingForRentNow = useMutation({
     mutationFn: async () => {
@@ -123,6 +189,11 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
         deliveryMethod: deliveryOption === 'shipping' ? 'Shipping' : 'Pickup',
       }
 
+      // Add promo code if applied
+      if (appliedPromo) {
+        bookingData.promoCode = appliedPromo.code
+      }
+
       // Add pickup-specific fields
       if (deliveryOption === 'pickup' && lenders.length > 0) {
         bookingData.tryOnRequested = true
@@ -139,28 +210,22 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
         ]
       }
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/customer/bookings/create`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(bookingData),
-        }
-      )
-
-      const responseData = await res.json()
-      if (!res.ok)
-        throw new Error(responseData?.message || 'Failed to create booking')
-      return responseData
+      return await bookingApi.createBooking(bookingData, token!)
     },
-    onSuccess: (res) => {
+    onSuccess: res => {
+      const bookingId = res?.data?.id
+
+      if (!bookingId) {
+        toast.error('No booking ID returned')
+        return
+      }
+
+      setCurrentBookingId(bookingId)
+
       toast.success(res?.message || 'Booking created successfully!', {
         position: 'bottom-right',
       })
-      // Redirect to checkout page
+
       setTimeout(() => {
         router.push(`/shop/checkout/${data?._id}`)
       }, 1000)
@@ -170,22 +235,32 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
     },
   })
 
-  // CREATE BOOKING (for Confirm & Pay button - checkout page)
-  const createBookingForPayment = useMutation({
+  // UPDATE BOOKING (for Confirm & Pay button - checkout page)
+  const updateBookingForPayment = useMutation({
     mutationFn: async () => {
-      const bookingData: any = {
-        masterdressId: data?._id,
+      if (!currentBookingId) {
+        throw new Error('No booking ID found. Please create a booking first.')
+      }
+
+      const updateData: any = {
         rentalStartDate: formatDate(startDate),
         rentalEndDate: formatDate(endDate),
         rentalDurationDays: rent === '4' ? 4 : 8,
         size: selectedSize,
         deliveryMethod: deliveryOption === 'shipping' ? 'Shipping' : 'Pickup',
+        address: address,
+        phone: phone,
+      }
+
+      // Add promo code if applied
+      if (appliedPromo) {
+        updateData.promoCode = appliedPromo.code
       }
 
       // Add pickup-specific fields
       if (deliveryOption === 'pickup' && lenders.length > 0) {
-        bookingData.tryOnRequested = true
-        bookingData.selectedLender = [
+        updateData.tryOnRequested = true
+        updateData.selectedLender = [
           {
             _id: lenders[0]._id,
             email: lenders[0].email,
@@ -198,33 +273,15 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
         ]
       }
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/customer/bookings/create`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(bookingData),
-        }
+      return await bookingApi.updateBooking(
+        currentBookingId,
+        updateData,
+        token!,
       )
-
-      const responseData = await res.json()
-      if (!res.ok)
-        throw new Error(responseData?.message || 'Failed to create booking')
-      return responseData
     },
-    onSuccess: (res) => {
-      const bookingId = res?.data?.id
-      if (!bookingId) {
-        toast.error('No booking ID returned')
-        return
-      }
-
-      // Save booking summary to store BEFORE updating
+    onSuccess: () => {
       setBookingSummary({
-        orderId: bookingId,
+        orderId: currentBookingId || 'N/A',
         dressName: data?.dressName || 'N/A',
         rentalStartDate: formatDisplayDate(startDate),
         rentalEndDate: formatDisplayDate(endDate),
@@ -234,47 +291,10 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
         size: selectedSize || 'N/A',
       })
 
-      // First update booking with customer details, then proceed to payment
-      updateBooking.mutate(bookingId)
-    },
-    onError: (err: any) => {
-      toast.error(err.message || 'Booking failed', { position: 'bottom-right' })
-    },
-  })
-
-  console.log('bookings summary', bookingSummary)
-
-  // UPDATE BOOKING (new mutation to update address, phone, etc.)
-  const updateBooking = useMutation({
-    mutationFn: async (bookingId: string) => {
-      const updateData = {
-        address: address,
-        phone: phone,
-      }
-
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/customer/bookings/${bookingId}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(updateData),
-        }
-      )
-
-      const responseData = await res.json()
-      if (!res.ok)
-        throw new Error(responseData?.message || 'Failed to update booking')
-      return { bookingId, ...responseData }
-    },
-    onSuccess: () => {
-      // After updating booking, redirect to payment info page
       createCheckout.mutate()
     },
     onError: (err: any) => {
-      toast.error(err.message || 'Failed to update booking details', {
+      toast.error(err.message || 'Failed to update booking', {
         position: 'bottom-right',
       })
     },
@@ -283,23 +303,9 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
   // SAVE PAYMENT INFO (redirect to card info page)
   const createCheckout = useMutation({
     mutationFn: async () => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/payment/savePaymentInfo`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-
-      const responseData = await res.json()
-      if (!res.ok)
-        throw new Error(responseData?.message || 'Failed to save payment info')
-      return responseData
+      return await paymentApi.savePaymentInfo(token!)
     },
-    onSuccess: (res) => {
+    onSuccess: res => {
       const url = res?.data?.url
       if (url) {
         window.location.href = url
@@ -353,7 +359,11 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
   }
 
   const handleConfirmPay = () => {
-    createBookingForPayment.mutate()
+    if (!currentBookingId) {
+      toast.error('No booking ID found. Please try again.')
+      return
+    }
+    updateBookingForPayment.mutate()
   }
 
   const handleRentNow = () => {
@@ -391,7 +401,6 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
       return
     }
 
-    // Create booking (NO payment yet)
     createBookingForRentNow.mutate()
   }
 
@@ -430,12 +439,54 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
               <span>Free</span>
             </div>
           )}
+
+          {appliedPromo && discount > 0 && (
+            <div className="flex items-center justify-between tracking-widest text-green-600">
+              <span className="uppercase text-xs">
+                Discount ({appliedPromo.code})
+              </span>
+              <span>-${discount.toFixed(2)}</span>
+            </div>
+          )}
         </div>
 
         <div className="mt-3">
-          <div className="flex items-center justify-between opacity-75 tracking-widest">
+          <div className="flex items-center justify-between opacity-75 tracking-widest font-semibold">
             <span>Total</span>
-            <span>${total}</span>
+            <span>${total.toFixed(2)}</span>
+          </div>
+        </div>
+
+        {/* PROMO CODE INPUT */}
+        <div className="mt-6">
+          <label className="block text-sm tracking-widest opacity-75 mb-2">
+            Promo Code
+          </label>
+          <div className="flex gap-2">
+            <Input
+              type="text"
+              placeholder="Enter promo code"
+              value={promoCode}
+              onChange={e => setPromoCode(e.target.value.toUpperCase())}
+              disabled={!!appliedPromo || isApplyingPromo}
+              className="flex-1 bg-transparent uppercase tracking-widest text-sm focus:ring-1 focus:ring-black h-10"
+            />
+            {appliedPromo ? (
+              <button
+                onClick={clearPromoCode}
+                className="px-4 py-2 border border-red-700 text-red-700 rounded-sm text-sm tracking-widest uppercase hover:bg-red-50 transition-colors"
+              >
+                Remove
+              </button>
+            ) : (
+              <button
+                onClick={handleApplyPromo}
+                disabled={isApplyingPromo || !promoCode.trim()}
+                className="px-4 py-2 border border-black text-sm tracking-widest uppercase hover:bg-black hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isApplyingPromo ? 'Applying...' : 'Apply'}
+              </button>
+            )}
           </div>
         </div>
 
@@ -450,7 +501,7 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
                 <SelectValue placeholder="Choose a size" />
               </SelectTrigger>
               <SelectContent>
-                {data.sizes.map((size) => (
+                {data.sizes.map(size => (
                   <SelectItem
                     key={size}
                     value={size}
@@ -473,15 +524,11 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
               <button
                 onClick={handleConfirmPay}
                 disabled={
-                  createBookingForPayment.isPending ||
-                  updateBooking.isPending ||
-                  createCheckout.isPending
+                  updateBookingForPayment.isPending || createCheckout.isPending
                 }
                 className="opacity-75 tracking-widest uppercase disabled:opacity-50"
               >
-                {createBookingForPayment.isPending ||
-                updateBooking.isPending ||
-                createCheckout.isPending
+                {updateBookingForPayment.isPending || createCheckout.isPending
                   ? 'Processing...'
                   : 'Confirm & Pay'}
               </button>
