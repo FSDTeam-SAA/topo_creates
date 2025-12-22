@@ -26,7 +26,7 @@ const OrderHistory = () => {
 
   const [page, setPage] = useState(1)
 
-  // ✅ API Call
+  // API Call
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ['customer-bookings', page],
     queryFn: async () => {
@@ -36,7 +36,7 @@ const OrderHistory = () => {
           headers: {
             Authorization: `Bearer ${session?.user?.accessToken}`,
           },
-        }
+        },
       )
       return res.json()
     },
@@ -45,7 +45,7 @@ const OrderHistory = () => {
     refetchOnWindowFocus: false,
   })
 
-  // ✅ Sync Data
+  //  Sync Data
   useEffect(() => {
     if (!data?.data?.bookings) return
 
@@ -55,17 +55,17 @@ const OrderHistory = () => {
       totalData: data.data.paginationInfo.totalData,
     })
 
-    setOrders((prev) => {
+    setOrders(prev => {
       if (page === 1) return data.data.bookings
-      const existingIds = new Set(prev.map((b) => b.id))
+      const existingIds = new Set(prev.map(b => b.id))
       const uniqueNew = data.data.bookings.filter(
-        (b: any) => !existingIds.has(b.id)
+        (b: any) => !existingIds.has(b.id),
       )
       return [...prev, ...uniqueNew]
     })
   }, [data, page])
 
-  // ✅ Prefetch Next Page
+  //  Prefetch Next Page
   useEffect(() => {
     if (!data?.data?.paginationInfo) return
 
@@ -76,12 +76,12 @@ const OrderHistory = () => {
           const res = await fetch(
             `${
               process.env.NEXT_PUBLIC_BACKEND_URL
-            }/api/v1/customer/bookings/all?page=${page + 1}`,
+            }/api/v1/customer/bookings/all?page=${page + 1}&limit=5`,
             {
               headers: {
                 Authorization: `Bearer ${session?.user?.accessToken}`,
               },
-            }
+            },
           )
           return res.json()
         },
@@ -113,6 +113,7 @@ const OrderHistory = () => {
                 {[
                   'Order Date',
                   'Event Date',
+                  'Dress Name',
                   'Payment',
                   'Delivery Status',
                   'Total Cost',
@@ -131,7 +132,7 @@ const OrderHistory = () => {
             <tbody>
               {isLoading && (
                 <tr>
-                  <td colSpan={6} className="text-center py-10 text-gray-500">
+                  <td colSpan={7} className="text-center py-10 text-gray-500">
                     Loading orders...
                   </td>
                 </tr>
@@ -139,30 +140,30 @@ const OrderHistory = () => {
 
               {!isLoading && orders.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="text-center py-10 text-gray-500">
+                  <td colSpan={7} className="text-center py-10 text-gray-500">
                     No bookings found.
                   </td>
                 </tr>
               )}
 
-              {orders.map((order) => {
+              {orders.map(order => {
                 const orderDate = new Date(order.createdAt).toLocaleDateString(
                   'en-US',
                   {
                     month: 'short',
                     day: 'numeric',
                     year: 'numeric',
-                  }
+                  },
                 )
                 const startDate = new Date(
-                  order.rentalStartDate
+                  order.rentalStartDate,
                 ).toLocaleDateString('en-US', {
                   month: 'short',
                   day: 'numeric',
                   year: 'numeric',
                 })
                 const endDate = new Date(
-                  order.rentalEndDate
+                  order.rentalEndDate,
                 ).toLocaleDateString('en-US', {
                   month: 'short',
                   day: 'numeric',
@@ -181,12 +182,20 @@ const OrderHistory = () => {
                     <td className="py-6 px-4 sm:px-6 lg:px-10 text-base text-gray-900 border-r font-light tracking-wide border-gray-300">
                       {orderDate}
                     </td>
+
                     <td className="py-6 px-4 sm:px-6 lg:px-10 text-base font-light tracking-wide text-gray-900 border-r border-gray-300 whitespace-nowrap">
                       {startDate} - {endDate}
                     </td>
+
+                    {/* Dress Name */}
+                    <td className="py-6 px-4 sm:px-6 lg:px-10 font-light tracking-wide text-base text-gray-900 border-r border-gray-300">
+                      {order.dressName || 'N/A'}
+                    </td>
+
                     <td className="py-6 px-4 sm:px-6 lg:px-10 font-light tracking-wide text-base text-gray-900 border-r border-gray-300">
                       {order.paymentStatus}
                     </td>
+
                     <td className="py-6 px-4 sm:px-6 lg:px-10 font-light tracking-wide text-base text-gray-900 border-r border-gray-300">
                       <span
                         className={clsx('px-2 py-1 rounded-full text-xs', {
@@ -200,9 +209,11 @@ const OrderHistory = () => {
                         {order.deliveryStatus}
                       </span>
                     </td>
+
                     <td className="py-6 px-4 sm:px-6 lg:px-10 text-base text-gray-900 border-r border-gray-300 font-light tracking-wide">
                       ${order.totalAmount}
                     </td>
+
                     <td className="py-6 px-4 sm:px-6 lg:px-10 text-base text-gray-900 font-light tracking-wide">
                       <Button
                         variant="link"
@@ -220,7 +231,7 @@ const OrderHistory = () => {
           </table>
         </div>
 
-        {/* ✅ Pagination */}
+        {/*  Pagination */}
         {pagination && orders.length > 0 && (
           <div className="text-center mt-8 md:mt-12">
             <p className="text-gray-600 mb-4">
@@ -229,9 +240,9 @@ const OrderHistory = () => {
 
             {page < pagination.totalPages && (
               <button
-                onClick={() => setPage((prev) => prev + 1)}
+                onClick={() => setPage(prev => prev + 1)}
                 disabled={isFetching}
-                className="inline-block border-b border-black font-light px-6 py-2 text-[14px] uppercase tracking-widest hover:bg-black hover:text-white transition-all"
+                className="inline-block border-b border-black font-light px-6 py-2 text-[14px] uppercase tracking-widest hover:bg-black hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isFetching ? 'Loading...' : 'Load More'}
               </button>
