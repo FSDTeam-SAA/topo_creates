@@ -27,7 +27,7 @@ export function PromoCodeCard({ promo }: PromoCodeCardProps) {
   const isMaxedOut = promo.usedCount >= promo.maxUsage
 
   return (
-    <Card className="p-6 hover:shadow-lg transition-shadow w-full">
+    <Card className="p-6 hover:shadow-lg rounded-sm transition-shadow w-full">
       <div className="space-y-4">
         {/* Code Header */}
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">

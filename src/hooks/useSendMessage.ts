@@ -24,6 +24,7 @@ export const useSendMessage = () => {
       // Only append message if it exists and is not empty
       if (payload.text?.trim()) {
         formData.append('message', payload.text.trim())
+        console.log('messages for test', payload.text)
       }
 
       // Append file if it exists
@@ -47,7 +48,7 @@ export const useSendMessage = () => {
             // Don't set Content-Type for FormData, let browser set it
           },
           body: formData,
-        }
+        },
       )
 
       if (!res.ok) {
@@ -69,7 +70,7 @@ export const useSendMessage = () => {
 
       return result.data
     },
-    onError: (error) => {
+    onError: error => {
       console.error('❌ Error sending message:', error)
     },
   })
