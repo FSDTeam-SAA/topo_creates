@@ -81,9 +81,9 @@ export default function UserPromoCodesPage() {
         {promoCodes.length > 0 ? (
           <>
             <div className="px-6">
-              <h2 className="text-xl font-light tracking-widest mb-4">
+              {/* <h2 className="text-xl font-light tracking-widest mb-4">
                 Available Codes
-              </h2>
+              </h2> */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {promoCodes.map(promo => (
                   <PromoCodeCard key={promo._id} promo={promo} />

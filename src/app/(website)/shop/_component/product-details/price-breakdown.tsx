@@ -467,9 +467,9 @@ const PriceBreakDown = ({ singleProduct }: ShopDetailsProps) => {
               type="text"
               placeholder="Enter promo code"
               value={promoCode}
-              onChange={e => setPromoCode(e.target.value.toUpperCase())}
+              onChange={e => setPromoCode(e.target.value)}
               disabled={!!appliedPromo || isApplyingPromo}
-              className="flex-1 bg-transparent uppercase tracking-widest text-sm focus:ring-1 focus:ring-black h-10"
+              className="flex-1 bg-transparent  tracking-widest text-sm focus:ring-1 focus:ring-black h-10"
             />
             {appliedPromo ? (
               <button
