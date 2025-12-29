@@ -77,7 +77,7 @@ const ProductDetails = () => {
     enabled: !!idOrName,
   })
 
-  // ✅ Handle both response shapes
+  // Handle both response shapes
   const singleProduct = Array.isArray(data?.data) ? data?.data[0] : data?.data
   const productdata = singleProduct
 
