@@ -8,6 +8,8 @@ import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import FindNearDressSection from '../_components/find-near-dress-section'
 import DynamicBanner from '@/components/DynamicBanner'
+import TrendingNow from '@/components/landing-products-page/trending-products-section'
+import TheMuseEdit from '@/components/landing-products-page/muse-edit-page'
 
 export default function Home() {
   // const trendingProducts = getTrendingProducts()
@@ -39,6 +41,10 @@ export default function Home() {
           products={trendingProducts}
         /> */}
 
+        <div className="mb-24">
+          <TrendingNow />
+        </div>
+
         {/* FIND YOUR DRESS NEAR YOUr map */}
         <div className="mt-5">
           <FindNearDressSection />
@@ -50,6 +56,10 @@ export default function Home() {
           subtitle="EXPLORE THE EDIT"
           products={trendingProducts}
         /> */}
+
+        <div>
+          <TheMuseEdit />
+        </div>
 
         <ServiceFeatures />
 
