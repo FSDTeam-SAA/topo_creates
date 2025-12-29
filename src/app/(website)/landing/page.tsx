@@ -1,6 +1,6 @@
 import HowItWork from '@/components/HowItWork'
 // import { ProductGrid } from '@/components/product/product-grid'
-import StyledByYou from '@/components/product/styled_By_You'
+
 import ServiceFeatures from '@/components/ServiceFeatures'
 import { Button } from '@/components/ui/button'
 // import { getTrendingProducts } from '@/data/product-data'
@@ -10,6 +10,7 @@ import FindNearDressSection from '../_components/find-near-dress-section'
 import DynamicBanner from '@/components/DynamicBanner'
 import TrendingNow from '@/components/landing-products-page/trending-products-section'
 import TheMuseEdit from '@/components/landing-products-page/muse-edit-page'
+import StyledByYou from '@/components/section/style-by-you'
 
 export default function Home() {
   // const trendingProducts = getTrendingProducts()
@@ -65,7 +66,9 @@ export default function Home() {
 
         {/* style by you  */}
 
-        <StyledByYou />
+        <div>
+          <StyledByYou />
+        </div>
 
         <div className="container mx-auto  py-8 md:py-12 lg:py-16 space-y-12 md:space-y-24">
           {/* Header */}
