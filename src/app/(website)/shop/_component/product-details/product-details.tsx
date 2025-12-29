@@ -5,9 +5,10 @@ import React from 'react'
 import ShopCard from './shop-card'
 import ShopDetails from './shop-details'
 import { useQuery } from '@tanstack/react-query'
-import StyledByYou from '@/components/product/styled_By_You'
+
 import HowItWork from '@/components/HowItWork'
 import GiveAndTake from '@/components/section/GiveAndTake'
+import StyledByYou from '@/components/section/style-by-you'
 
 // ------------------- TYPES -------------------
 interface ShippingDetails {
@@ -61,7 +62,7 @@ const ProductDetails = () => {
       return `${
         process.env.NEXT_PUBLIC_BACKEND_URL
       }/api/v1/customer/bookings/search?dressName=${encodeURIComponent(
-        idOrName
+        idOrName,
       )}`
     }
   })()
@@ -78,8 +79,7 @@ const ProductDetails = () => {
 
   // ✅ Handle both response shapes
   const singleProduct = Array.isArray(data?.data) ? data?.data[0] : data?.data
-  const productdata= singleProduct
- 
+  const productdata = singleProduct
 
   const thumbnailImage = singleProduct?.thumbnail ?? ''
   const allImages = singleProduct?.media ?? []
