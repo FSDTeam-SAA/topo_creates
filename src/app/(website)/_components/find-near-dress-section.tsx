@@ -1,6 +1,6 @@
-import { cn } from '@/lib/utils'
-import Link from 'next/link'
-import FindNearMap from './find-near-map'
+import { cn } from "@/lib/utils";
+import Link from "next/link";
+import FindNearMap from "./find-near-map";
 
 const FindNearDressSection = () => {
   return (
@@ -8,17 +8,15 @@ const FindNearDressSection = () => {
       {/* Text content section */}
       <div className="flex flex-col justify-center w-full md:w-1/2 mb-8 md:mb-0">
         <div>
-          <h1 className={cn('headerClass underline')}>
-            FIND YOUR DRESS NEAR YOU
-          </h1>
-          <p className="sub-title mb-8">
+          <h1 className={cn("headerClass ")}>FIND YOUR DRESS NEAR YOU</h1>
+          <p className="text-[14px] opacity-75 my-5">
             Discover rentals ready for pick up. Real time availability.
           </p>
           <Link
             href="/find-near-you"
-            className="inline-block border-b border-black px-6 py-2 text-[14px] uppercase tracking-widest hover:bg-black hover:text-white"
+            className="inline-block border-b border-black py-1 text-[14px] uppercase hover:bg-black hover:text-white "
           >
-            EXPLORE NEARBY DRESSES
+            <button className="opacity-80 font-avenir tracking-[0.2rem]">EXPLORE NEARBY DRESSES</button>
           </Link>
         </div>
       </div>
@@ -28,7 +26,7 @@ const FindNearDressSection = () => {
         <FindNearMap />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default FindNearDressSection
+export default FindNearDressSection;

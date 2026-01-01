@@ -87,7 +87,7 @@
   }
 
   .headerClass {
-    @apply text-[18px] md:text-[24px] tracking-[10px] md:tracking-[20px] mb-2 font-avenir;
+    @apply text-[18px] md:text-[28px] tracking-[10px] md:tracking-[20px] mb-2 font-avenir;
   }
   .sub-header {
     @apply font-inter font-light uppercase tracking-[8px] text-[16px];
