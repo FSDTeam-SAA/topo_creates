@@ -31,12 +31,12 @@ const BecomeLender = () => {
         {/* Hero Section */}
         <section className="py-12 text-center">
           <div className="container px-4 md:px-6">
-            <h1 className="mb-6 text-2xl md:text-4xl font-light tracking-[1rem] font-inter">
+            <h1 className="mb-6 text-2xl md:text-4xl font-light tracking-[1rem] font-inter uppercase">
               Partner with Muse Gala
             </h1>
             <Link
               href="/become-lender/form"
-              className="inline-block border-b border-black px-6 py-2 sub-title text-[12px] font-inter hover:bg-black hover:text-white"
+              className="inline-block border-b border-black py-1 sub-title text-[12px] font-inter hover:bg-black hover:text-white"
             >
               Start Listing Today
             </Link>
