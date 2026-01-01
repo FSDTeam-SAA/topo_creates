@@ -51,7 +51,7 @@ const LoginForm = () => {
 
   return (
     <div className="md:col-span-2 md:pr-[50px] lg:pr-[100px] flex flex-col justify-center">
-      <h2 className="text-2xl md:text-[27px] lg:text-3xl font-normal text-black leading-[36px] pb-[25px] md:pb-[35px] lg:pb-[45px] text-right">
+      <h2 className="text-2xl md:text-[27px] font-thin lg:text-3xl text-black leading-[36px] pb-[25px] md:pb-[35px] lg:pb-[45px] text-right uppercase">
         Already part of Muse Club? Log in.
       </h2>
 
@@ -125,13 +125,13 @@ const LoginForm = () => {
       </Form>
 
       {/* Join section */}
-      <h2 className="text-2xl md:text-[27px] lg:text-3xl font-normal text-black leading-[36px] pt-[25px] md:pt-[45px] lg:pt-[60px] text-right">
+      <h2 className="text-2xl md:text-[27px] lg:text-3xl font-thin text-black leading-[36px] pt-[25px] md:pt-[45px] lg:pt-[60px] text-right">
         NEW HERE? JOIN MUSE CLUB
       </h2>
       <div className="w-full flex justify-end items-center pt-[15px] md:pt-[22px] lg:pt-[30px]">
         <Link href="/sign-up">
           <button
-            className="text-base font-normal text-black leading-[20px] border-b border-black py-[10px] uppercase"
+            className="text-base font-thin text-black leading-[20px] border-b border-black py-[10px] uppercase"
             type="button"
           >
             JOIN THE MUSE CLUB
