@@ -16,7 +16,7 @@ const StyledByYou = () => {
     queryKey: ['homepage-sections'],
     queryFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/homepageSections`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/homepageSections`
       )
       return res.json()
     },
@@ -24,7 +24,7 @@ const StyledByYou = () => {
   })
 
   const section = data?.data?.find(
-    item => item.sectionName.toLowerCase() === 'style by you',
+    (item) => item.sectionName.toLowerCase() === 'style by you'
   )
 
   //  only show if active
@@ -36,11 +36,11 @@ const StyledByYou = () => {
     <section className="">
       {/* 🔹 Header */}
       <div className="text-center mb-14">
-        <h2 className="uppercase tracking-[10px]  text-lg md:text-3xl font-light">
+        <h2 className="uppercase tracking-[12px]  text-lg md:text-2xl font-light">
           {section.sectionName}
         </h2>
 
-        <p className="mt-3 text-sm md:text-sm uppercase tracking-widest text-gray-700">
+        <p className="mt-3 text-xs md:text-xs uppercase tracking-widest text-gray-700">
           {section.content}
         </p>
 

@@ -3,7 +3,7 @@
 import type React from 'react'
 
 // Packages
-import { Menu, Search, ShoppingBag, User, X } from 'lucide-react'
+import { Menu, Search, User, X } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -120,7 +120,6 @@ const Navbar = ({ isLoggedin, session }: Props) => {
       pathname === '/become-lender' ||
       pathname.startsWith('/product/') ||
       pathname.startsWith('/shop/') || // ✅ add this
-      pathname === '/checkout' ||
       pathname === '/shop' ||
       pathname === '/account' ||
       pathname === '/about' ||
@@ -295,13 +294,6 @@ const Navbar = ({ isLoggedin, session }: Props) => {
                   </>
                 )}
               </div>
-
-              <Link
-                href="/checkout"
-                className="hover:opacity-70 transition-opacity"
-              >
-                <ShoppingBag size={20} />
-              </Link>
             </div>
 
             {/* Mobile Menu */}

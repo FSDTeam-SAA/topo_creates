@@ -3,20 +3,24 @@ import { create } from 'zustand'
 interface IFilter {
   search: string
   setSearch: (value: string) => void
+
   fourDayRental: boolean
   setFourDayRental: (value: boolean) => void
-  localPickup: number
-  setLocalPickup: (value: number) => void
-  eventDate: string
-  setEventDate: (value: string) => void
+
+  shipping: boolean
+  localPickup: boolean
+  selectShipping: () => void
+  selectLocalPickup: () => void
+
   minPrice: string
   setMinPrice: (value: string) => void
+
   maxPrice: string
   setMaxPrice: (value: string) => void
+
   size: string
   setSize: (value: string) => void
 
-  // Pagination
   page: number
   resetPage: () => void
   nextPage: () => void
@@ -26,8 +30,10 @@ interface IFilter {
 const initialState = {
   search: '',
   fourDayRental: false,
-  localPickup: 2,
-  eventDate: '',
+
+  shipping: true, // ✅ default
+  localPickup: false, // ✅ default
+
   minPrice: '',
   maxPrice: '',
   size: '',
@@ -36,15 +42,29 @@ const initialState = {
 
 export const useFilterStore = create<IFilter>((set) => ({
   ...initialState,
+
   setSearch: (value) => set({ search: value }),
   setFourDayRental: (value) => set({ fourDayRental: value }),
-  setLocalPickup: (value) => set({ localPickup: value }),
-  setEventDate: (value) => set({ eventDate: value }),
+
+  // ✅ radio behavior
+  selectShipping: () =>
+    set({
+      shipping: true,
+      localPickup: false,
+      page: 1,
+    }),
+
+  selectLocalPickup: () =>
+    set({
+      shipping: false,
+      localPickup: true,
+      page: 1,
+    }),
+
   setMinPrice: (value) => set({ minPrice: value }),
   setMaxPrice: (value) => set({ maxPrice: value }),
   setSize: (value) => set({ size: value }),
 
-  // Pagination actions
   resetPage: () => set({ page: 1 }),
   nextPage: () => set((state) => ({ page: state.page + 1 })),
   setPage: (value) => set({ page: value }),

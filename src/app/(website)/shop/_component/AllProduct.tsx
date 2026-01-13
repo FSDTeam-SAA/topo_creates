@@ -11,8 +11,6 @@ import {
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 
-// const LIMIT = 2
-
 const AllProduct = () => {
   const {
     search,
@@ -20,6 +18,8 @@ const AllProduct = () => {
     minPrice,
     maxPrice,
     fourDayRental,
+    shipping,
+    localPickup,
     page,
     nextPage,
     setPage,
@@ -38,7 +38,35 @@ const AllProduct = () => {
   useEffect(() => {
     setPage(1)
     setProducts([])
-  }, [search, size, minPrice, maxPrice, fourDayRental, setPage])
+  }, [
+    search,
+    size,
+    minPrice,
+    maxPrice,
+    fourDayRental,
+    shipping,
+    localPickup,
+    setPage,
+  ])
+
+  // ✅ Build query safely (backend aligned)
+  const buildQuery = (currentPage: number) => {
+    const params = new URLSearchParams()
+
+    if (search) params.append('search', search)
+    if (size) params.append('size', size)
+    if (minPrice) params.append('min', minPrice)
+    if (maxPrice) params.append('max', maxPrice)
+    if (fourDayRental) params.append('fourDaysSelected', 'true')
+
+    // 🔥 IMPORTANT: backend logic
+    if (shipping) params.append('shipping', 'true')
+    if (localPickup) params.append('localPickup', 'true')
+
+    params.append('page', String(currentPage))
+
+    return params.toString()
+  }
 
   const { data, isLoading, isFetching, isSuccess } = useQuery({
     queryKey: [
@@ -48,11 +76,15 @@ const AllProduct = () => {
       minPrice,
       maxPrice,
       fourDayRental,
+      shipping,
+      localPickup,
       page,
     ],
     queryFn: async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin/master-dresses?search=${search}&size=${size}&min=${minPrice}&max=${maxPrice}&fourDaysSelected=${fourDayRental}&page=${page}`
+        `${
+          process.env.NEXT_PUBLIC_BACKEND_URL
+        }/api/v1/admin/master-dresses?${buildQuery(page)}`
       )
       return res.json()
     },
@@ -61,7 +93,7 @@ const AllProduct = () => {
     refetchOnWindowFocus: false,
   })
 
-  // ✅ Sync new data into list
+  // ✅ Sync fetched data
   useEffect(() => {
     if (!data?.data) return
 
@@ -74,7 +106,6 @@ const AllProduct = () => {
     setProducts((prev) => {
       if (page === 1) return data.data
 
-      // ✅ Prevent duplicates
       const existingIds = new Set(prev.map((p) => p._id))
       const uniqueNew = data.data.filter(
         (p: Product) => !existingIds.has(p._id)
@@ -86,32 +117,42 @@ const AllProduct = () => {
 
   // ✅ Prefetch next page
   useEffect(() => {
-    if (!data?.pagination) return
+    if (!pagination) return
+    if (page >= pagination.totalPages) return
 
-    if (page < data.pagination.totalPages) {
-      queryClient.prefetchQuery({
-        queryKey: [
-          'all-products',
-          search,
-          size,
-          minPrice,
-          maxPrice,
-          fourDayRental,
-          page + 1,
-        ],
-        queryFn: async () => {
-          const res = await fetch(
-            `${
-              process.env.NEXT_PUBLIC_BACKEND_URL
-            }/api/v1/admin/master-dresses?search=${search}&size=${size}&min=${minPrice}&max=${maxPrice}&fourDaysSelected=${fourDayRental}&page=${
-              page + 1
-            }`
-          )
-          return res.json()
-        },
-      })
-    }
-  }, [data, page, queryClient, search, size, minPrice, maxPrice, fourDayRental])
+    queryClient.prefetchQuery({
+      queryKey: [
+        'all-products',
+        search,
+        size,
+        minPrice,
+        maxPrice,
+        fourDayRental,
+        shipping,
+        localPickup,
+        page + 1,
+      ],
+      queryFn: async () => {
+        const res = await fetch(
+          `${
+            process.env.NEXT_PUBLIC_BACKEND_URL
+          }/api/v1/admin/master-dresses?${buildQuery(page + 1)}`
+        )
+        return res.json()
+      },
+    })
+  }, [
+    pagination,
+    page,
+    queryClient,
+    search,
+    size,
+    minPrice,
+    maxPrice,
+    fourDayRental,
+    shipping,
+    localPickup,
+  ])
 
   return (
     <div>
@@ -148,7 +189,7 @@ const AllProduct = () => {
         </div>
       )}
 
-      {/* ✅ Pagination Info */}
+      {/* ✅ Pagination */}
       {pagination && products.length > 0 && (
         <div className="text-center mt-8 md:mt-12 lg:mt-16">
           <p className="text-gray-600 mb-4">
@@ -158,7 +199,7 @@ const AllProduct = () => {
 
           {page < pagination.totalPages && (
             <button
-              onClick={() => nextPage()}
+              onClick={nextPage}
               disabled={isFetching}
               className="inline-block border-b border-black font-light px-6 py-2 text-[14px] uppercase tracking-widest hover:bg-black hover:text-white transition-all"
             >
@@ -168,7 +209,7 @@ const AllProduct = () => {
         </div>
       )}
 
-      {/* ✅ Loader while loading next page */}
+      {/* ✅ Loader for next page */}
       {isFetching && page > 1 && (
         <div className="flex justify-center mt-8">
           <div className="flex gap-2">
