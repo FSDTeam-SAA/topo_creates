@@ -17,6 +17,6 @@ export async function middleware(req: NextRequest) {
 
 // Match the exact route or paths you want to protect
 export const config = {
-  matcher: ["/account"],
+  matcher: ["/account/:path*"],
 };
 
