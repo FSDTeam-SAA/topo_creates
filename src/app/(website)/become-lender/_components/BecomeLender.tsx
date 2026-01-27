@@ -31,12 +31,12 @@ const BecomeLender = () => {
         {/* Hero Section */}
         <section className="py-12 text-center">
           <div className="container px-4 md:px-6">
-            <h1 className="mb-6 text-2xl md:text-4xl font-light tracking-[1rem] font-inter uppercase">
+            <h1 className="brand-header mb-6">
               Partner with Muse Gala
             </h1>
             <Link
               href="/become-lender/form"
-              className="inline-block border-b border-black py-1 sub-title text-[12px] font-inter hover:bg-black hover:text-white"
+              className="inline-block border-b border-black py-1 brand-button hover:bg-black hover:text-white"
             >
               Start Listing Today
             </Link>
@@ -56,10 +56,10 @@ const BecomeLender = () => {
                     height={64}
                   />
                 </div>
-                <h3 className="mb-2 text-[16px] font-inter uppercase tracking-widest">
+                <h3 className="brand-subheader mb-2">
                   Trusted Platform
                 </h3>
-                <p className="text-[13px] text-gray-600">
+                <p className="brand-body text-gray-600">
                   List your dresses on a platform <br /> trusted by thousands of
                   renters.
                 </p>
@@ -74,10 +74,10 @@ const BecomeLender = () => {
                     height={64}
                   />
                 </div>
-                <h3 className="mb-2 text-[16px] font-inter uppercase tracking-widest">
+                <h3 className="brand-subheader mb-2">
                   Wider Audience
                 </h3>
-                <p className="text-[13px] text-gray-600">
+                <p className="brand-body text-gray-600">
                   Expand your reach and <br /> get more bookings.
                 </p>
               </div>
@@ -91,10 +91,10 @@ const BecomeLender = () => {
                     height={64}
                   />
                 </div>
-                <h3 className="mb-2 text-[16px] font-inter uppercase tracking-widest">
+                <h3 className="brand-subheader mb-2">
                   Seamless Management
                 </h3>
-                <p className="text-[13px] text-gray-600">
+                <p className="brand-body text-gray-600">
                   Manage rentals <br /> with our intuitive tools and support.
                 </p>
               </div>
@@ -105,10 +105,10 @@ const BecomeLender = () => {
         {/* What You Can Expect */}
         <section className="py-12 text-center md:py-16">
           <div className="container px-4 md:px-6">
-            <h2 className="mb-5  text-3xl font-normal uppercase tracking-widest  sub-title">
+            <h2 className="brand-subheader mb-5 text-center">
               What You Can Expect
             </h2>
-            <div className="mx-auto text-[12px] space-y-3">
+            <div className="mx-auto brand-body space-y-3">
               <p className="">
                 • 80% of listings receive a booking within the first 30 days.
               </p>
@@ -127,7 +127,7 @@ const BecomeLender = () => {
         {/* How It Works */}
         <section className="py-12 md:py-16">
           <div className="container px-4 md:px-6">
-            <h2 className="mb-10 text-center font-normal uppercase tracking-widest  sub-title">
+            <h2 className="brand-subheader mb-10 text-center">
               How It Works
             </h2>
             <div className="mx-auto max-w-2xl space-y-8">
@@ -136,8 +136,8 @@ const BecomeLender = () => {
                   <span>1</span>
                 </div>
                 <div>
-                  <h3 className="mb-1 text-[16px] font-medium">Sign Up</h3>
-                  <p className="text-[14px] text-gray-600">
+                  <h3 className="brand-subheader mb-1">Sign Up</h3>
+                  <p className="brand-body text-gray-600">
                     Create your lender account with your business details.
                   </p>
                 </div>
@@ -148,10 +148,10 @@ const BecomeLender = () => {
                   <span>2</span>
                 </div>
                 <div>
-                  <h3 className="mb-1 text-[16px] font-medium">
+                  <h3 className="brand-subheader mb-1">
                     List Your Dresses
                   </h3>
-                  <p className="text-[14px] text-gray-600">
+                  <p className="brand-body text-gray-600">
                     Upload your inventory with photos, descriptions, and
                     availability.
                   </p>
@@ -163,10 +163,10 @@ const BecomeLender = () => {
                   <span>3</span>
                 </div>
                 <div>
-                  <h3 className="mb-1 text-[16px] font-medium">
+                  <h3 className="brand-subheader mb-1">
                     Manage Rentals
                   </h3>
-                  <p className="text-[14px] text-gray-600">
+                  <p className="brand-body text-gray-600">
                     Track bookings, communicate with renters, and receive
                     payment seamlessly.
                   </p>
@@ -179,7 +179,7 @@ const BecomeLender = () => {
         {/* Support You Can Count On */}
         <section className="py-12 md:py-16">
           <div className="container ">
-            <h2 className="mb-10 text-center  font-normal uppercase tracking-widest  sub-title">
+            <h2 className="brand-subheader mb-10 text-center">
               Support You Can Count On
             </h2>
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
@@ -192,10 +192,10 @@ const BecomeLender = () => {
                     height={54}
                   />
                 </div>
-                <h3 className="mb-2 text-[17px] uppercase tracking-widest">
+                <h3 className="brand-subheader mb-2">
                   Dedicated Support
                 </h3>
-                <p className="text-[15px] text-gray-600">
+                <p className="brand-body text-gray-600">
                   Our team is here to help you every step from onboarding to
                   daily operations.
                 </p>
@@ -210,10 +210,10 @@ const BecomeLender = () => {
                     height={54}
                   />
                 </div>
-                <h3 className="mb-2 text-[17px] uppercase tracking-widest">
+                <h3 className="brand-subheader mb-2">
                   Insurance Coverage
                 </h3>
-                <p className="text-[15px] text-gray-600">
+                <p className="brand-body text-gray-600">
                   Optional insurance coverage to protect your dresses against
                   minor accidents.
                 </p>
@@ -228,10 +228,10 @@ const BecomeLender = () => {
                     height={64}
                   />
                 </div>
-                <h3 className="mb-2 text-[17px] uppercase tracking-widest">
+                <h3 className="brand-subheader mb-2">
                   Dispute Handling
                 </h3>
-                <p className="text-[15px] text-gray-600">
+                <p className="brand-body text-gray-600">
                   We manage disputes and ensure you don&apos;t lose out on
                   getting paid what&apos;s owed.
                 </p>
@@ -246,10 +246,10 @@ const BecomeLender = () => {
                     height={64}
                   />
                 </div>
-                <h3 className="mb-2 text-[17px] uppercase tracking-widest">
+                <h3 className="brand-subheader mb-2">
                   Secure Payments
                 </h3>
-                <p className="text-[15px] text-gray-600">
+                <p className="brand-body text-gray-600">
                   Reliable payment processing so you get paid fast and securely
                   after each rental.
                 </p>
@@ -264,7 +264,7 @@ const BecomeLender = () => {
         {/* Plan Comparison */}
         <section className="overflow-x-auto py-12 md:py-16">
           <div className="container ">
-            <h2 className="mb-10 text-center  font-normal uppercase tracking-widest sub-title">
+            <h2 className="brand-subheader mb-10 text-center">
               Plan Comparison
             </h2>
 
@@ -273,13 +273,13 @@ const BecomeLender = () => {
                 <thead>
                   <tr className="">
                     <th className="py-4 text-left text-lg font-normal"></th>
-                    <th className="py-4 text-center text-lg font-normal uppercase">
+                    <th className="py-4 text-center brand-subheader">
                       Founder&apos;s Collective
                     </th>
-                    <th className="py-4 text-center text-lg font-normal uppercase">
+                    <th className="py-4 text-center brand-subheader">
                       Signature
                     </th>
-                    <th className="py-4 text-center text-lg font-normal uppercase">
+                    <th className="py-4 text-center brand-subheader">
                       Vault Society
                     </th>
                   </tr>
@@ -289,13 +289,13 @@ const BecomeLender = () => {
                     <td className="py-4 text-left text-[15px] font-medium">
                       Perfect For
                     </td>
-                    <td className="py-4 text-center text-[14px]">
+                    <td className="py-4 text-center brand-body">
                       Early boutique getting started
                     </td>
-                    <td className="py-4 text-center text-[14px]">
+                    <td className="py-4 text-center brand-body">
                       Growing to mid-sized boutique
                     </td>
-                    <td className="py-4 text-center text-[14px]">
+                    <td className="py-4 text-center brand-body">
                       Premium, high-volume boutiques
                     </td>
                   </tr>
@@ -303,27 +303,27 @@ const BecomeLender = () => {
                     <td className="py-4 text-left text-[15px] font-medium">
                       Monthly Fee
                     </td>
-                    <td className="py-4 text-center text-[14px]">
+                    <td className="py-4 text-center brand-body">
                       Free (first 3 months)
                     </td>
-                    <td className="py-4 text-center text-[14px]">$49/month</td>
-                    <td className="py-4 text-center text-[14px]">$129/month</td>
+                    <td className="py-4 text-center brand-body">$49/month</td>
+                    <td className="py-4 text-center brand-body">$129/month</td>
                   </tr>
                   <tr className="">
                     <td className="py-4 text-left text-[15px] font-medium">
                       Commission
                     </td>
-                    <td className="py-4 text-center text-[14px]">0%</td>
-                    <td className="py-4 text-center text-[14px]">10%</td>
-                    <td className="py-4 text-center text-[14px]">5%</td>
+                    <td className="py-4 text-center brand-body">0%</td>
+                    <td className="py-4 text-center brand-body">10%</td>
+                    <td className="py-4 text-center brand-body">5%</td>
                   </tr>
                   <tr className="">
                     <td className="py-4 text-left text-[15px] font-medium">
                       Return Shipping
                     </td>
-                    <td className="py-4 text-center text-[14px]">✕</td>
-                    <td className="py-4 text-center text-[14px]">✕</td>
-                    <td className="py-4 text-center text-[14px]">
+                    <td className="py-4 text-center brand-body">✕</td>
+                    <td className="py-4 text-center brand-body">✕</td>
+                    <td className="py-4 text-center brand-body">
                       Covered by Muse Gala
                     </td>
                   </tr>
@@ -331,11 +331,11 @@ const BecomeLender = () => {
                     <td className="py-4 text-left text-[15px] font-medium">
                       Events
                     </td>
-                    <td className="py-4 text-center text-[14px]">✕</td>
-                    <td className="py-4 text-center text-[14px]">
+                    <td className="py-4 text-center brand-body">✕</td>
+                    <td className="py-4 text-center brand-body">
                       Invite Based
                     </td>
-                    <td className="py-4 text-center text-[14px]">
+                    <td className="py-4 text-center brand-body">
                       Guaranteed Invite
                     </td>
                   </tr>
@@ -348,17 +348,17 @@ const BecomeLender = () => {
         {/* List With Muse Gala */}
         <section className="py-12 text-center md:py-12 mb-5 md:mb-10">
           <div className="container px-4 md:px-6">
-            <h2 className="mb-4 text-2xl font-normal uppercase tracking-widest headerClass">
+            <h2 className="brand-header mb-4">
               List With Muse Gala
             </h2>
-            <p className="mb-8  sub-title max-w-3xl mx-auto text-gray-600">
+            <p className="brand-body mb-8 max-w-3xl mx-auto text-gray-600">
               No listing fees. No hidden costs. Just more exposure, more
               rentals, and a seamless dashboard.
             </p>
             <button
               // href="/become-lender/form"
               onClick={handleClick}
-              className="inline-block border-b border-black font-light px-6 py-2 text-[14px] uppercase tracking-widest text-base hover:bg-black hover:text-white"
+              className="inline-block border-b border-black py-2 brand-button hover:bg-black hover:text-white"
             >
               Become A Lender
             </button>
