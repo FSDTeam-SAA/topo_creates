@@ -149,15 +149,14 @@ const Navbar = ({ isLoggedin, session }: Props) => {
   return (
     <>
       <div
-        className={`fixed top-0 z-50 min-w-full py-3 transition duration-300 ${
-          scrolling ? 'bg-white' : isHomePage ? '' : 'bg-transparent mt-0'
-        }`}
+        className={`fixed top-0 z-50 min-w-full py-3 transition duration-300 ${scrolling ? 'bg-white' : isHomePage ? '' : 'bg-transparent mt-0'
+          }`}
       >
         <div className="container mx-auto">
           <div className="flex justify-between items-center">
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center md:gap-x-2 lg:gap-x-0">
-              {menus.map((menu) => (
+              {menus.filter(m => m.id !== 5).map((menu) => (
                 <Button
                   key={menu.id}
                   variant="link"
@@ -167,9 +166,8 @@ const Navbar = ({ isLoggedin, session }: Props) => {
                 >
                   <Link
                     href={menu.href}
-                    className={`${
-                      pathname === menu.href ? 'font-normal' : 'font-light'
-                    } leading-[20px] tracking-[0.1em]`}
+                    className={`${pathname === menu.href ? 'font-normal' : 'font-light'
+                      } leading-[20px] tracking-[0.1em]`}
                   >
                     {menu.linkText}
                   </Link>
@@ -178,16 +176,16 @@ const Navbar = ({ isLoggedin, session }: Props) => {
 
               <div className="flex-shrink-0">
                 {scrolling ||
-                pathname === '/account' ||
-                pathname.startsWith('/product/') ||
-                pathname.startsWith('/shop/') || // ✅ add this
-                pathname === '/login' ||
-                pathname === '/checkout' ||
-                pathname === '/become-lender' ||
-                pathname === '/shop' ||
-                pathname === '/about' ||
-                pathname === '/how-it-works' ||
-                pathname === '/find-near-you' ? (
+                  pathname === '/account' ||
+                  pathname.startsWith('/product/') ||
+                  pathname.startsWith('/shop/') || // ✅ add this
+                  pathname === '/login' ||
+                  pathname === '/checkout' ||
+                  pathname === '/become-lender' ||
+                  pathname === '/shop' ||
+                  pathname === '/about' ||
+                  pathname === '/how-it-works' ||
+                  pathname === '/find-near-you' ? (
                   <Image
                     src="/logo-black.svg"
                     height={60}
@@ -220,6 +218,12 @@ const Navbar = ({ isLoggedin, session }: Props) => {
 
             {/* Desktop Actions */}
             <div className={`${getTextColor()} flex gap-[30px] items-center`}>
+              <Link
+                href="/become-lender"
+                className="brand-button text-[14px] !tracking-[2px] hover:opacity-70 transition-opacity whitespace-nowrap hidden lg:block"
+              >
+                BECOME A LENDER
+              </Link>
               <div className="relative" ref={searchRef}>
                 <Search
                   className="cursor-pointer hover:opacity-70 transition-opacity"
@@ -311,11 +315,10 @@ const Navbar = ({ isLoggedin, session }: Props) => {
                         <Link
                           key={menu.id}
                           href={menu.href}
-                          className={`${
-                            pathname === menu.href
-                              ? 'font-semibold'
-                              : 'font-light'
-                          } text-lg hover:text-gray-600 transition-colors`}
+                          className={`${pathname === menu.href
+                            ? 'font-semibold'
+                            : 'font-light'
+                            } text-lg hover:text-gray-600 transition-colors`}
                         >
                           <SheetClose>{menu.linkText}</SheetClose>
                         </Link>
