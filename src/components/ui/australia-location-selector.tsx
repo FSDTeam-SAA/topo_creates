@@ -341,7 +341,7 @@ export default function AustraliaLocationSelector({
 
   return (
     <div className={`w-full relative space-y-4 ${className}`}>
-      <div className="flex gap-2 relative">
+      <div className="flex flex-col sm:flex-row gap-2 relative">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
@@ -350,7 +350,7 @@ export default function AustraliaLocationSelector({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => searchResults.length > 0 && setShowResults(true)}
-            className="pl-10 pr-10"
+            className="pl-10 pr-10 text-sm sm:text-base"
           />
           {searchQuery && (
             <Button
@@ -373,10 +373,11 @@ export default function AustraliaLocationSelector({
             size="default"
             onClick={getCurrentLocation}
             disabled={isGettingLocation}
-            className="flex items-center gap-2 bg-transparent"
+            className="flex items-center justify-center gap-2 bg-transparent brand-button w-full sm:w-auto whitespace-nowrap"
           >
             <Navigation className="h-4 w-4" />
-            {isGettingLocation ? 'Getting...' : 'My Location'}
+            <span className="hidden sm:inline">{isGettingLocation ? 'Getting...' : 'My Location'}</span>
+            <span className="sm:hidden">{isGettingLocation ? 'Getting...' : 'My Location'}</span>
           </Button>
         )}
       </div>

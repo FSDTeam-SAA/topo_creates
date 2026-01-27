@@ -6,6 +6,7 @@
   .text-balance {
     text-wrap: balance;
   }
+
   .animate-fadeIn {
     animation: fadeIn 0.3s ease-in-out;
   }
@@ -16,6 +17,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -50,6 +52,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -82,6 +85,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -89,6 +93,7 @@
   .headerClass {
     @apply text-[18px] md:text-[28px] tracking-[10px] md:tracking-[20px] mb-2 font-avenir;
   }
+
   .sub-header {
     @apply font-inter font-light uppercase tracking-[8px] text-[16px];
   }
@@ -123,4 +128,53 @@
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+@layer base {
+  .avenir-arabic-light {
+    font-family: var(--font-avenir-arabic);
+    font-weight: 300;
+  }
+
+  .avenir-arabic-header {
+    font-family: var(--font-avenir-arabic);
+    font-weight: 300;
+    font-size: 24px;
+    letter-spacing: 20px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  /* Brand Typography Classes */
+  .brand-header {
+    font-family: var(--font-avenir-arabic);
+    font-weight: 300;
+    font-size: 24px;
+    letter-spacing: 20px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .brand-subheader {
+    font-family: var(--font-avenir);
+    font-weight: 400;
+    font-size: 16px;
+    letter-spacing: 10px;
+    text-transform: uppercase;
+  }
+
+  .brand-body {
+    font-family: var(--font-avenir);
+    font-weight: 400;
+    font-size: 12px;
+    letter-spacing: 0;
+  }
+
+  .brand-button {
+    font-family: var(--font-avenir);
+    font-weight: 400;
+    font-size: 14px;
+    letter-spacing: 10px;
+    text-transform: uppercase;
+  }
 }

@@ -17,8 +17,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* CUSTOMER SECTION */}
           <div className="space-y-4">
-            <h3 className="text-[18px] font-medium tracking-wider">CUSTOMER</h3>
-            <nav className="flex flex-col space-y-2 text-[14px]">
+            <h3 className="brand-subheader">CUSTOMER</h3>
+            <nav className="flex flex-col space-y-2 brand-body">
               <Link
                 href="/how-it-works/#faq"
                 className="text-gray-600 hover:text-gray-900"
@@ -27,7 +27,7 @@ const Footer = () => {
               </Link>
               <Link
                 href="/how-it-works"
-                className="text-gray-600 avenir-text hover:text-gray-900"
+                className="text-gray-600 hover:text-gray-900"
               >
                 How It Works
               </Link>
@@ -60,8 +60,8 @@ const Footer = () => {
 
           {/* LENDERS SECTION */}
           <div className="space-y-4">
-            <h3 className="text-[18px] font-medium tracking-wider">LENDERS</h3>
-            <nav className="flex flex-col space-y-2 text-[14px]">
+            <h3 className="brand-subheader">LENDERS</h3>
+            <nav className="flex flex-col space-y-2 brand-body">
               <Link
                 href="/become-lender"
                 className="text-gray-600 hover:text-gray-900"
@@ -90,8 +90,8 @@ const Footer = () => {
 
           {/* COMPANY SECTION */}
           <div className="space-y-4">
-            <h3 className="text-[18px] font-medium tracking-wider">COMPANY</h3>
-            <nav className="flex flex-col space-y-2 text-[14px]">
+            <h3 className="brand-subheader">COMPANY</h3>
+            <nav className="flex flex-col space-y-2 brand-body">
               <Link href="/about" className="text-gray-600 hover:text-gray-900">
                 About
               </Link>
@@ -125,7 +125,7 @@ const Footer = () => {
 
           {/* STAY CONNECTED SECTION */}
           <div className="space-y-4">
-            <h3 className="text-[18px] font-medium tracking-wider">
+            <h3 className="brand-subheader">
               STAY CONNECTED
             </h3>
             <div className="flex space-x-4 ">
@@ -152,14 +152,14 @@ const Footer = () => {
               </Link>
             </div>
             <div className="space-y-2">
-              <p className="text-gray-600 text-[15px]">
+              <p className="brand-body text-gray-600">
                 Subscribe to our newsletter
               </p>
               <div className="flex relative flex-col sm:flex-row justify-center items-center max-w-md mx-auto">
                 <input
                   type="email"
                   placeholder="Email@example.com"
-                  className="border  border-t-0 border-l-0 border-r-0 border-[#000000] text-[14px]  px-2 py-[10px] mb-4 sm:mb-0 sm:flex-1 outline-none"
+                  className="border brand-body border-t-0 border-l-0 border-r-0 border-[#000000] px-2 py-[10px] mb-4 sm:mb-0 sm:flex-1 outline-none"
                 />
                 <Button
                   variant="ghost"
@@ -169,7 +169,7 @@ const Footer = () => {
                   <ArrowRight className="h-5 w-6" />
                 </Button>
               </div>
-              <p className="text-[12px] text-gray-500">
+              <p className="brand-body text-gray-500">
                 By subscribing, you agree to our{' '}
                 <Link href="#" className="text-gray-700 hover:underline">
                   Privacy Policy
@@ -225,13 +225,13 @@ const Footer = () => {
               />
             </div>
             <div className="flex items-center space-x-2">
-              <span className="text-[16px] font-light">MUSE GALA</span>
+              <span className="brand-subheader">MUSE GALA</span>
             </div>
           </div>
           <div></div>
         </div>
       </div>
-      <p className="text-center border-t border-gray-600  py-4 text-[14px]">
+      <p className="text-center border-t border-gray-600 py-4 brand-body">
         © MUSE GALA 2025
       </p>
     </footer>

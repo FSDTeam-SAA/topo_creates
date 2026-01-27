@@ -43,23 +43,23 @@ export default function MapProductCard({
         <div className="w-full relative">
           <div className="w-full flex flex-col md:flex-row items-start md:items-center">
             <div className="flex-1 ">
-              <h3 className="text-sm md:text-base lg:text-lg font-light text-black leading-[25px] md:leading-[30px] lg:leading-[36px] uppercase tracking-[0.10rem]">
+              <h3 className="brand-subheader text-black leading-[25px] md:leading-[30px] lg:leading-[36px]">
                 {name}
               </h3>
               {/* <p className="text-sm md:text-base lg:text-lg font-light text-black leading-[20px] md:leading-[24px] lg:leading-[28px] tracking-[0.15rem] py-[12px] md:py-[14px] lg:py-[16px]">
                 {brand}
               </p> */}
-              <p className="text-sm md:text-base lg:text-lg font-light text-black leading-[20px] md:leading-[24px] lg:leading-[28px] tracking-[0.15rem] py-[12px] md:py-[14px] lg:py-[16px]">
+              <p className="brand-body text-black leading-[20px] md:leading-[24px] lg:leading-[28px] py-[12px] md:py-[14px] lg:py-[16px]">
                 {category}
               </p>
-              <p className="text-sm md:text-base lg:text-lg font-light text-black leading-[20px] md:leading-[22px] lg:leading-[24px] tracking-[0rem]">
+              <p className="brand-body text-black leading-[20px] md:leading-[22px] lg:leading-[24px]">
                 Size: {size}
               </p>
               <div className="flex flex-col md:flex-row items-start md:items-center gap-[10px] md:gap-[13px] lg:gap-[15px] py-[12px] md:py-[14px] lg:py-[16px]">
                 {shipping && (
                   <div className="flex items-center gap-[10px] md:gap-[13px] lg:gap-[15px]">
                     <Truck width={25} height={20} />
-                    <span className="text-sm md:text-base font-light text-black leading-[20px] tracking-[0.20rem] uppercase">
+                    <span className="brand-body text-black leading-[20px]">
                       SHIPPING
                     </span>
                   </div>
@@ -68,20 +68,20 @@ export default function MapProductCard({
                 {pickup && (
                   <div className="flex items-center gap-[10px] md:gap-[13px] lg:gap-[15px]">
                     <MapPin className="w-[17px] h-[20px]" />
-                    <span className="text-base font-normal text-black leading-[20px] tracking-[0.20rem] uppercase">
+                    <span className="brand-body text-black leading-[20px]">
                       PICKUP
                     </span>
                   </div>
                 )}
               </div>
-              <p className="text-lg md:text-xl lg:text-[24px] text-black font-normal leading-[120%]">
+              <p className="brand-body text-black leading-[120%]">
                 {description}
               </p>
             </div>
 
             <Link href={`/shop/${encodeURIComponent(name ?? '')}`}>
               <div className="hidden md:block">
-                <button className="inline-block border-b border-black font-light px-6 py-2 text-[14px] uppercase tracking-widest text-base hover:bg-black hover:text-white">
+                <button className="inline-block border-b border-black brand-button px-6 py-2 hover:bg-black hover:text-white">
                   BOOK NOW
                 </button>
               </div>
@@ -91,16 +91,15 @@ export default function MapProductCard({
             className={`hidden md:block w-full absolute -bottom-3 border-b border-black `}
           />
           <div
-            className={`block md:hidden w-full absolute border-b border-black ${
-              pickup && shipping ? '-bottom-2' : '-bottom-6'
-            }`}
+            className={`block md:hidden w-full absolute border-b border-black ${pickup && shipping ? '-bottom-2' : '-bottom-6'
+              }`}
           />
         </div>
       </div>
       <div className="block md:hidden pb-[25px]">
         <Link href={`/shop/${id}`}>
           <div className="w-full flex items-center justify-center">
-            <button className="w-full my-4 rounded-md bg-black font-light text-white py-2 text-base md:text-lg uppercase tracking-[0.2043m]">
+            <button className="w-full my-4 rounded-md bg-black brand-button text-white py-2">
               BOOK NOW
             </button>
           </div>

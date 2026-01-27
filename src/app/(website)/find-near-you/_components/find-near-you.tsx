@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { Filter, ChevronDown, ChevronUp, Map, AlertCircle } from 'lucide-react'
+import { Filter, ChevronDown, ChevronUp, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import { Label } from '@/components/ui/label'
@@ -45,7 +45,6 @@ export default function FindNearYou() {
   } = useFindNearYouStore()
 
   // UI
-  const [showMap, setShowMap] = useState(true)
   const [showFilters, setShowFilters] = useState(false)
   const mapboxtoken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
 
@@ -65,8 +64,7 @@ export default function FindNearYou() {
     if (maxPrice) queryParams.append('maxPrice', maxPrice)
 
     const res = await fetch(
-      `${
-        process.env.NEXT_PUBLIC_BACKEND_URL
+      `${process.env.NEXT_PUBLIC_BACKEND_URL
       }/api/v1/admin/?${queryParams.toString()}`
     )
     if (!res.ok) throw new Error('Failed to fetch products')
@@ -131,10 +129,10 @@ export default function FindNearYou() {
 
   return (
     <section className="container mx-auto py-12">
-      <h1 className="text-center  text-[32px]  md:text-[40px] lg:text-[56px] uppercase font-light tracking-[5px] lg:tracking-[.4em] mb-6 md:mb-10 font-inter">
+      <h1 className="brand-header mb-5">
         Find Near You
       </h1>
-      <p className="text-center text-lg md:text-xl lg:text-2xl font-light tracking-[3px] lg:tracking-[10px] mb-8 font-inter">
+      <p className="brand-subheader text-center mb-10">
         FIND YOUR DRESS NEAR YOU FOR LOCAL PICK UP
       </p>
 
@@ -142,16 +140,8 @@ export default function FindNearYou() {
       <div className="flex items-center justify-center gap-4 mb-6">
         <Button
           variant="outline"
-          onClick={() => setShowMap(!showMap)}
-          className="flex items-center gap-2 font-light tracking-[.08em]"
-        >
-          <Map size={16} />
-          {showMap ? 'Hide Search Bar' : 'Show Search Bar'}
-        </Button>
-        <Button
-          variant="outline"
           onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center gap-2 font-light tracking-[.08em]"
+          className="flex items-center gap-2 brand-button"
         >
           <Filter size={16} />
           Filters{' '}
@@ -160,49 +150,46 @@ export default function FindNearYou() {
       </div>
 
       {/* Location Selector */}
-      {showMap && (
-        <div className="mb-6">
-          <AustraliaLocationSelector
-            accessToken={mapboxtoken || ''}
-            initialLocation={
-              selectedLocation
-                ? {
-                    latitude: selectedLocation.latitude,
-                    longitude: selectedLocation.longitude,
-                    placeName: selectedLocation.placeName,
-                    address: selectedLocation.placeName,
-                    country: 'Australia', //required field fix
-                    precision: 'exact',
-                  }
-                : undefined
-            }
-            onLocationSelect={(data) => {
-              setState({
-                selectedLocation: {
-                  latitude: data.latitude,
-                  longitude: data.longitude,
-                  placeName: data.placeName,
-                },
-              })
-            }}
-            placeholder="Search for your location..."
-            mapHeight="300px"
-          />
-          <div className="mt-6 text-center w-full">
-            <Button
-              className="inline-block border-b border-black font-light px-6 py-2 text-[14px] uppercase tracking-widest text-lg md:text-xl hover:bg-black hover:text-white"
-              variant="outline"
-              onClick={handleSearchNearYou}
-            >
-              Search Near You
-            </Button>
-          </div>
+      <div className="mb-6">
+        <AustraliaLocationSelector
+          accessToken={mapboxtoken || ''}
+          initialLocation={
+            selectedLocation
+              ? {
+                latitude: selectedLocation.latitude,
+                longitude: selectedLocation.longitude,
+                placeName: selectedLocation.placeName,
+                address: selectedLocation.placeName,
+                country: 'Australia', //required field fix
+                precision: 'exact',
+              }
+              : undefined
+          }
+          onLocationSelect={(data) => {
+            setState({
+              selectedLocation: {
+                latitude: data.latitude,
+                longitude: data.longitude,
+                placeName: data.placeName,
+              },
+            })
+          }}
+          placeholder="Search for your location..."
+          mapHeight="300px"
+        />
+        <div className="mt-6 text-center w-full">
+          <button
+            className="inline-block border-b border-black brand-button py-2 hover:bg-black hover:text-white cursor-pointer"
+            onClick={handleSearchNearYou}
+          >
+            Search Near You
+          </button>
         </div>
-      )}
+      </div>
       {/* Radius Slider */}
       <div className="mb-6">
-        <p className="font-light tracking-[.05em] mb-2">
-          Radius: <span className="font-light">{radius} km</span>
+        <p className="brand-body mb-2">
+          Radius: <span className="brand-body">{radius} km</span>
         </p>
         <Slider
           value={[radius]}
@@ -216,13 +203,13 @@ export default function FindNearYou() {
       {/* Filters */}
       {showFilters && (
         <div className="mb-6 p-4 border rounded-lg shadow-sm bg-white">
-          <p className="font-light tracking-[.08em] text-xl mb-4">
+          <p className="brand-subheader mb-4">
             Filter Options
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-[30px] md:gap-[45px] lg:gap-[60px]">
             {/* Size */}
             <div>
-              <Label className="text-lg text-black font-thin">Size</Label>
+              <Label className="brand-body text-black">Size</Label>
               <Select
                 value={size || 'CLEAR'} // default empty value
                 onValueChange={(val) =>
@@ -245,7 +232,7 @@ export default function FindNearYou() {
 
             {/* Category */}
             <div>
-              <Label className="text-lg text-black font-thin">Category</Label>
+              <Label className="brand-body text-black">Category</Label>
               <Select
                 value={category}
                 onValueChange={(val) =>
@@ -269,7 +256,7 @@ export default function FindNearYou() {
             {/* Price Range */}
             <div className="w-full flex items-end gap-4">
               <div className="w-full">
-                <Label className="text-lg text-black font-thin">
+                <Label className="brand-body text-black">
                   Price Range
                 </Label>
                 <div className="flex items-center gap-2 border-b border-black pb-4">
@@ -293,7 +280,7 @@ export default function FindNearYou() {
           <div className="mt-6 text-center">
             <Button
               variant="outline"
-              className="inline-block border-b border-black px-6 py-2 text-[14px] font-light uppercase tracking-widest hover:bg-black hover:text-white"
+              className="inline-block border-b border-black px-6 py-2 brand-button hover:bg-black hover:text-white"
               onClick={handleApplyFilters}
             >
               Apply Filters
@@ -317,6 +304,7 @@ export default function FindNearYou() {
                 variant="outline"
                 onClick={nextPage}
                 disabled={isFetching}
+                className="brand-button"
               >
                 {isFetching ? 'Loading...' : 'Load More'}
               </Button>
@@ -349,10 +337,10 @@ export default function FindNearYou() {
       {!isMapPage && !isFetching && !isError && !selectedLocation && (
         <div className="mt-16 text-center space-y-5">
           <AlertCircle className="mx-auto mb-3 text-gray-400 size-24" />
-          <h3 className="text-lg md:text-xl lg:text-2xl font-medium text-gray-700">
+          <h3 className="brand-subheader text-gray-700">
             Start by Selecting a Location
           </h3>
-          <p className="text-gray-500 mt-1 font-light">
+          <p className="brand-body text-gray-500 mt-1">
             Use the map above to choose a location and search for dresses near
             you.
           </p>
@@ -367,10 +355,10 @@ export default function FindNearYou() {
         selectedLocation && (
           <div className="mt-16 text-center space-y-5">
             <AlertCircle className="mx-auto mb-3 text-gray-400 size-24" />
-            <h3 className="text-lg md:text-xl lg:text-2xl font-medium text-gray-700">
+            <h3 className="brand-subheader text-gray-700">
               No Dresses Found
             </h3>
-            <p className="text-gray-500 mt-1 font-light">
+            <p className="brand-body text-gray-500 mt-1">
               Try adjusting your filters or increasing the radius.
             </p>
           </div>
