@@ -13,7 +13,7 @@ const getSubscriptions = async (token: string) => {
     {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+        ...(token && { Authorization: `Bearer ${token}` }),
       },
     }
   )
@@ -89,7 +89,7 @@ export default function PricingPlan() {
   const { data, isLoading } = useQuery({
     queryKey: ['subscriptions'],
     queryFn: () => getSubscriptions(accessToken),
-    enabled: !!accessToken,
+    enabled: true,
   })
 
   // --- Create subscription ---
@@ -120,25 +120,17 @@ export default function PricingPlan() {
     mutate({ id: planId, token: accessToken })
   }
 
-  if (!accessToken) {
-    return (
-      <div className="text-center py-16">
-        <p className="text-gray-600">
-          Please login to view subscription plans.
-        </p>
-      </div>
-    )
-  }
+
 
   const plans = data?.data || []
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
       <div className="text-center mb-16">
-        <h2 className="headerClass font-normal tracking-[20px] mb-2">
+        <h2 className="brand-header mb-2">
           CHOOSE THE PLAN
         </h2>
-        <h3 className="headerClass font-normal tracking-[20px]">
+        <h3 className="brand-header">
           THAT GROWS WITH YOU
         </h3>
       </div>
@@ -146,59 +138,59 @@ export default function PricingPlan() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {isLoading
           ? Array(3)
-              .fill(null)
-              .map((_, idx) => <PlanSkeleton key={idx} />)
+            .fill(null)
+            .map((_, idx) => <PlanSkeleton key={idx} />)
           : plans.map((plan: any) => (
-              <div
-                key={plan._id}
-                className="border border-gray-200 p-8 flex flex-col h-full"
-              >
-                <div className="text-center mb-8">
-                  <h3 className="text-xl font-bold mb-1">{plan.name}</h3>
-                  <p className="text-sm text-gray-600 mb-8 text-center">
-                    {plan.description.split('.')[0]}
-                  </p>
+            <div
+              key={plan._id}
+              className="border border-gray-200 p-8 flex flex-col h-full"
+            >
+              <div className="text-center mb-8">
+                <h3 className="brand-subheader mb-1">{plan.name}</h3>
+                <p className="brand-body text-gray-600 mb-8 text-center">
+                  {plan.description.split('.')[0]}
+                </p>
 
-                  <div className="mb-2">
-                    <span className="text-3xl font-bold">
-                      {plan.price === 0 ? 'FREE' : `$${plan.price}`}
-                    </span>
-                  </div>
-                  <p className="text-xs text-center tracking-wider mb-8">
-                    {plan.description.includes('PER MONTH')
-                      ? 'PER MONTH'
-                      : plan.billingCycle}
-                  </p>
-
-                  <div className="text-lg font-medium mb-8">
-                    {plan.commission}% Commission
-                  </div>
+                <div className="mb-2">
+                  <span className="brand-subheader font-bold">
+                    {plan.price === 0 ? 'FREE' : `$${plan.price}`}
+                  </span>
                 </div>
+                <p className="brand-body text-center mb-8">
+                  {plan.description.includes('PER MONTH')
+                    ? 'PER MONTH'
+                    : plan.billingCycle}
+                </p>
 
-                <div className="flex-grow">
-                  <ul className="space-y-4 mb-8">
-                    {plan.features.map((feature: string, index: number) => (
-                      <li key={index} className="flex items-start">
-                        <div className="flex-shrink-0 h-5 w-5 mr-2">
-                          <Check className="h-5 w-5 text-black" />
-                        </div>
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="mt-auto">
-                  <button
-                    onClick={() => handleChoosePlan(plan._id)}
-                    disabled={isPending}
-                    className="w-full py-3 border-t border-gray-200 text-sm font-medium hover:bg-gray-50 transition-colors disabled:opacity-50"
-                  >
-                    {isPending ? 'Redirecting...' : 'CHOOSE PLAN'}
-                  </button>
+                <div className="brand-body mb-8">
+                  {plan.commission}% Commission
                 </div>
               </div>
-            ))}
+
+              <div className="flex-grow">
+                <ul className="space-y-4 mb-8">
+                  {plan.features.map((feature: string, index: number) => (
+                    <li key={index} className="flex items-start">
+                      <div className="flex-shrink-0 h-5 w-5 mr-2">
+                        <Check className="h-5 w-5 text-black" />
+                      </div>
+                      <span className="brand-body text-sm font-medium">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="mt-auto">
+                <button
+                  onClick={() => handleChoosePlan(plan._id)}
+                  disabled={isPending}
+                  className="w-full py-3 border-t border-gray-200 brand-button hover:bg-gray-50 transition-colors disabled:opacity-50"
+                >
+                  {isPending ? 'Redirecting...' : 'CHOOSE PLAN'}
+                </button>
+              </div>
+            </div>
+          ))}
       </div>
     </div>
   )
